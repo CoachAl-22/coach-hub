@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block title %}Sessions{% endblock %}
+{% block page_title %}Sessions{% endblock %}
+
+{% block top_actions %}
+<button class="btn btn-primary btn-sm" onclick="document.getElementById('add-session-modal').classList.remove('hidden')">+ Add Session</button>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Day</th>
+                <th>Time</th>
+                <th>Location</th>
+                <th>Programs</th>
+                <th>Coaches</th>
+                <th>Notes</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for session in sessions %}
+            <tr class="{% if not session['is_active'] %}row-inactive{% endif %}">
+                <td><strong>{{ session['day_of_week'] }}</strong></td>
+                <td>{{ session['start_time'][:5] }} -- {{ session['end_time'][:5] }}</td>
+                <td>{{ session['location'] }}</td>
+                <td><small>{{ session['programs'] }}</small></td>
+                <td><small>min {{ session['min_coaches'] }} / max {{ session['max_coaches'] }}</small></td>
+                <td><small class="text-muted">{{ session['notes'] or '' }}</small></td>
+                <td>
+                    {% if session['is_active'] %}<span class="badge badge-success">Active</span>
+                    {% else %}<span class="badge">Inactive</span>{% endif %}
+                </td>
+                <td>
+                    <button class="btn btn-xs btn-outline"
+                            onclick="openEditSession({{ session | tojson }})">Edit</button>
+                    <form method="POST" action="{{ url_for('admin_sessions_toggle', session_id=session['id']) }}" style="display:inline">
+                        <button type="submit" class="btn btn-xs btn-danger"
+                                onclick="return confirm('Toggle session status?')">
+                            {{ 'Disable' if session['is_active'] else 'Enable' }}
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Add Session Modal -->
+<div id="add-session-modal" class="modal hidden">
+    <div class="modal-overlay" onclick="document.getElementById('add-session-modal').classList.add('hidden')"></div>
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3>Add Session</h3>
+            <button onclick="document.getElementById('add-session-modal').classList.add('hidden')">&times;</button>
+        </div>
+        <form method="POST" action="{{ url_for('admin_sessions_add') }}">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Day</label>
+                    <select name="day_of_week" class="form-select" required>
+                        {% for day in days %}<option>{{ day }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div class="form-group"><label>Start Time</label><input type="time" name="start_time" required></div>
+                <div class="form-group"><label>End Time</label><input type="time" name="end_time" required></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Location</label><input type="text" name="location" required></div>
+                <div class="form-group"><label>Programs</label><input type="text" name="programs" placeholder="Foundation, Emerging"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Min Coaches</label><input type="number" name="min_coaches" value="1" min="1"></div>
+                <div class="form-group"><label>Max Coaches</label><input type="number" name="max_coaches" value="4" min="1"></div>
+            </div>
+            <div class="form-group"><label>Notes</label><input type="text" name="notes" placeholder="e.g. 3pm setup required"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="document.getElementById('add-session-modal').classList.add('hidden')">Cancel</button>
+                <button type="submit" class="btn btn-primary">Add Session</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Session Modal -->
+<div id="edit-session-modal" class="modal hidden">
+    <div class="modal-overlay" onclick="document.getElementById('edit-session-modal').classList.add('hidden')"></div>
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3>Edit Session</h3>
+            <button onclick="document.getElementById('edit-session-modal').classList.add('hidden')">&times;</button>
+        </div>
+        <form method="POST" id="edit-session-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Day</label>
+                    <select name="day_of_week" id="es-day" class="form-select">
+                        {% for day in days %}<option>{{ day }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div class="form-group"><label>Start Time</label><input type="time" name="start_time" id="es-start"></div>
+                <div class="form-group"><label>End Time</label><input type="time" name="end_time" id="es-end"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Location</label><input type="text" name="location" id="es-location"></div>
+                <div class="form-group"><label>Programs</label><input type="text" name="programs" id="es-programs"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Min Coaches</label><input type="number" name="min_coaches" id="es-min" min="1"></div>
+                <div class="form-group"><label>Max Coaches</label><input type="number" name="max_coaches" id="es-max" min="1"></div>
+            </div>
+            <div class="form-group"><label>Notes</label><input type="text" name="notes" id="es-notes"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="document.getElementById('edit-session-modal').classList.add('hidden')">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+function openEditSession(s) {
+    document.getElementById('es-day').value = s.day_of_week;
+    document.getElementById('es-start').value = s.start_time;
+    document.getElementById('es-end').value = s.end_time;
+    document.getElementById('es-location').value = s.location;
+    document.getElementById('es-programs').value = s.programs || '';
+    document.getElementById('es-min').value = s.min_coaches;
+    document.getElementById('es-max').value = s.max_coaches;
+    document.getElementById('es-notes').value = s.notes || '';
+    document.getElementById('edit-session-form').action = `/admin/sessions/${s.id}/edit`;
+    document.getElementById('edit-session-modal').classList.remove('hidden');
+}
+</script>
+{% endblock %}

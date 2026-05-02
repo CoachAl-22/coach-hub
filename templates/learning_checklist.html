@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Induction Checklist{% endblock %}
+{% block page_title %}Induction Checklist{% endblock %}
+
+{% block top_actions %}
+<a href="{{ url_for('learning_induction') }}" class="btn btn-sm btn-outline">← Induction</a>
+{% endblock %}
+
+{% block content %}
+<style>
+.checklist-note {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 0.875rem 1.25rem; font-size: 0.875rem; color: var(--text-muted);
+    line-height: 1.6; margin-bottom: 1.25rem;
+}
+.checklist-group { margin-bottom: 1.25rem; }
+.checklist-group-title {
+    font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--text-muted); padding: 0.35rem 0; margin-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+}
+.checklist-items { display: flex; flex-direction: column; gap: 0.4rem; }
+.checklist-item {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.875rem;
+}
+.checklist-item.done { border-color: rgba(34,197,94,.35); background: rgba(34,197,94,.03); }
+.check-circle {
+    width: 1.375rem; height: 1.375rem; border-radius: 50%; flex-shrink: 0;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: 700; color: var(--text-muted);
+}
+.check-circle.done { background: rgba(34,197,94,.2); color: #22c55e; border-color: rgba(34,197,94,.5); }
+.item-text { flex: 1; font-size: 0.875rem; }
+.item-text.done { color: var(--text-muted); }
+</style>
+
+<div class="checklist-note">
+    Items marked <span class="badge badge-warning" style="font-size:0.72rem;">Requires Sign-Off</span> need Alistair to confirm.
+    Tick what you've done — Alistair will sign off at your weekly check-ins.
+    Questions? <strong>0434 679 395</strong>
+</div>
+
+{% for category, items in grouped.items() %}
+<div class="checklist-group">
+    <div class="checklist-group-title">{{ category }}</div>
+    <div class="checklist-items">
+    {% for item in items %}
+    <div class="checklist-item {% if item.completed %}done{% endif %}">
+        <div class="check-circle {% if item.completed %}done{% endif %}">{% if item.completed %}✓{% endif %}</div>
+        <div class="item-text {% if item.completed %}done{% endif %}">{{ item.text }}</div>
+
+        {% if item.requires_admin %}
+            {% if item.admin_signed %}
+                <span class="badge badge-success" style="font-size:0.7rem; white-space:nowrap;">✓ Signed Off</span>
+            {% else %}
+                <span class="badge badge-warning" style="font-size:0.7rem; white-space:nowrap;">Requires Sign-Off</span>
+            {% endif %}
+        {% endif %}
+
+        {% if not item.completed and not is_admin %}
+        <form method="POST" action="{{ url_for('complete_checklist_item', item_id=item.id) }}" style="margin:0;">
+            <button type="submit" class="btn btn-xs btn-outline">Tick Off</button>
+        </form>
+        {% endif %}
+    </div>
+    {% endfor %}
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

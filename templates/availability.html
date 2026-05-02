@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}Availability{% endblock %}
+{% block page_title %}Availability{% endblock %}
+
+{% block content %}
+<div class="two-col-grid">
+
+    <!-- Send requests panel -->
+    <div class="card">
+        <div class="card-header"><h2>Send Availability Requests</h2></div>
+        <p class="card-desc">Sends an SMS to all active coaches with a link to fill in their availability for the selected term.</p>
+        <form method="POST" action="{{ url_for('send_availability_requests') }}">
+            <div class="form-group">
+                <label>Term</label>
+                <select name="term_id" class="form-select" required>
+                    {% for term in terms %}
+                    <option value="{{ term['id'] }}">{{ term['name'] }} ({{ term['start_date'] }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary"
+                    onclick="return confirm('Send availability SMS to all coaches?')">
+                Send SMS to All Coaches
+            </button>
+        </form>
+    </div>
+
+    <!-- Google Sheets reference -->
+    {% if sheet_data %}
+    <div class="card">
+        <div class="card-header"><h2>Current Availability (Google Sheets)</h2></div>
+        <table class="avail-table">
+            <thead>
+                <tr><th>Coach</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th></tr>
+            </thead>
+            <tbody>
+                {% for row in sheet_data %}
+                <tr>
+                    <td>{{ row.coach }}</td>
+                    <td class="{% if row.mon == 'Y' %}avail-yes{% elif row.mon == 'N' %}avail-no{% endif %}">{{ row.mon }}</td>
+                    <td class="{% if row.tue == 'Y' %}avail-yes{% elif row.tue == 'N' %}avail-no{% endif %}">{{ row.tue }}</td>
+                    <td class="{% if row.wed == 'Y' %}avail-yes{% elif row.wed == 'N' %}avail-no{% endif %}">{{ row.wed }}</td>
+                    <td class="{% if row.thu == 'Y' %}avail-yes{% elif row.thu == 'N' %}avail-no{% endif %}">{{ row.thu }}</td>
+                    <td class="{% if row.fri == 'Y' %}avail-yes{% elif row.fri == 'N' %}avail-no{% endif %}">{{ row.fri }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+</div>
+
+<!-- Response tracker -->
+<div class="card">
+    <div class="card-header"><h2>Response Tracker</h2></div>
+    <div class="response-tabs">
+        {% for term in terms %}
+        <button class="tab-btn {% if loop.first %}active{% endif %}"
+                onclick="showTab('term-{{ term['id'] }}', this)">
+            {{ term['name'] }}
+        </button>
+        {% endfor %}
+    </div>
+
+    {% for term in terms %}
+    <div id="term-{{ term['id'] }}" class="tab-content {% if not loop.first %}hidden{% endif %}">
+        <table class="avail-table">
+            <thead>
+                <tr>
+                    <th>Coach</th>
+                    <th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th>
+                    <th>Specific Dates Off</th>
+                    <th>Submitted</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for coach in coaches %}
+                {% set resp = responses[term['id']][coach['id']] %}
+                <tr>
+                    <td>{{ coach['name'] }}</td>
+                    {% if resp %}
+                        {% set weekly = resp['weekly_availability'] | tojson | replace('"', '') %}
+                        {% set w = resp['weekly_availability'] %}
+                        {% if w %}
+                            {% set weekly_data = w | from_json if w is string else {} %}
+                        {% else %}
+                            {% set weekly_data = {} %}
+                        {% endif %}
+                        {% for day in ['Monday','Tuesday','Wednesday','Thursday','Friday'] %}
+                        <td class="{% if weekly_data.get(day, True) %}avail-yes{% else %}avail-no{% endif %}">
+                            {{ 'Y' if weekly_data.get(day, True) else 'N' }}
+                        </td>
+                        {% endfor %}
+                        <td><small>{{ resp['unavailable_dates'] }}</small></td>
+                        <td><small class="text-muted">{{ resp['submitted_at'][:10] }}</small></td>
+                    {% else %}
+                        <td colspan="6" class="text-muted"><small>Not submitted</small></td>
+                        <td></td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function showTab(id, btn) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById(id).classList.remove('hidden');
+    btn.classList.add('active');
+}
+</script>
+{% endblock %}

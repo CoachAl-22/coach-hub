@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Availability Form | Power2ADAPT</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="form-body">
+<div class="form-container">
+
+    <div class="form-logo">
+        <span class="logo-power">Power</span><span class="logo-2">2</span><span class="logo-adapt">ADAPT</span>
+    </div>
+
+    {% if error %}
+        <div class="form-card">
+            <h2>Invalid Link</h2>
+            <p class="text-muted">This link is invalid or has expired. Please contact Alistair for a new link.</p>
+        </div>
+
+    {% elif submitted %}
+        <div class="form-card success-card">
+            <div class="success-icon">&#10003;</div>
+            <h2>Thanks!</h2>
+            <p>Your availability has been submitted. Alistair will be in touch with your roster.</p>
+        </div>
+
+    {% elif already_submitted %}
+        <div class="form-card">
+            <h2>Already Submitted</h2>
+            <p>You've already submitted your availability for <strong>{{ tok['term_name'] }}</strong>.</p>
+            {% if existing %}
+            <p class="text-muted">Submitted: {{ existing['submitted_at'][:10] }}</p>
+            {% endif %}
+            <p>Need to make changes? Contact Alistair.</p>
+        </div>
+
+    {% else %}
+        <div class="form-card">
+            <h2>{{ tok['term_name'] }} Availability</h2>
+            <p>Hi <strong>{{ tok['coach_name'].split()[0] }}</strong>, please fill in your availability below. Takes 2 minutes!</p>
+
+            <form method="POST" action="/availability/{{ token }}/submit">
+
+                <!-- Weekly availability -->
+                <div class="form-section">
+                    <h3>Weekly Availability</h3>
+                    <p class="form-hint">For each day, are you generally available this term?</p>
+
+                    {% for day in days_of_week %}
+                    <div class="day-toggle">
+                        <label class="day-label">{{ day }}</label>
+                        <div class="toggle-group">
+                            <label class="toggle-opt">
+                                <input type="radio" name="weekly_{{ day }}" value="available" checked>
+                                <span class="toggle-btn toggle-yes">Available</span>
+                            </label>
+                            <label class="toggle-opt">
+                                <input type="radio" name="weekly_{{ day }}" value="unavailable">
+                                <span class="toggle-btn toggle-no">Unavailable</span>
+                            </label>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Specific dates off -->
+                {% if term_dates %}
+                <div class="form-section">
+                    <h3>Specific Dates Off</h3>
+                    <p class="form-hint">Tick any specific dates you CAN'T make it (school camps, holidays, etc.)</p>
+                    <div class="dates-grid">
+                        {% set current_month = namespace(value='') %}
+                        {% for d in term_dates %}
+                            {% if d.strftime('%B') != current_month.value %}
+                                {% set current_month.value = d.strftime('%B') %}
+                                <div class="month-label">{{ d.strftime('%B') }}</div>
+                            {% endif %}
+                            <label class="date-checkbox">
+                                <input type="checkbox" name="unavailable_dates" value="{{ d.isoformat() }}">
+                                <span class="date-chip">
+                                    <span class="date-day">{{ d.strftime('%a') }}</span>
+                                    <span class="date-num">{{ d.strftime('%d') }}</span>
+                                </span>
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Notes -->
+                <div class="form-section">
+                    <div class="form-group">
+                        <label>Any notes for Alistair? (optional)</label>
+                        <textarea name="notes" rows="3" placeholder="e.g. Away April 21-24 for Easter trip, available for makeup sessions..."></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">Submit Availability</button>
+            </form>
+        </div>
+    {% endif %}
+
+</div>
+
+<script>
+// Visual toggle for weekly availability
+document.querySelectorAll('.toggle-opt input').forEach(input => {
+    input.addEventListener('change', function() {
+        const group = this.closest('.toggle-group');
+        group.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('selected'));
+        this.nextElementSibling.classList.add('selected');
+    });
+});
+// Init selected state
+document.querySelectorAll('.toggle-opt input:checked').forEach(input => {
+    input.nextElementSibling.classList.add('selected');
+});
+</script>
+</body>
+</html>

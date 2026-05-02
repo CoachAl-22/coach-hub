@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+{% block title %}Week {{ week.week }} — {{ week.title }}{% endblock %}
+{% block page_title %}Week {{ week.week }} — {{ week.title }}{% endblock %}
+
+{% block top_actions %}
+<a href="{{ url_for('learning_lesson_plans') }}" class="btn btn-sm btn-outline">← All Weeks</a>
+{% endblock %}
+
+{% block content %}
+<style>
+.lw-wrap { max-width: 780px; }
+
+.session-meta-bar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.875rem 1.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin-bottom: 1rem;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+.session-meta-bar span { display: flex; align-items: center; gap: 0.3rem; }
+
+.complete-bar {
+    display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 0.875rem 1.25rem; margin-bottom: 1rem;
+}
+.complete-bar.done { border-color: rgba(34,197,94,.4); }
+.complete-bar small { color: var(--text-muted); font-size: 0.85rem; }
+.complete-bar.done small { color: #22c55e; }
+
+.section-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+.section-header {
+    padding: 0.75rem 1.125rem;
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+}
+.section-badge {
+    font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+    padding: 0.15rem 0.55rem; border-radius: 12px;
+}
+.badge-warmup  { background: rgba(245,158,11,.2); color: #f59e0b; }
+.badge-run     { background: rgba(0,180,216,.2); color: #00B4D8; }
+.badge-jump    { background: rgba(34,197,94,.2); color: #22c55e; }
+.badge-throw   { background: rgba(168,85,247,.2); color: #a855f7; }
+.badge-relay   { background: rgba(245,158,11,.15); color: #f59e0b; }
+.badge-comp    { background: rgba(242,101,34,.2); color: #F26522; }
+
+.section-header-title { font-weight: 600; font-size: 0.9rem; flex: 1; }
+.section-header-dur { font-size: 0.78rem; color: var(--text-muted); }
+.section-body { padding: 1.125rem; }
+
+.warmup-desc { font-size: 0.875rem; line-height: 1.65; white-space: pre-line; margin-bottom: 0.75rem; }
+.warmup-note {
+    background: var(--surface2); border-left: 3px solid var(--border); border-radius: 0 6px 6px 0;
+    padding: 0.5rem 0.75rem; font-size: 0.82rem; color: var(--text-muted); line-height: 1.6;
+}
+
+.activity-list { display: flex; flex-direction: column; gap: 0.875rem; }
+.activity-item { border-bottom: 1px solid var(--border); padding-bottom: 0.875rem; }
+.activity-item:last-child { border-bottom: none; padding-bottom: 0; }
+.activity-name { font-weight: 600; font-size: 0.875rem; margin-bottom: 0.3rem; }
+.activity-desc { font-size: 0.845rem; line-height: 1.65; color: var(--text-muted); white-space: pre-line; }
+
+.cues-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.4rem; }
+.cue-item {
+    display: flex; gap: 0.625rem; align-items: flex-start;
+    font-size: 0.845rem; line-height: 1.55;
+    padding: 0.45rem 0.75rem; background: var(--surface2); border-radius: 6px;
+}
+.cue-bullet { color: #F26522; font-weight: 700; flex-shrink: 0; margin-top: 0.05rem; }
+
+.run-sheet-list { display: flex; flex-direction: column; gap: 0.35rem; }
+.rs-item {
+    font-size: 0.845rem; line-height: 1.55; padding: 0.45rem 0.875rem;
+    border-radius: 6px; border-left: 3px solid var(--border);
+}
+.rs-item.c1 { border-left-color: #F26522; }
+.rs-item.c2 { border-left-color: #00B4D8; }
+
+.resource-links { display: flex; flex-wrap: wrap; gap: 0.625rem; }
+.resource-link {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    font-size: 0.82rem; color: #F26522; text-decoration: none;
+    background: rgba(242,101,34,.07); border: 1px solid rgba(242,101,34,.2);
+    border-radius: 6px; padding: 0.35rem 0.7rem;
+}
+.resource-link:hover { background: rgba(242,101,34,.14); }
+
+.lw-nav { display: flex; gap: 0.75rem; margin-top: 0.5rem; }
+.btn-lw-nav {
+    flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 0.75rem 1rem; text-decoration: none; color: var(--text); font-size: 0.85rem;
+    transition: border-color .15s; display: flex; align-items: center; gap: 0.5rem;
+}
+.btn-lw-nav:hover { border-color: #F26522; color: var(--text); text-decoration: none; }
+.btn-lw-nav-right { justify-content: flex-end; }
+.btn-nav-label { color: var(--text-muted); font-size: 0.75rem; display: block; }
+</style>
+
+<div class="lw-wrap">
+
+<div class="session-meta-bar">
+    <span>⏱ {{ week.duration }}</span>
+    <span>👦 {{ week.group }}</span>
+    <span>🎒 {{ week.equipment }}</span>
+</div>
+
+<!-- Completion bar -->
+<div class="complete-bar {% if completed %}done{% endif %}">
+    {% if completed %}
+        <small>✓ You've reviewed this session plan</small>
+        <button class="btn btn-sm btn-outline" disabled>Reviewed ✓</button>
+    {% else %}
+        <small>Review this plan before coaching the session.</small>
+        <form method="POST" action="{{ url_for('complete_lesson_week', week_num=week.week) }}" style="margin:0;">
+            <button type="submit" class="btn btn-sm btn-primary">Mark as Reviewed ✓</button>
+        </form>
+    {% endif %}
+</div>
+
+<!-- WARM UP -->
+<div class="section-card">
+    <div class="section-header">
+        <span class="section-badge badge-warmup">Warm Up</span>
+        <div class="section-header-title">{{ week.warmup.name }}</div>
+        <div class="section-header-dur">{{ week.warmup.duration }}</div>
+    </div>
+    <div class="section-body">
+        <div class="warmup-desc">{{ week.warmup.description }}</div>
+        {% if week.warmup.coaching_notes %}
+        <div class="warmup-note"><strong>Coaching Notes:</strong> {{ week.warmup.coaching_notes }}</div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- MAIN BLOCK -->
+<div class="section-card">
+    <div class="section-header">
+        <span class="section-badge badge-run">{{ week.main_block.name }}</span>
+        <div class="section-header-title">{{ week.main_block.focus }}</div>
+        <div class="section-header-dur">{{ week.main_block.duration }}</div>
+    </div>
+    <div class="section-body">
+        <div class="activity-list">
+        {% for a in week.main_block.activities %}
+        <div class="activity-item">
+            <div class="activity-name">{{ a.name }}</div>
+            <div class="activity-desc">{{ a.description }}</div>
+        </div>
+        {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- SECONDARY BLOCK -->
+{% if week.secondary_block %}
+<div class="section-card">
+    <div class="section-header">
+        {% if 'JUMP' in week.secondary_block.name %}<span class="section-badge badge-jump">{{ week.secondary_block.name }}</span>
+        {% elif 'THROW' in week.secondary_block.name %}<span class="section-badge badge-throw">{{ week.secondary_block.name }}</span>
+        {% elif 'RELAY' in week.secondary_block.name or 'ZIG' in week.secondary_block.name %}<span class="section-badge badge-relay">{{ week.secondary_block.name }}</span>
+        {% elif week.week == 10 %}<span class="section-badge badge-comp">{{ week.secondary_block.name }}</span>
+        {% else %}<span class="section-badge badge-run">{{ week.secondary_block.name }}</span>{% endif %}
+        <div class="section-header-title">{{ week.secondary_block.focus }}</div>
+        {% if week.secondary_block.duration %}<div class="section-header-dur">{{ week.secondary_block.duration }}</div>{% endif %}
+    </div>
+    <div class="section-body">
+        <div class="activity-list">
+        {% for a in week.secondary_block.activities %}
+        <div class="activity-item">
+            <div class="activity-name">{{ a.name }}</div>
+            <div class="activity-desc">{{ a.description }}</div>
+        </div>
+        {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- COACHING CUES -->
+{% if week.coaching_cues %}
+<div class="section-card">
+    <div class="section-header"><div class="section-header-title">🎯 Coaching Cues</div></div>
+    <div class="section-body">
+        <ul class="cues-list">
+        {% for cue in week.coaching_cues %}
+        <li class="cue-item"><span class="cue-bullet">›</span><span>{{ cue }}</span></li>
+        {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endif %}
+
+<!-- COACH RUN SHEET -->
+{% if week.coach_run_sheet %}
+<div class="section-card">
+    <div class="section-header">
+        <div class="section-header-title">📋 Coach Run Sheet</div>
+        <div class="section-header-dur" style="font-style:italic;">Coach 1 = orange · Coach 2 = teal</div>
+    </div>
+    <div class="section-body">
+        <div class="run-sheet-list">
+        {% for item in week.coach_run_sheet %}
+        <div class="rs-item {% if 'Coach 1' in item %}c1{% elif 'Coach 2' in item %}c2{% endif %}">{{ item }}</div>
+        {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- RESOURCES -->
+{% if week.resources %}
+<div class="section-card">
+    <div class="section-header"><div class="section-header-title">🔗 Activity Resources</div></div>
+    <div class="section-body">
+        <div class="resource-links">
+        {% for r in week.resources %}
+        <a href="{{ r.url }}" target="_blank" class="resource-link">↗ {{ r.name }}</a>
+        {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Prev / Next nav -->
+<div class="lw-nav">
+    {% if prev_week %}
+    <a href="{{ url_for('learning_lesson_week', week_num=prev_week.week) }}" class="btn-lw-nav">
+        ← <div><span class="btn-nav-label">Previous</span>Week {{ prev_week.week }}</div>
+    </a>
+    {% else %}<div style="flex:1;"></div>{% endif %}
+
+    {% if next_week %}
+    <a href="{{ url_for('learning_lesson_week', week_num=next_week.week) }}" class="btn-lw-nav btn-lw-nav-right">
+        <div style="text-align:right;"><span class="btn-nav-label">Next</span>Week {{ next_week.week }}</div> →
+    </a>
+    {% else %}<div style="flex:1;"></div>{% endif %}
+</div>
+
+</div>
+{% endblock %}

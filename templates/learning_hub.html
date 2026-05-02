@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% block title %}Learning Hub{% endblock %}
+{% block page_title %}Learning Hub{% endblock %}
+
+{% block top_actions %}
+{% if is_admin %}
+<a href="{{ url_for('admin_learning_progress') }}" class="btn btn-secondary btn-sm">Coach Progress</a>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<style>
+.learning-intro {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+.learning-intro strong { color: var(--text); }
+
+.track-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+.track-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color .15s, transform .15s;
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+}
+.track-card:hover { border-color: #F26522; transform: translateY(-1px); text-decoration: none; color: var(--text); }
+
+.track-header { display: flex; align-items: center; gap: 0.875rem; }
+.track-icon { font-size: 1.75rem; flex-shrink: 0; }
+.track-title { font-size: 1rem; font-weight: 600; }
+.track-subtitle { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.15rem; }
+
+.progress-bar-wrap { background: var(--surface2); border-radius: 4px; height: 6px; overflow: hidden; }
+.progress-bar-fill { height: 100%; background: #F26522; border-radius: 4px; transition: width .5s; }
+.progress-bar-fill.complete { background: #22c55e; }
+.progress-label { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-muted); margin-top: 0.35rem; }
+
+.track-status {
+    font-size: 0.75rem; padding: 0.2rem 0.65rem; border-radius: 20px; align-self: flex-start;
+}
+.ts-complete { background: rgba(34,197,94,.15); color: #22c55e; }
+.ts-progress { background: rgba(242,101,34,.12); color: #F26522; }
+.ts-empty { background: var(--surface2); color: var(--text-muted); }
+
+.checklist-row {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+</style>
+
+{% if is_admin %}
+<div class="learning-intro">
+    <strong>Director View</strong> — You can see all coach progress from the Coach Progress page.
+    Coaches see their own progress only. Admin sign-off items on the Induction Checklist require your approval.
+</div>
+{% else %}
+<div class="learning-intro">
+    Complete the <strong>Induction modules</strong> before your first session.
+    Use <strong>Foundation Program</strong> as a reference when coaching. <strong>Career Progression</strong> is self-directed — read it whenever you're ready.
+</div>
+{% endif %}
+
+<div class="track-grid">
+
+    <a href="{{ url_for('learning_induction') }}" class="track-card">
+        <div class="track-header">
+            <div class="track-icon">📋</div>
+            <div>
+                <div class="track-title">New Coach Induction</div>
+                <div class="track-subtitle">5 modules · complete before your first session</div>
+            </div>
+        </div>
+        <div>
+            <div class="progress-bar-wrap">
+                <div class="progress-bar-fill {% if induction_done == induction_total %}complete{% endif %}"
+                     style="width:{{ (induction_done / induction_total * 100) | int }}%"></div>
+            </div>
+            <div class="progress-label">
+                <span>{{ induction_done }}/{{ induction_total }} modules read</span>
+                <span>{{ (induction_done / induction_total * 100) | int }}%</span>
+            </div>
+        </div>
+        <span class="track-status {% if induction_done == induction_total %}ts-complete{% elif induction_done > 0 %}ts-progress{% else %}ts-empty{% endif %}">
+            {% if induction_done == induction_total %}✓ Complete{% elif induction_done > 0 %}In Progress{% else %}Not Started{% endif %}
+        </span>
+    </a>
+
+    <a href="{{ url_for('learning_lesson_plans') }}" class="track-card">
+        <div class="track-header">
+            <div class="track-icon">🏃</div>
+            <div>
+                <div class="track-title">Foundation Program</div>
+                <div class="track-subtitle">10 weeks · Prep to Grade 2 lesson plans</div>
+            </div>
+        </div>
+        <div>
+            <div class="progress-bar-wrap">
+                <div class="progress-bar-fill {% if lesson_done == lesson_total %}complete{% endif %}"
+                     style="width:{{ (lesson_done / lesson_total * 100) | int }}%"></div>
+            </div>
+            <div class="progress-label">
+                <span>{{ lesson_done }}/{{ lesson_total }} weeks reviewed</span>
+                <span>{{ (lesson_done / lesson_total * 100) | int }}%</span>
+            </div>
+        </div>
+        <span class="track-status {% if lesson_done == lesson_total %}ts-complete{% elif lesson_done > 0 %}ts-progress{% else %}ts-empty{% endif %}">
+            {% if lesson_done == lesson_total %}✓ Complete{% elif lesson_done > 0 %}In Progress{% else %}Not Started{% endif %}
+        </span>
+    </a>
+
+    <a href="{{ url_for('learning_progression') }}" class="track-card">
+        <div class="track-header">
+            <div class="track-icon">🚀</div>
+            <div>
+                <div class="track-title">Career Progression</div>
+                <div class="track-subtitle">Level 2, 3 & 4 pathway guides</div>
+            </div>
+        </div>
+        <div>
+            <div class="progress-bar-wrap">
+                <div class="progress-bar-fill {% if prog_done == prog_total %}complete{% endif %}"
+                     style="width:{{ (prog_done / prog_total * 100) | int }}%"></div>
+            </div>
+            <div class="progress-label">
+                <span>{{ prog_done }}/{{ prog_total }} guides read</span>
+                <span>{{ (prog_done / prog_total * 100) | int }}%</span>
+            </div>
+        </div>
+        <span class="track-status {% if prog_done == prog_total %}ts-complete{% elif prog_done > 0 %}ts-progress{% else %}ts-empty{% endif %}">
+            {% if prog_done == prog_total %}✓ Complete{% elif prog_done > 0 %}In Progress{% else %}Not Started{% endif %}
+        </span>
+    </a>
+
+</div>
+
+<div class="checklist-row">
+    <div>
+        <strong>Induction Checklist</strong>
+        <span style="margin-left:0.75rem; color:var(--text-muted); font-size:0.85rem;">
+            {{ checklist_done }}/{{ checklist_total }} items complete
+            {% if checklist_done < checklist_total %}&nbsp;·&nbsp;some require Alistair's sign-off{% endif %}
+        </span>
+    </div>
+    <a href="{{ url_for('learning_checklist') }}" class="btn btn-sm btn-outline">View Checklist</a>
+</div>
+
+{% endblock %}

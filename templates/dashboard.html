@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block top_actions %}
+    {% if current_user.is_admin %}
+    <a href="{{ url_for('alerts') }}" class="btn btn-secondary btn-sm">Send SMS</a>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-grid">
+
+    <!-- Stats row -->
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-value">{{ total_this_week }}</div>
+            <div class="stat-label">Sessions This Week</div>
+        </div>
+        <div class="stat-card {% if gaps > 0 %}stat-warning{% endif %}">
+            <div class="stat-value">{{ gaps }}</div>
+            <div class="stat-label">Roster Gaps</div>
+        </div>
+        {% if current_term %}
+        <div class="stat-card">
+            <div class="stat-value accent">{{ current_term['name'] }}</div>
+            <div class="stat-label">{{ current_term['start_date'] }} to {{ current_term['end_date'] }}</div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- This week's schedule -->
+    <div class="card">
+        <div class="card-header">
+            <h2>This Week
+                <span class="week-range">{{ week_start.strftime('%d %b') }} -- {{ week_end.strftime('%d %b %Y') }}</span>
+            </h2>
+            {% if current_user.is_admin and current_term %}
+            <a href="{{ url_for('roster_term', term_id=current_term['id']) }}" class="btn btn-primary btn-sm">Edit Roster</a>
+            {% endif %}
+        </div>
+
+        {% if week_schedule %}
+        <div class="schedule-list">
+            {% set current_day = namespace(value='') %}
+            {% for item in week_schedule %}
+                {% if item.date.strftime('%A') != current_day.value %}
+                    {% set current_day.value = item.date.strftime('%A') %}
+                    <div class="schedule-day-header {% if item.is_today %}today{% endif %}">
+                        {{ item.date.strftime('%A') }}
+                        {% if item.is_today %}<span class="today-badge">Today</span>{% endif %}
+                        <span class="day-date">{{ item.date.strftime('%d %b') }}</span>
+                    </div>
+                {% endif %}
+
+                <div class="schedule-item status-{{ item.status }}">
+                    <div class="schedule-time">
+                        {{ item.session['start_time'][:5] }} -- {{ item.session['end_time'][:5] }}
+                    </div>
+                    <div class="schedule-info">
+                        <div class="schedule-location">{{ item.session['location'] }}</div>
+                        <div class="schedule-programs">{{ item.session['programs'] }}</div>
+                    </div>
+                    <div class="schedule-coaches">
+                        {% if item.entries %}
+                            {% for entry in item.entries %}
+                            <span class="coach-chip">{{ entry['coach_name'].split()[0] }}</span>
+                            {% endfor %}
+                        {% else %}
+                            <span class="coach-chip chip-empty">No coaches assigned</span>
+                        {% endif %}
+                    </div>
+                    <div class="schedule-status">
+                        {% if item.status == 'full' %}
+                            <span class="badge badge-success">Fully Staffed</span>
+                        {% elif item.status == 'staffed' %}
+                            <span class="badge badge-info">Staffed</span>
+                        {% elif item.status == 'understaffed' %}
+                            <span class="badge badge-warning">Needs More</span>
+                        {% else %}
+                            <span class="badge badge-danger">Unassigned</span>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">No sessions scheduled this week.</div>
+        {% endif %}
+    </div>
+
+    <!-- Term overview -->
+    {% if terms %}
+    <div class="card">
+        <div class="card-header"><h2>Terms</h2></div>
+        <div class="terms-list">
+            {% for term in terms %}
+            <div class="term-row">
+                <div class="term-info">
+                    <div class="term-name">{{ term['name'] }}</div>
+                    <div class="term-dates">{{ term['start_date'] }} to {{ term['end_date'] }}</div>
+                </div>
+                {% if current_user.is_admin %}
+                <a href="{{ url_for('roster_term', term_id=term['id']) }}" class="btn btn-outline btn-sm">View Roster</a>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

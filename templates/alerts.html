@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Alerts{% endblock %}
+{% block page_title %}Alerts & SMS{% endblock %}
+
+{% block content %}
+<div class="two-col-grid">
+
+    <!-- Timesheet reminder -->
+    <div class="card">
+        <div class="card-header"><h2>Timesheet Reminder</h2></div>
+        <p class="card-desc">Remind coaches to submit their Xero Me timesheet. Auto-sends every Friday at 5pm.</p>
+        <form method="POST" action="{{ url_for('send_timesheet_reminder') }}">
+            <div class="form-group">
+                <label>Send to (leave empty for all active coaches)</label>
+                <div class="coach-checkboxes">
+                    {% for coach in coaches %}
+                    {% if coach['mobile'] %}
+                    <label class="coach-check">
+                        <input type="checkbox" name="coach_ids" value="{{ coach['id'] }}">
+                        {{ coach['name'] }}
+                    </label>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary"
+                    onclick="return confirm('Send timesheet reminder SMS?')">
+                Send Timesheet Reminder
+            </button>
+        </form>
+    </div>
+
+    <!-- Custom message -->
+    <div class="card">
+        <div class="card-header"><h2>Custom Message</h2></div>
+        <p class="card-desc">Send a custom SMS to selected coaches or the whole team.</p>
+        <form method="POST" action="{{ url_for('send_custom_sms') }}">
+            <div class="form-group">
+                <label>Message</label>
+                <textarea name="message" rows="4" placeholder="Type your message here..." required></textarea>
+            </div>
+            <div class="form-group">
+                <label>Send to (leave empty for all active coaches)</label>
+                <div class="coach-checkboxes">
+                    {% for coach in coaches %}
+                    {% if coach['mobile'] %}
+                    <label class="coach-check">
+                        <input type="checkbox" name="coach_ids" value="{{ coach['id'] }}">
+                        {{ coach['name'] }}
+                    </label>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            <button type="submit" class="btn btn-secondary"
+                    onclick="return confirm('Send this SMS to selected coaches?')">
+                Send Message
+            </button>
+        </form>
+    </div>
+
+</div>
+
+<!-- SMS Log -->
+<div class="card">
+    <div class="card-header"><h2>SMS Log <span class="text-muted">(last 50)</span></h2></div>
+    {% if log %}
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Sent</th>
+                    <th>Coach</th>
+                    <th>Type</th>
+                    <th>Message</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in log %}
+                <tr>
+                    <td><small>{{ entry['sent_at'][:16] }}</small></td>
+                    <td>{{ entry['coach_name'] or entry['mobile'] }}</td>
+                    <td><span class="badge badge-info">{{ entry['type'] | replace('_', ' ') }}</span></td>
+                    <td><small class="text-muted">{{ entry['message'][:80] }}{% if entry['message']|length > 80 %}...{% endif %}</small></td>
+                    <td>
+                        {% if entry['status'] == 'sent' %}
+                        <span class="badge badge-success">Sent</span>
+                        {% else %}
+                        <span class="badge badge-danger">Failed</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">No messages sent yet.</div>
+    {% endif %}
+</div>
+{% endblock %}

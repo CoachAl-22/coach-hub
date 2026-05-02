@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Coach Progress{% endblock %}
+{% block page_title %}Coach Learning Progress{% endblock %}
+
+{% block top_actions %}
+<a href="{{ url_for('learning_hub') }}" class="btn btn-sm btn-outline">← Hub</a>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Coach</th>
+                <th>Induction</th>
+                <th>Lesson Plans</th>
+                <th>Progression</th>
+                <th>Checklist</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for coach in coaches %}
+        <tr>
+            <td><strong>{{ coach.name }}</strong></td>
+            <td>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <div style="width:60px;height:5px;border-radius:3px;background:var(--surface2);overflow:hidden;flex-shrink:0;">
+                        <div style="height:100%;background:{% if coach.induction_done == coach.induction_total %}#22c55e{% else %}#F26522{% endif %};width:{{ (coach.induction_done / coach.induction_total * 100)|int }}%;"></div>
+                    </div>
+                    <small class="text-muted">{{ coach.induction_done }}/{{ coach.induction_total }}</small>
+                </div>
+            </td>
+            <td>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <div style="width:60px;height:5px;border-radius:3px;background:var(--surface2);overflow:hidden;flex-shrink:0;">
+                        <div style="height:100%;background:{% if coach.lesson_done == coach.lesson_total %}#22c55e{% else %}#F26522{% endif %};width:{{ (coach.lesson_done / coach.lesson_total * 100)|int }}%;"></div>
+                    </div>
+                    <small class="text-muted">{{ coach.lesson_done }}/{{ coach.lesson_total }}</small>
+                </div>
+            </td>
+            <td>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <div style="width:60px;height:5px;border-radius:3px;background:var(--surface2);overflow:hidden;flex-shrink:0;">
+                        <div style="height:100%;background:{% if coach.prog_done == coach.prog_total %}#22c55e{% else %}#F26522{% endif %};width:{{ (coach.prog_done / coach.prog_total * 100)|int }}%;"></div>
+                    </div>
+                    <small class="text-muted">{{ coach.prog_done }}/{{ coach.prog_total }}</small>
+                </div>
+            </td>
+            <td>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <div style="width:60px;height:5px;border-radius:3px;background:var(--surface2);overflow:hidden;flex-shrink:0;">
+                        <div style="height:100%;background:{% if coach.checklist_done == coach.checklist_total %}#22c55e{% else %}#F26522{% endif %};width:{{ (coach.checklist_done / coach.checklist_total * 100)|int }}%;"></div>
+                    </div>
+                    <small class="text-muted">{{ coach.checklist_done }}/{{ coach.checklist_total }}</small>
+                </div>
+            </td>
+            <td>
+                <a href="{{ url_for('admin_coach_induction', coach_id=coach.id) }}" class="btn btn-xs btn-primary">Sign Off</a>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

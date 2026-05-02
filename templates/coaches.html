@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% block title %}Coaches{% endblock %}
+{% block page_title %}Coaches{% endblock %}
+
+{% block top_actions %}
+<button class="btn btn-primary btn-sm" onclick="document.getElementById('add-coach-modal').classList.remove('hidden')">+ Add Coach</button>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Username</th>
+                <th>Role</th>
+                <th>Level</th>
+                <th>Mobile</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for coach in coaches %}
+            <tr class="{% if not coach['is_active'] %}row-inactive{% endif %}">
+                <td><strong>{{ coach['name'] }}</strong></td>
+                <td><code>{{ coach['username'] }}</code></td>
+                <td><small>{{ coach['role'] }}</small></td>
+                <td><span class="badge badge-info">{{ coach['level'] }}</span></td>
+                <td><small>{{ coach['mobile'] or '--' }}</small></td>
+                <td>
+                    {% if coach['is_admin'] %}<span class="badge badge-warning">Admin</span>
+                    {% elif coach['is_standby'] %}<span class="badge">Standby</span>
+                    {% else %}<span class="badge badge-success">Active</span>{% endif %}
+                </td>
+                <td>
+                    {% if coach['is_active'] %}
+                    <span class="badge badge-success">Active</span>
+                    {% else %}
+                    <span class="badge">Inactive</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <button class="btn btn-xs btn-outline"
+                            onclick="openEditModal({{ coach | tojson }})">Edit</button>
+                    {% if not coach['is_admin'] %}
+                    <form method="POST" action="{{ url_for('admin_coaches_toggle', coach_id=coach['id']) }}" style="display:inline">
+                        <button type="submit" class="btn btn-xs btn-danger"
+                                onclick="return confirm('Toggle active status?')">
+                            {{ 'Deactivate' if coach['is_active'] else 'Activate' }}
+                        </button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Add Coach Modal -->
+<div id="add-coach-modal" class="modal hidden">
+    <div class="modal-overlay" onclick="document.getElementById('add-coach-modal').classList.add('hidden')"></div>
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3>Add Coach</h3>
+            <button onclick="document.getElementById('add-coach-modal').classList.add('hidden')">&times;</button>
+        </div>
+        <form method="POST" action="{{ url_for('admin_coaches_add') }}">
+            <div class="form-row">
+                <div class="form-group"><label>Full Name</label><input type="text" name="name" required></div>
+                <div class="form-group"><label>Username</label><input type="text" name="username" required placeholder="firstname lowercase"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Email</label><input type="email" name="email"></div>
+                <div class="form-group"><label>Mobile</label><input type="text" name="mobile" placeholder="+614XXXXXXXX"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Role</label><input type="text" name="role" placeholder="Development Coach"></div>
+                <div class="form-group">
+                    <label>Level</label>
+                    <select name="level" class="form-select">
+                        <option>Level 1</option><option>Level 2</option><option>Level 3</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Password</label><input type="text" name="password" value="CoachHub2026"></div>
+                <div class="form-group form-check-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="is_standby"> Standby only
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="document.getElementById('add-coach-modal').classList.add('hidden')">Cancel</button>
+                <button type="submit" class="btn btn-primary">Add Coach</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Coach Modal -->
+<div id="edit-coach-modal" class="modal hidden">
+    <div class="modal-overlay" onclick="document.getElementById('edit-coach-modal').classList.add('hidden')"></div>
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3>Edit Coach</h3>
+            <button onclick="document.getElementById('edit-coach-modal').classList.add('hidden')">&times;</button>
+        </div>
+        <form method="POST" id="edit-coach-form">
+            <div class="form-row">
+                <div class="form-group"><label>Full Name</label><input type="text" name="name" id="edit-name" required></div>
+                <div class="form-group"><label>Email</label><input type="email" name="email" id="edit-email"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Mobile</label><input type="text" name="mobile" id="edit-mobile"></div>
+                <div class="form-group"><label>Role</label><input type="text" name="role" id="edit-role"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Level</label>
+                    <select name="level" id="edit-level" class="form-select">
+                        <option>Level 1</option><option>Level 2</option><option>Level 3</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>New Password (leave blank to keep)</label><input type="text" name="new_password" placeholder="Leave blank to keep"></div>
+            </div>
+            <div class="form-group form-check-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="is_standby" id="edit-standby"> Standby only
+                </label>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="document.getElementById('edit-coach-modal').classList.add('hidden')">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+function openEditModal(coach) {
+    document.getElementById('edit-name').value = coach.name;
+    document.getElementById('edit-email').value = coach.email || '';
+    document.getElementById('edit-mobile').value = coach.mobile || '';
+    document.getElementById('edit-role').value = coach.role || '';
+    document.getElementById('edit-level').value = coach.level || 'Level 1';
+    document.getElementById('edit-standby').checked = coach.is_standby == 1;
+    document.getElementById('edit-coach-form').action = `/admin/coaches/${coach.id}/edit`;
+    document.getElementById('edit-coach-modal').classList.remove('hidden');
+}
+</script>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}{{ coach['name'] }} — Induction{% endblock %}
+{% block page_title %}{{ coach['name'] }} — Induction Sign-Off{% endblock %}
+
+{% block top_actions %}
+<a href="{{ url_for('admin_learning_progress') }}" class="btn btn-sm btn-outline">← All Coaches</a>
+{% endblock %}
+
+{% block content %}
+<style>
+.ci-group { margin-bottom: 1.25rem; }
+.ci-group-title {
+    font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--text-muted); padding: 0.35rem 0; margin-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+}
+.ci-item {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.875rem;
+    margin-bottom: 0.4rem;
+}
+.ci-item.done { border-color: rgba(34,197,94,.35); background: rgba(34,197,94,.03); }
+.ci-dot {
+    width: 1.25rem; height: 1.25rem; border-radius: 50%; flex-shrink: 0;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.68rem; font-weight: 700; color: var(--text-muted);
+}
+.ci-dot.done { background: rgba(34,197,94,.2); color: #22c55e; border-color: rgba(34,197,94,.5); }
+.ci-text { flex: 1; font-size: 0.875rem; }
+.ci-text.done { color: var(--text-muted); }
+</style>
+
+{% for category, items in grouped.items() %}
+<div class="ci-group">
+    <div class="ci-group-title">{{ category }}</div>
+    {% for item in items %}
+    <div class="ci-item {% if item.completed %}done{% endif %}">
+        <div class="ci-dot {% if item.completed %}done{% endif %}">{% if item.completed %}✓{% endif %}</div>
+        <div class="ci-text {% if item.completed %}done{% endif %}">{{ item.text }}</div>
+        {% if item.requires_admin %}
+            {% if item.admin_signed %}
+                <span class="badge badge-success" style="font-size:0.7rem;">✓ Signed Off</span>
+            {% elif item.completed %}
+                <form method="POST" action="{{ url_for('signoff_checklist_item', item_id=item.id) }}" style="margin:0;">
+                    <input type="hidden" name="coach_id" value="{{ coach['id'] }}">
+                    <button type="submit" class="btn btn-xs btn-primary">Sign Off</button>
+                </form>
+            {% else %}
+                <span class="badge" style="font-size:0.7rem;">Not Done Yet</span>
+            {% endif %}
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endfor %}
+{% endblock %}

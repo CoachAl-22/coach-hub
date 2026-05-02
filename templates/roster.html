@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block title %}Roster -- {{ term['name'] }}{% endblock %}
+{% block page_title %}Roster{% endblock %}
+
+{% block top_actions %}
+    {% if is_admin %}
+    <form method="POST" action="{{ url_for('roster_generate', term_id=term['id']) }}" style="display:inline" onsubmit="return confirm('This will clear the current roster and auto-generate a new one. Continue?')">
+        <button type="submit" class="btn btn-secondary btn-sm">Auto-Generate</button>
+    </form>
+    <form method="POST" action="{{ url_for('roster_clear', term_id=term['id']) }}" style="display:inline" onsubmit="return confirm('Clear all roster entries for this term?')">
+        <button type="submit" class="btn btn-danger btn-sm">Clear</button>
+    </form>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+<!-- Term selector -->
+<div class="term-tabs">
+    {% for t in terms %}
+    <a href="{{ url_for('roster_term', term_id=t['id']) }}"
+       class="term-tab {% if t['id'] == term['id'] %}active{% endif %}">
+        {{ t['name'] }}
+    </a>
+    {% endfor %}
+</div>
+
+{% if weeks %}
+{% for week in weeks %}
+<div class="card week-card">
+    <div class="week-header">
+        <h3>Week of {{ week.week_start.strftime('%d %B') }}</h3>
+    </div>
+    <div class="roster-table-wrap">
+        <table class="roster-table">
+            <thead>
+                <tr>
+                    <th>Day</th>
+                    <th>Time</th>
+                    <th>Location</th>
+                    <th>Programs</th>
+                    <th>Coaches</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in week.sessions %}
+                <tr class="roster-row status-row-{{ item.status }}"
+                    data-session="{{ item.session['id'] }}"
+                    data-date="{{ item.date.isoformat() }}">
+                    <td class="day-cell">{{ item.date.strftime('%a %d') }}</td>
+                    <td class="time-cell">{{ item.session['start_time'][:5] }}<br><small>{{ item.session['end_time'][:5] }}</small></td>
+                    <td>{{ item.session['location'] }}</td>
+                    <td><small>{{ item.session['programs'] }}</small></td>
+                    <td class="coaches-cell">
+                        {% for entry in item.entries %}
+                        <div class="roster-coach-chip">
+                            {{ entry['coach_name'].split()[0] }}
+                            {% if is_admin %}
+                            <button class="remove-coach-btn"
+                                    onclick="removeCoach({{ item.session['id'] }}, {{ entry['coach_id'] }}, '{{ item.date.isoformat() }}')"
+                                    title="Remove">x</button>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                        {% if is_admin and item.assigned < item.session['max_coaches'] %}
+                        <div class="add-coach-wrap">
+                            <select class="add-coach-select" id="select-{{ item.session['id'] }}-{{ item.date.isoformat() }}">
+                                <option value="">+ Add coach</option>
+                                {% for coach in coaches %}
+                                    {% set already_assigned = item.entries | selectattr('coach_id', 'equalto', coach['id']) | list %}
+                                    {% if not already_assigned %}
+                                    <option value="{{ coach['id'] }}">{{ coach['name'] }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                            <button class="btn btn-xs btn-primary"
+                                    onclick="assignCoach({{ item.session['id'] }}, '{{ item.date.isoformat() }}')">Add</button>
+                        </div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if item.status == 'full' %}
+                            <span class="badge badge-success">Full</span>
+                        {% elif item.status == 'staffed' %}
+                            <span class="badge badge-info">OK</span>
+                        {% elif item.status == 'understaffed' %}
+                            <span class="badge badge-warning">{{ item.assigned }}/{{ item.session['min_coaches'] }}</span>
+                        {% else %}
+                            <span class="badge badge-danger">Empty</span>
+                        {% endif %}
+                        <div class="min-coaches-note">min {{ item.session['min_coaches'] }}</div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endfor %}
+{% else %}
+<div class="card">
+    <div class="empty-state">
+        No sessions found for this term.
+        {% if is_admin %}
+        <br><br>
+        <a href="{{ url_for('admin_sessions') }}" class="btn btn-primary">Manage Sessions</a>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+const TERM_ID = {{ term['id'] }};
+
+async function assignCoach(sessionId, sessionDate) {
+    const selectId = `select-${sessionId}-${sessionDate}`;
+    const select = document.getElementById(selectId);
+    const coachId = select.value;
+    if (!coachId) return;
+
+    const resp = await fetch(`/roster/${TERM_ID}/assign`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({session_id: sessionId, coach_id: coachId, date: sessionDate})
+    });
+    if (resp.ok) { location.reload(); }
+    else { alert('Failed to assign coach. Please try again.'); }
+}
+
+async function removeCoach(sessionId, coachId, sessionDate) {
+    if (!confirm('Remove this coach from the session?')) return;
+    const resp = await fetch(`/roster/${TERM_ID}/unassign`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({session_id: sessionId, coach_id: coachId, date: sessionDate})
+    });
+    if (resp.ok) { location.reload(); }
+    else { alert('Failed to remove coach. Please try again.'); }
+}
+</script>
+{% endblock %}

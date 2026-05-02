@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Career Progression{% endblock %}
+{% block page_title %}Career Progression{% endblock %}
+
+{% block content %}
+<style>
+.prog-intro { font-size: 0.875rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.25rem; }
+.career-ladder { display: flex; flex-direction: column; gap: 0.75rem; }
+.level-row {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 1.25rem; text-decoration: none; color: var(--text);
+    display: flex; gap: 1rem; align-items: flex-start; transition: border-color .15s;
+}
+.level-row:hover { border-color: #F26522; text-decoration: none; color: var(--text); }
+.level-row.completed { border-color: rgba(34,197,94,.4); }
+.level-icon { font-size: 1.75rem; flex-shrink: 0; }
+.level-info { flex: 1; }
+.level-info h3 { margin: 0 0 0.2rem; font-size: 0.95rem; font-weight: 600; }
+.level-info p { margin: 0; font-size: 0.82rem; color: var(--text-muted); }
+.level-badges { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.5rem; }
+.level-badge { font-size: 0.7rem; padding: 0.12rem 0.5rem; border-radius: 12px; background: var(--surface2); color: var(--text-muted); }
+.connector { width: 2px; height: 1rem; background: var(--border); margin: -0.375rem 0 -0.375rem 1.875rem; }
+</style>
+
+<div class="prog-intro">
+    The Power2ADAPT coaching career ladder. Read each pathway guide to understand what's expected at each level and how to get there.
+</div>
+
+<div class="career-ladder">
+{% for level in levels %}
+{% if loop.index > 1 %}<div class="connector"></div>{% endif %}
+<a href="{{ url_for('learning_progression_level', level_key=level.key) }}"
+   class="level-row {% if level.completed %}completed{% endif %}">
+    <div class="level-icon">{{ level.icon }}</div>
+    <div class="level-info">
+        <h3>{{ level.title }}</h3>
+        <p>{{ level.subtitle }}</p>
+        <div class="level-badges">
+            <span class="level-badge">Min score: {{ level.min_score }}</span>
+            <span class="level-badge">{{ level.assessment_domains | length }} domains</span>
+            {% if level.status == 'application_only' %}<span class="level-badge">Application only — held by Alistair</span>{% endif %}
+        </div>
+    </div>
+    {% if level.completed %}
+    <span class="badge badge-success">Read ✓</span>
+    {% elif level.status == 'application_only' %}
+    <span class="badge badge-info">Ref Only</span>
+    {% else %}
+    <span class="badge">Open</span>
+    {% endif %}
+</a>
+{% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Foundation Program{% endblock %}
+{% block page_title %}Foundation Program{% endblock %}
+
+{% block content %}
+<style>
+.lp-intro {
+    font-size: 0.875rem; color: var(--text-muted); margin-bottom: 1.25rem; line-height: 1.6;
+}
+.week-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 0.875rem;
+}
+.week-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.125rem;
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color .15s, transform .15s;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+}
+.week-card:hover { border-color: #F26522; transform: translateY(-1px); text-decoration: none; color: var(--text); }
+.week-card.comp-day { border-color: rgba(242,101,34,.35); background: rgba(242,101,34,.04); }
+.week-card.reviewed { border-color: rgba(34,197,94,.4); }
+
+.week-num { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); }
+.week-title { font-size: 0.9rem; font-weight: 600; line-height: 1.4; }
+.week-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+.week-tag { font-size: 0.7rem; padding: 0.12rem 0.5rem; border-radius: 12px; background: var(--surface2); color: var(--text-muted); }
+.week-tag.run { background: rgba(0,180,216,.12); color: #00B4D8; }
+.week-tag.jump { background: rgba(34,197,94,.12); color: #22c55e; }
+.week-tag.throw { background: rgba(168,85,247,.12); color: #a855f7; }
+.week-tag.relay { background: rgba(245,158,11,.12); color: #f59e0b; }
+.week-tag.comp { background: rgba(242,101,34,.15); color: #F26522; }
+</style>
+
+<div class="lp-intro">
+    Foundation Athletes · Prep to Grade 2 · 50 minutes each.
+    Tap any week to view the full session plan with warm-up, activities, coaching cues, and coach run sheet.
+</div>
+
+<div class="week-grid">
+{% for week in weeks %}
+<a href="{{ url_for('learning_lesson_week', week_num=week.week) }}"
+   class="week-card {% if week.week == 10 %}comp-day{% endif %} {% if week.completed %}reviewed{% endif %}">
+
+    <div class="week-num">
+        {% if week.week == 10 %}🏆 Week 10 — Comp Day{% else %}Week {{ week.week }}{% endif %}
+        {% if week.completed %}&nbsp;·&nbsp;<span style="color:#22c55e;">✓</span>{% endif %}
+    </div>
+    <div class="week-title">{{ week.title }}</div>
+    <div class="week-tags">
+        <span class="week-tag run">{{ week.main_block.name }}</span>
+        {% if week.secondary_block %}
+            {% if 'JUMP' in week.secondary_block.name %}<span class="week-tag jump">{{ week.secondary_block.name }}</span>
+            {% elif 'THROW' in week.secondary_block.name %}<span class="week-tag throw">{{ week.secondary_block.name }}</span>
+            {% elif 'RELAY' in week.secondary_block.name or 'ZIG' in week.secondary_block.name %}<span class="week-tag relay">{{ week.secondary_block.name }}</span>
+            {% elif week.week == 10 %}<span class="week-tag comp">COMPETITION</span>
+            {% else %}<span class="week-tag">{{ week.secondary_block.name }}</span>
+            {% endif %}
+        {% endif %}
+        <span class="week-tag">{{ week.duration }}</span>
+    </div>
+</a>
+{% endfor %}
+</div>
+{% endblock %}
