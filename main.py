@@ -881,6 +881,67 @@ def admin_sessions_toggle(session_id):
 
 
 # ---------------------------------------------------------------------------
+# API -- read-only, key-protected
+# ---------------------------------------------------------------------------
+
+@app.route('/api/this-week')
+def api_this_week():
+    api_key = request.args.get('key', '')
+    if not api_key or api_key != app.config.get('API_KEY', ''):
+        return jsonify({'error': 'unauthorised'}), 401
+
+    db = get_db()
+    today = datetime.now(AEST).date()
+    week_start = today - timedelta(days=today.weekday())
+    week_end = week_start + timedelta(days=6)
+
+    sessions = db.execute(
+        'SELECT * FROM sessions WHERE is_active = 1 ORDER BY '
+        'CASE day_of_week WHEN "Monday" THEN 1 WHEN "Tuesday" THEN 2 WHEN "Wednesday" THEN 3 '
+        'WHEN "Thursday" THEN 4 WHEN "Friday" THEN 5 ELSE 6 END, start_time'
+    ).fetchall()
+
+    result = []
+    for s in sessions:
+        day_num = DAY_ORDER.index(s['day_of_week'])
+        session_date = week_start + timedelta(days=day_num)
+        if session_date > week_end:
+            continue
+
+        entries = db.execute('''
+            SELECT c.name FROM roster_entries re
+            JOIN coaches c ON re.coach_id = c.id
+            WHERE re.session_id = ? AND re.date = ?
+            ORDER BY c.name
+        ''', (s['id'], session_date.isoformat())).fetchall()
+
+        assigned = len(entries)
+        if assigned == 0:
+            status = 'empty'
+        elif assigned < s['min_coaches']:
+            status = 'understaffed'
+        elif assigned < s['max_coaches']:
+            status = 'staffed'
+        else:
+            status = 'full'
+
+        result.append({
+            'day': s['day_of_week'],
+            'date': session_date.isoformat(),
+            'time': f"{s['start_time']}-{s['end_time']}",
+            'location': s['location'],
+            'programs': s['programs'],
+            'coaches': [e['name'] for e in entries],
+            'assigned': assigned,
+            'min_required': s['min_coaches'],
+            'status': status,
+        })
+
+    db.close()
+    return jsonify({'week_start': week_start.isoformat(), 'sessions': result})
+
+
+# ---------------------------------------------------------------------------
 # Startup
 # ---------------------------------------------------------------------------
 

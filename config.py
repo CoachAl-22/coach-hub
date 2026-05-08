@@ -10,3 +10,4 @@ class Config:
     APP_URL = os.environ.get('APP_URL', 'http://localhost:5000')
     TIMEZONE = 'Australia/Melbourne'
     DATABASE = 'coach_hub.db'
+    API_KEY = os.environ.get('API_KEY', '')
