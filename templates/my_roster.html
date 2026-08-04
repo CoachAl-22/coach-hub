@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}My Roster{% endblock %}
+{% block page_title %}My Roster{% endblock %}
+
+{% block content %}
+{% if term %}
+<div class="roster-intro">
+    <div>
+        <strong>{{ term['name'] }}</strong>
+        <span>{{ term['start_date'] }} to {{ term['end_date'] }}</span>
+    </div>
+    <span class="badge badge-info">{{ weeks | length }} rostered week{% if weeks | length != 1 %}s{% endif %}</span>
+</div>
+{% endif %}
+
+{% if weeks %}
+{% for week in weeks %}
+<div class="card week-card {% if week.is_past %}is-collapsed{% endif %}">
+    <button class="week-header week-toggle"
+            type="button"
+            aria-expanded="{{ 'false' if week.is_past else 'true' }}"
+            aria-controls="my-roster-week-{{ loop.index }}">
+        <span>
+            Week of {{ week.week_start.strftime('%d %B') }}
+            {% if week.is_past %}<span class="past-week-label">Past</span>{% endif %}
+        </span>
+        <span class="week-chevron" aria-hidden="true">⌄</span>
+    </button>
+    <div class="roster-table-wrap week-content" id="my-roster-week-{{ loop.index }}">
+        <table class="roster-table">
+            <thead>
+                <tr>
+                    <th>Day</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Location</th>
+                    <th>Programs</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in week.sessions %}
+                <tr>
+                    <td class="day-cell">{{ item.date.strftime('%A') }}</td>
+                    <td>{{ item.date.strftime('%d %b') }}</td>
+                    <td class="time-cell">{{ item.session['start_time'][:5] }}–{{ item.session['end_time'][:5] }}</td>
+                    <td>{{ item.session['location'] }}</td>
+                    <td><small>{{ item.session['programs'] or '—' }}</small></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endfor %}
+{% else %}
+<div class="card">
+    <div class="empty-state">
+        {% if term %}
+        You have no classes allocated for {{ term['name'] }} yet.
+        {% else %}
+        There is no current or upcoming term.
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.querySelectorAll('.week-toggle').forEach((toggle) => {
+    toggle.addEventListener('click', () => {
+        const card = toggle.closest('.week-card');
+        const collapsed = card.classList.toggle('is-collapsed');
+        toggle.setAttribute('aria-expanded', String(!collapsed));
+    });
+});
+</script>
+{% endblock %}

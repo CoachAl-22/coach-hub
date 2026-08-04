@@ -24,10 +24,17 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
                     Dashboard
                 </a>
-                <a href="{{ url_for('roster') }}" class="nav-item {% if 'roster' in request.endpoint %}active{% endif %}">
+                {% if current_user.is_admin %}
+                <a href="{{ url_for('roster') }}" class="nav-item {% if request.endpoint in ('roster', 'roster_term') %}active{% endif %}">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                     Roster
                 </a>
+                {% else %}
+                <a href="{{ url_for('my_roster') }}" class="nav-item {% if request.endpoint == 'my_roster' %}active{% endif %}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    My Roster
+                </a>
+                {% endif %}
                 {% if current_user.is_admin %}
                 <a href="{{ url_for('availability') }}" class="nav-item {% if 'availability' in request.endpoint %}active{% endif %}">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>

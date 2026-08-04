@@ -162,6 +162,9 @@ def dashboard():
 @app.route('/roster')
 @login_required
 def roster():
+    if not current_user.is_admin:
+        return redirect(url_for('my_roster'))
+
     db = get_db()
     current_term = get_current_or_next_term(db)
     db.close()
@@ -173,6 +176,9 @@ def roster():
 @app.route('/roster/<int:term_id>')
 @login_required
 def roster_term(term_id):
+    if not current_user.is_admin:
+        return redirect(url_for('my_roster'))
+
     db = get_db()
     terms = db.execute('SELECT * FROM terms ORDER BY start_date').fetchall()
     term = db.execute('SELECT * FROM terms WHERE id = ?', (term_id,)).fetchone()
@@ -204,7 +210,6 @@ def roster_term(term_id):
             day_num = DAY_ORDER.index(s['day_of_week'])
             session_date = week_start + timedelta(days=day_num)
             if session_date < term_start or session_date > term_end:
-                week_start += timedelta(days=7)
                 continue
 
             entries = db.execute('''
@@ -246,6 +251,48 @@ def roster_term(term_id):
                            weeks=weeks,
                            coaches=coaches,
                            is_admin=current_user.is_admin)
+
+
+@app.route('/my-roster')
+@login_required
+def my_roster():
+    if current_user.is_admin:
+        return redirect(url_for('roster'))
+
+    db = get_db()
+    term = get_current_or_next_term(db)
+    if not term:
+        db.close()
+        return render_template('my_roster.html', term=None, weeks=[])
+
+    rows = db.execute('''
+        SELECT re.date, s.day_of_week, s.start_time, s.end_time,
+               s.location, s.programs
+        FROM roster_entries re
+        JOIN sessions s ON re.session_id = s.id
+        WHERE re.coach_id = ? AND re.term_id = ?
+        ORDER BY re.date, s.start_time
+    ''', (current_user.id, term['id'])).fetchall()
+    db.close()
+
+    today = datetime.now(AEST).date()
+    weeks_by_start = {}
+    for row in rows:
+        session_date = date.fromisoformat(row['date'])
+        week_start = session_date - timedelta(days=session_date.weekday())
+        weeks_by_start.setdefault(week_start, []).append({
+            'date': session_date,
+            'session': row,
+        })
+
+    weeks = [{
+        'week_start': week_start,
+        'week_end': week_start + timedelta(days=6),
+        'is_past': week_start + timedelta(days=6) < today,
+        'sessions': sessions,
+    } for week_start, sessions in sorted(weeks_by_start.items())]
+
+    return render_template('my_roster.html', term=term, weeks=weeks)
 
 
 @app.route('/roster/<int:term_id>/assign', methods=['POST'])

@@ -465,11 +465,56 @@ textarea { resize: vertical; min-height: 80px; }
 .week-card { margin-bottom: 16px; }
 
 .week-header {
+    width: 100%;
     padding: 12px 20px;
     border-bottom: 1px solid var(--border);
 }
 
 .week-header h3 { font-size: 14px; font-weight: 700; color: var(--text-muted); }
+
+.roster-intro {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.roster-intro strong {
+    display: block;
+    color: var(--text);
+    font-size: 16px;
+    margin-bottom: 3px;
+}
+
+.week-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: transparent;
+    color: var(--text-muted);
+    border: 0;
+    cursor: pointer;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: left;
+}
+
+.week-toggle:hover { color: var(--cyan); }
+.week-chevron { font-size: 20px; transition: transform 0.15s ease; }
+.week-card.is-collapsed .week-chevron { transform: rotate(-90deg); }
+.week-card.is-collapsed .week-content { display: none; }
+
+.past-week-label {
+    margin-left: 8px;
+    color: var(--text-muted);
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
 
 .roster-table-wrap { overflow-x: auto; }
 
