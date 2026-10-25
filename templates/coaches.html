@@ -8,7 +8,21 @@
 
 {% block content %}
 <div class="card">
-    <table class="data-table">
+    {% if setup_send_note %}
+    <div style="padding: 12px 16px;">
+        <span class="text-muted" style="font-size: 11px;">{{ setup_send_note }}</span>
+        <button type="button" id="verify-setup-sms"
+                class="btn btn-xs btn-outline"
+                data-verify-url="{{ url_for('coach_setup.verify_setup_sms') }}"
+                aria-controls="setup-sms-verification-status">
+            Check SMS connection
+        </button>
+        <div id="setup-sms-verification-status" class="text-muted"
+             role="status" aria-live="polite" style="font-size: 11px; margin-top: 4px;"></div>
+    </div>
+    {% endif %}
+    <div class="table-wrap" role="region" aria-label="Coaches table" tabindex="0">
+    <table class="data-table" style="min-width: 1120px;">
         <thead>
             <tr>
                 <th>Name</th>
@@ -18,6 +32,7 @@
                 <th>Mobile</th>
                 <th>Type</th>
                 <th>Status</th>
+                <th>Password setup</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -42,10 +57,39 @@
                     {% endif %}
                 </td>
                 <td>
+                    {% if coach['is_admin'] %}
+                    <span aria-label="Password setup is not available for administrators">—</span>
+                    {% else %}
+                    <span class="badge {% if coach['setup_status'] == 'Completed' %}badge-success{% elif coach['setup_status'] == 'Expired' or coach['setup_status'] == 'Send failed' %}badge-danger{% elif coach['setup_status'] == 'Sent' %}badge-info{% else %}badge-warning{% endif %}">
+                        {{ coach['setup_status'] }}
+                    </span>
+                    <div class="text-muted" style="font-size: 11px; margin-top: 4px;">
+                        {% if coach['setup_sent_label'] %}<div>Sent: {{ coach['setup_sent_label'] }}</div>{% endif %}
+                        {% if coach['setup_completed_label'] %}<div>Completed: {{ coach['setup_completed_label'] }}</div>{% endif %}
+                        {% if coach['setup_expires_label'] %}<div>Expires: {{ coach['setup_expires_label'] }}</div>{% endif %}
+                        {% if coach['setup_status'] == 'Send failed' %}<div>Any previous valid link is unchanged.</div>{% endif %}
+                        <div>No password is stored or shown here; this status tracks setup links from this flow only.</div>
+                    </div>
+                    <form method="POST"
+                          action="{{ url_for('coach_setup.send_setup', coach_id=coach['id']) }}"
+                          class="coach-setup-send-form"
+                          data-coach-name="{{ coach['name'] }}"
+                          data-coach-username="{{ coach['username'] }}"
+                          data-coach-mobile="{{ coach['mobile'] or '--' }}">
+                        <input type="hidden" name="csrf_token" value="{{ session['coach_admin_csrf'] }}">
+                        <button type="submit" class="btn btn-xs btn-outline" {% if not setup_send_enabled %}disabled{% endif %}>
+                            {{ 'Resend setup SMS' if coach['setup_status'] in ['Sent', 'Expired', 'Send failed', 'Completed'] else 'Send setup SMS' }}
+                        </button>
+                    </form>
+                    {% endif %}
+                </td>
+                <td>
                     <button class="btn btn-xs btn-outline"
-                            onclick="openEditModal({{ coach | tojson }})">Edit</button>
+                            data-coach="{{ coach | tojson | forceescape }}"
+                            onclick="openEditModal(JSON.parse(this.dataset.coach))">Edit</button>
                     {% if not coach['is_admin'] %}
                     <form method="POST" action="{{ url_for('admin_coaches_toggle', coach_id=coach['id']) }}" style="display:inline">
+                        <input type="hidden" name="csrf_token" value="{{ session['coach_admin_csrf'] }}">
                         <button type="submit" class="btn btn-xs btn-danger"
                                 onclick="return confirm('Toggle active status?')">
                             {{ 'Deactivate' if coach['is_active'] else 'Activate' }}
@@ -57,6 +101,7 @@
             {% endfor %}
         </tbody>
     </table>
+    </div>
 </div>
 
 <!-- Add Coach Modal -->
@@ -68,6 +113,7 @@
             <button onclick="document.getElementById('add-coach-modal').classList.add('hidden')">&times;</button>
         </div>
         <form method="POST" action="{{ url_for('admin_coaches_add') }}">
+            <input type="hidden" name="csrf_token" value="{{ session['coach_admin_csrf'] }}">
             <div class="form-row">
                 <div class="form-group"><label>Full Name</label><input type="text" name="name" required></div>
                 <div class="form-group"><label>Username</label><input type="text" name="username" required placeholder="firstname lowercase"></div>
@@ -86,7 +132,7 @@
                 </div>
             </div>
             <div class="form-row">
-                <div class="form-group"><label>Password</label><input type="text" name="password" value="CoachHub2026"></div>
+                <div class="form-group"><label>Password (at least 12 characters)</label><input type="password" name="password" minlength="12" required autocomplete="new-password"></div>
                 <div class="form-group form-check-group">
                     <label class="checkbox-label">
                         <input type="checkbox" name="is_standby"> Standby only
@@ -110,6 +156,7 @@
             <button onclick="document.getElementById('edit-coach-modal').classList.add('hidden')">&times;</button>
         </div>
         <form method="POST" id="edit-coach-form">
+            <input type="hidden" name="csrf_token" value="{{ session['coach_admin_csrf'] }}">
             <div class="form-row">
                 <div class="form-group"><label>Full Name</label><input type="text" name="name" id="edit-name" required></div>
                 <div class="form-group"><label>Email</label><input type="email" name="email" id="edit-email"></div>
@@ -125,7 +172,7 @@
                         <option>Level 1</option><option>Level 2</option><option>Level 3</option>
                     </select>
                 </div>
-                <div class="form-group"><label>New Password (leave blank to keep)</label><input type="text" name="new_password" placeholder="Leave blank to keep"></div>
+                <div class="form-group"><label>New Password (leave blank to keep)</label><input type="password" name="new_password" minlength="12" autocomplete="new-password" placeholder="Leave blank to keep"></div>
             </div>
             <div class="form-group form-check-group">
                 <label class="checkbox-label">
@@ -153,6 +200,49 @@ function openEditModal(coach) {
     document.getElementById('edit-standby').checked = coach.is_standby == 1;
     document.getElementById('edit-coach-form').action = `/admin/coaches/${coach.id}/edit`;
     document.getElementById('edit-coach-modal').classList.remove('hidden');
+}
+
+document.querySelectorAll('.coach-setup-send-form').forEach(function (form) {
+    form.addEventListener('submit', function (event) {
+        const name = form.dataset.coachName;
+        const username = form.dataset.coachUsername;
+        const mobile = form.dataset.coachMobile;
+        const confirmation = `Send password setup SMS to ${name} (username: ${username}, mobile: ${mobile})? If the coach is inactive, they will remain inactive. Their old password stays in place until setup is completed.`;
+        if (!window.confirm(confirmation)) {
+            event.preventDefault();
+        }
+    });
+});
+
+const verifySetupSmsButton = document.getElementById('verify-setup-sms');
+if (verifySetupSmsButton) {
+    verifySetupSmsButton.addEventListener('click', async function () {
+        const status = document.getElementById('setup-sms-verification-status');
+        verifySetupSmsButton.disabled = true;
+        status.textContent = 'Checking SMS connection…';
+        try {
+            const response = await fetch(verifySetupSmsButton.dataset.verifyUrl, {
+                method: 'GET',
+                headers: { 'Accept': 'application/json' }
+            });
+            const result = await response.json();
+            if (!response.ok || result.verified !== true) {
+                status.textContent = typeof result.error === 'string' ?
+                    result.error : 'Could not verify the SMS connection. Do not send until verification succeeds.';
+                return;
+            }
+            status.textContent =
+                'Saved Twilio credentials and configured SMS-capable sender verified. ' +
+                'This confirms configuration, not SMS delivery.' +
+                (result.account_type === 'Trial' ? ' Trial accounts require verified recipients.' : '') +
+                (result.same_sender_as_reminders === false ? ' Setup SMS uses a different sender from reminders.' : '') +
+                (result.sending_enabled ? '' : ' SMS sending is still disabled here.');
+        } catch (error) {
+            status.textContent = 'Could not verify the SMS connection. Do not send until verification succeeds.';
+        } finally {
+            verifySetupSmsButton.disabled = false;
+        }
+    });
 }
 </script>
 {% endblock %}

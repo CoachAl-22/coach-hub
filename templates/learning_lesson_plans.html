@@ -1,9 +1,26 @@
 {% extends "base.html" %}
-{% block title %}Foundation Program{% endblock %}
-{% block page_title %}Foundation Program{% endblock %}
+{% block title %}Lesson Plans{% endblock %}
+{% block page_title %}Lesson Plans{% endblock %}
 
 {% block content %}
 <style>
+.lp-tabs {
+    display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.25rem;
+}
+.lp-tab {
+    padding: 0.45rem 1.1rem; border-radius: 8px; font-size: 0.875rem; font-weight: 600;
+    border: 1px solid var(--border); background: var(--surface); color: var(--text-muted);
+    cursor: pointer; transition: all .15s; text-decoration: none;
+}
+.lp-tab.active { background: #F26522; border-color: #F26522; color: #fff; }
+.lp-tab:hover:not(.active) { border-color: #F26522; color: var(--text); }
+
+.lp-term-badge {
+    display: inline-block; font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .07em; padding: 0.1rem 0.45rem; border-radius: 10px; margin-left: 0.3rem;
+    background: rgba(255,255,255,.15); vertical-align: middle;
+}
+
 .lp-intro {
     font-size: 0.875rem; color: var(--text-muted); margin-bottom: 1.25rem; line-height: 1.6;
 }
@@ -32,41 +49,166 @@
 .week-title { font-size: 0.9rem; font-weight: 600; line-height: 1.4; }
 .week-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; }
 .week-tag { font-size: 0.7rem; padding: 0.12rem 0.5rem; border-radius: 12px; background: var(--surface2); color: var(--text-muted); }
-.week-tag.run { background: rgba(0,180,216,.12); color: #00B4D8; }
+.week-tag.run  { background: rgba(0,180,216,.12); color: #00B4D8; }
 .week-tag.jump { background: rgba(34,197,94,.12); color: #22c55e; }
 .week-tag.throw { background: rgba(168,85,247,.12); color: #a855f7; }
 .week-tag.relay { background: rgba(245,158,11,.12); color: #f59e0b; }
-.week-tag.comp { background: rgba(242,101,34,.15); color: #F26522; }
+.week-tag.core  { background: rgba(239,68,68,.12); color: #ef4444; }
+.week-tag.comp  { background: rgba(242,101,34,.15); color: #F26522; }
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
 </style>
 
-<div class="lp-intro">
-    Foundation Athletes · Prep to Grade 2 · 50 minutes each.
-    Tap any week to view the full session plan with warm-up, activities, coaching cues, and coach run sheet.
+{% macro week_tag(name, week_num) %}
+    {% if 'JUMP' in name or 'HIGH' in name or 'SCISSOR' in name %}<span class="week-tag jump">JUMP</span>
+    {% elif 'THROW' in name %}<span class="week-tag throw">{{ name }}</span>
+    {% elif 'RELAY' in name or 'ZIG' in name %}<span class="week-tag relay">{{ name }}</span>
+    {% elif 'CORE' in name %}<span class="week-tag core">{{ name }}</span>
+    {% elif week_num == 10 %}<span class="week-tag comp">COMPETITION</span>
+    {% else %}<span class="week-tag">{{ name }}</span>
+    {% endif %}
+{% endmacro %}
+
+<div class="lp-tabs">
+    <a href="#" class="lp-tab active" id="tab-foundation"
+       onclick="showTab('foundation',this);return false;">🏃 Foundation <span class="lp-term-badge">T1</span></a>
+    <a href="#foundation-t2" class="lp-tab" id="tab-foundation-t2"
+       onclick="showTab('foundation-t2',this);return false;">🏃 Foundation <span class="lp-term-badge">T2</span></a>
+    <a href="#emerging" class="lp-tab" id="tab-emerging"
+       onclick="showTab('emerging',this);return false;">⚡ Emerging <span class="lp-term-badge">T1</span></a>
+    <a href="#emerging-t2" class="lp-tab" id="tab-emerging-t2"
+       onclick="showTab('emerging-t2',this);return false;">⚡ Emerging <span class="lp-term-badge">T2</span></a>
 </div>
 
-<div class="week-grid">
-{% for week in weeks %}
-<a href="{{ url_for('learning_lesson_week', week_num=week.week) }}"
-   class="week-card {% if week.week == 10 %}comp-day{% endif %} {% if week.completed %}reviewed{% endif %}">
-
-    <div class="week-num">
-        {% if week.week == 10 %}🏆 Week 10 — Comp Day{% else %}Week {{ week.week }}{% endif %}
-        {% if week.completed %}&nbsp;·&nbsp;<span style="color:#22c55e;">✓</span>{% endif %}
+{# ── Foundation T1 ─────────────────────────────────────────────────────── #}
+<div id="panel-foundation" class="tab-panel active">
+    <div class="lp-intro">
+        Foundation Athletes · Prep to Grade 2 · 50 minutes each · Term 1 program.
+        Tap any week to view the full session plan with warm-up, activities, coaching cues, and coach run sheet.
     </div>
-    <div class="week-title">{{ week.title }}</div>
-    <div class="week-tags">
-        <span class="week-tag run">{{ week.main_block.name }}</span>
-        {% if week.secondary_block %}
-            {% if 'JUMP' in week.secondary_block.name %}<span class="week-tag jump">{{ week.secondary_block.name }}</span>
-            {% elif 'THROW' in week.secondary_block.name %}<span class="week-tag throw">{{ week.secondary_block.name }}</span>
-            {% elif 'RELAY' in week.secondary_block.name or 'ZIG' in week.secondary_block.name %}<span class="week-tag relay">{{ week.secondary_block.name }}</span>
-            {% elif week.week == 10 %}<span class="week-tag comp">COMPETITION</span>
-            {% else %}<span class="week-tag">{{ week.secondary_block.name }}</span>
+    <div class="week-grid">
+    {% for week in weeks %}
+    <a href="{{ url_for('learning_lesson_week', week_num=week.week) }}"
+       class="week-card {% if week.week == 10 %}comp-day{% endif %} {% if week.completed %}reviewed{% endif %}">
+        <div class="week-num">
+            {% if week.week == 10 %}🏆 Week 10 — Comp Day{% else %}Week {{ week.week }}{% endif %}
+            {% if week.completed %}&nbsp;·&nbsp;<span style="color:#22c55e;">✓</span>{% endif %}
+        </div>
+        <div class="week-title">{{ week.title }}</div>
+        <div class="week-tags">
+            <span class="week-tag run">{{ week.main_block.name }}</span>
+            {% if week.secondary_block %}
+                {{ week_tag(week.secondary_block.name, week.week) }}
             {% endif %}
-        {% endif %}
-        <span class="week-tag">{{ week.duration }}</span>
+            <span class="week-tag">{{ week.duration }}</span>
+        </div>
+    </a>
+    {% endfor %}
     </div>
-</a>
-{% endfor %}
 </div>
+
+{# ── Foundation T2 ─────────────────────────────────────────────────────── #}
+<div id="panel-foundation-t2" class="tab-panel">
+    <div class="lp-intro">
+        Foundation Athletes · Prep to Grade 2 · Term 2 endurance focus.
+        Tap any week to view the full session plan.
+        {% if foundation_t2_weeks | length < 10 %}
+        <br><em style="color:var(--text-muted);">{{ foundation_t2_weeks | length }} week{% if foundation_t2_weeks | length != 1 %}s{% endif %} available — more to be added.</em>
+        {% endif %}
+    </div>
+    <div class="week-grid">
+    {% for week in foundation_t2_weeks %}
+    <a href="{{ url_for('learning_foundation_t2_week', week_num=week.week) }}"
+       class="week-card {% if week.week == 10 %}comp-day{% endif %} {% if week.completed %}reviewed{% endif %}">
+        <div class="week-num">
+            {% if week.week == 10 %}🏆 Week 10 — Comp Day{% else %}Week {{ week.week }}{% endif %}
+            {% if week.completed %}&nbsp;·&nbsp;<span style="color:#22c55e;">✓</span>{% endif %}
+        </div>
+        <div class="week-title">{{ week.title }}</div>
+        <div class="week-tags">
+            <span class="week-tag run">{{ week.main_block.name }}</span>
+            {% if week.secondary_block %}
+                {{ week_tag(week.secondary_block.name, week.week) }}
+            {% endif %}
+            <span class="week-tag">{{ week.duration }}</span>
+        </div>
+    </a>
+    {% endfor %}
+    </div>
+</div>
+
+{# ── Emerging T1 ───────────────────────────────────────────────────────── #}
+<div id="panel-emerging" class="tab-panel">
+    <div class="lp-intro">
+        Emerging Athletes · Grade 3 to Grade 6 · 60 minutes each · Term 1 program.
+        Tap any week to view the full session plan with warm-up, activities, coaching cues, and coach run sheet.
+    </div>
+    <div class="week-grid">
+    {% for week in emerging_weeks %}
+    <a href="{{ url_for('learning_emerging_week', week_num=week.week) }}"
+       class="week-card {% if week.week == 10 %}comp-day{% endif %} {% if week.completed %}reviewed{% endif %}">
+        <div class="week-num">
+            {% if week.week == 10 %}🏆 Week 10 — Comp Day{% else %}Week {{ week.week }}{% endif %}
+            {% if week.completed %}&nbsp;·&nbsp;<span style="color:#22c55e;">✓</span>{% endif %}
+        </div>
+        <div class="week-title">{{ week.title }}</div>
+        <div class="week-tags">
+            <span class="week-tag run">{{ week.main_block.name }}</span>
+            {% if week.secondary_block %}
+                {{ week_tag(week.secondary_block.name, week.week) }}
+            {% endif %}
+            <span class="week-tag">{{ week.duration }}</span>
+        </div>
+    </a>
+    {% endfor %}
+    </div>
+</div>
+
+{# ── Emerging T2 ───────────────────────────────────────────────────────── #}
+<div id="panel-emerging-t2" class="tab-panel">
+    <div class="lp-intro">
+        Emerging Athletes · Grade 3 to Grade 6 · 60 minutes each · Term 2 endurance focus.
+        Tap any week to view the full session plan with warm-up, activities, coaching cues, and coach run sheet.
+    </div>
+    <div class="week-grid">
+    {% for week in emerging_t2_weeks %}
+    <a href="{{ url_for('learning_emerging_t2_week', week_num=week.week) }}"
+       class="week-card {% if week.week == 10 %}comp-day{% endif %} {% if week.completed %}reviewed{% endif %}">
+        <div class="week-num">
+            {% if week.week == 10 %}🏆 Week 10 — Comp Day{% else %}Week {{ week.week }}{% endif %}
+            {% if week.completed %}&nbsp;·&nbsp;<span style="color:#22c55e;">✓</span>{% endif %}
+        </div>
+        <div class="week-title">{{ week.title }}</div>
+        <div class="week-tags">
+            <span class="week-tag run">{{ week.main_block.name }}</span>
+            {% if week.secondary_block %}
+                {{ week_tag(week.secondary_block.name, week.week) }}
+            {% endif %}
+            <span class="week-tag">{{ week.duration }}</span>
+        </div>
+    </a>
+    {% endfor %}
+    </div>
+</div>
+
+<script>
+const TAB_MAP = {
+    'foundation':    'tab-foundation',
+    'foundation-t2': 'tab-foundation-t2',
+    'emerging':      'tab-emerging',
+    'emerging-t2':   'tab-emerging-t2',
+};
+function showTab(name, el) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.lp-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('panel-' + name).classList.add('active');
+    (el || document.getElementById('tab-' + name)).classList.add('active');
+    const hash = name === 'foundation' ? location.pathname : '#' + name;
+    history.replaceState(null, '', hash);
+}
+// Auto-activate tab from URL hash
+const hash = location.hash.replace('#', '');
+if (hash && TAB_MAP[hash]) showTab(hash);
+</script>
 {% endblock %}

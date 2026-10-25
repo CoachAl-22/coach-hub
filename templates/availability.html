@@ -8,8 +8,9 @@
     <!-- Send requests panel -->
     <div class="card">
         <div class="card-header"><h2>Send Availability Requests</h2></div>
-        <p class="card-desc">Sends an SMS to all active coaches with a link to fill in their availability for the selected term.</p>
-        <form method="POST" action="{{ url_for('send_availability_requests') }}">
+        <p class="card-desc">Sends an SMS with a personal availability link. Leave all coaches unticked to send to everyone.</p>
+        <form method="POST" action="{{ url_for('send_availability_requests') }}"
+              onsubmit="return confirmSend(this)">
             <div class="form-group">
                 <label>Term</label>
                 <select name="term_id" class="form-select" required>
@@ -18,10 +19,20 @@
                     {% endfor %}
                 </select>
             </div>
-            <button type="submit" class="btn btn-primary"
-                    onclick="return confirm('Send availability SMS to all coaches?')">
-                Send SMS to All Coaches
-            </button>
+            <div class="form-group">
+                <label>Send to (leave all unticked for all coaches)</label>
+                <div class="coach-checkboxes">
+                    {% for coach in coaches %}
+                    {% if coach['mobile'] %}
+                    <label class="coach-check">
+                        <input type="checkbox" name="coach_ids" value="{{ coach['id'] }}">
+                        {{ coach['name'] }}
+                    </label>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Send Availability SMS</button>
         </form>
     </div>
 
@@ -80,7 +91,6 @@
                 <tr>
                     <td>{{ coach['name'] }}</td>
                     {% if resp %}
-                        {% set weekly = resp['weekly_availability'] | tojson | replace('"', '') %}
                         {% set w = resp['weekly_availability'] %}
                         {% if w %}
                             {% set weekly_data = w | from_json if w is string else {} %}
@@ -88,12 +98,21 @@
                             {% set weekly_data = {} %}
                         {% endif %}
                         {% for day in ['Monday','Tuesday','Wednesday','Thursday','Friday'] %}
-                        <td class="{% if weekly_data.get(day, True) %}avail-yes{% else %}avail-no{% endif %}">
-                            {{ 'Y' if weekly_data.get(day, True) else 'N' }}
-                        </td>
+                            {% set val = weekly_data.get(day, 'all') %}
+                            {% if val == true or val == 'all' %}
+                                <td class="avail-yes">All</td>
+                            {% elif val == 'am' %}
+                                <td class="avail-am">AM</td>
+                            {% elif val == 'pm' %}
+                                <td class="avail-pm">PM</td>
+                            {% elif val == 'standby' %}
+                                <td class="avail-standby">Standby</td>
+                            {% else %}
+                                <td class="avail-no">No</td>
+                            {% endif %}
                         {% endfor %}
                         <td><small>{{ resp['unavailable_dates'] }}</small></td>
-                        <td><small class="text-muted">{{ resp['submitted_at'][:10] }}</small></td>
+                        <td><small class="text-muted">{{ resp['submitted_at'].strftime('%Y-%m-%d') if resp['submitted_at'] else '' }}</small></td>
                     {% else %}
                         <td colspan="6" class="text-muted"><small>Not submitted</small></td>
                         <td></td>
@@ -114,6 +133,11 @@ function showTab(id, btn) {
     document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
     document.getElementById(id).classList.remove('hidden');
     btn.classList.add('active');
+}
+function confirmSend(form) {
+    const checked = form.querySelectorAll('input[name="coach_ids"]:checked');
+    const target = checked.length === 0 ? 'all coaches' : checked.length + ' coach' + (checked.length > 1 ? 'es' : '');
+    return confirm('Send availability SMS to ' + target + '?');
 }
 </script>
 {% endblock %}

@@ -1089,6 +1089,1411 @@ LESSON_WEEKS = [
 ]
 
 # ============================================================
+# Emerging Program — Lesson Plans (Grade 3 to Grade 6)
+# ============================================================
+
+EMERGING_LESSON_WEEKS = [
+    {
+        'week': 1,
+        'title': 'Running Form, Arms & Jumping',
+        'duration': '60 mins',
+        'group': 'Emerging Athletes — Grade 3 to Grade 6',
+        'equipment': 'Coaches bag, agility ladder, 30cm hurdles, 15cm hurdles, bounding hoops, witches\' hats',
+        'warmup': {
+            'name': 'Partner Tag',
+            'duration': '10 mins',
+            'description': 'Set out a large circled area using cones according to the size of the group. Players are given a coloured tag to tuck into the top of their shorts and move to avoid getting their tag taken. Start with skipping, then side skip, butt kicks, scissors etc. Blow whistle to reset each round. Monitor play for fairness and respect.',
+            'coaching_notes': 'Mark out a large circle with cones and use coloured sashes. Coach 1 leads the game and calls each round. Coach 2 observes fair play and helps players tuck in loose tags.'
+        },
+        'main_block': {
+            'name': 'RUN',
+            'focus': 'Running form, arms, pace & tempo',
+            'duration': '20 mins',
+            'activities': [
+                {
+                    'name': 'Skills & Drills — Run Drill Circuit or Obstacle Course',
+                    'description': 'RUN DRILL CIRCUIT: Set out agility ladder, 30cm hurdles, witches\' hats, bounding hoops and 15cm hurdles as per the Run Drill Circuit diagram.\n\nOBSTACLE COURSE: Use coloured cones to mark Start and Finish and use the ladder at the start of the course. Allow adequate run-off before the next obstacle.'
+                },
+                {
+                    'name': 'Activity — Partner Run',
+                    'description': 'Pair up participants (similar ability if possible) and get them to run either side of a straight line to a cone 20m away. First one to high-5 the coach wins. Focus on encouraging strong arm drive and knee lift throughout the run to beat their partner.'
+                },
+                {
+                    'name': 'Activity — Out and Backs',
+                    'description': 'Introduction to changing pace. Set up start cones. Participants run at a steady pace out for 30 seconds, blow whistle to stop. Standing rest for 30 seconds. Run back, aiming to reach the starting point in 30 seconds. Repeat for 60 seconds, then for 2 minutes, increasing rest time as running time increases. Encourage steady, relaxed running.'
+                }
+            ]
+        },
+        'secondary_block': {
+            'name': 'JUMP',
+            'focus': 'Fast & springy jumping',
+            'duration': '10 mins',
+            'activities': [
+                {
+                    'name': 'Skills — Pogos',
+                    'description': 'Participants spring up and down on the spot and count how many jumps they do in 20 seconds. Repeat for jumping back and forth over a line or cone, then side to side (lateral) pogos.'
+                },
+                {
+                    'name': 'Jump and Land Variations',
+                    'description': 'Set out hoops and coloured marker dots with plenty of space to jump and land easily. Use a 2-foot jump and land and increase distance between hoops and dots to increase difficulty. To encourage a higher jump, use 15cm or 30cm hurdles.\n\nCHANGE IT: single leg take-off, 2 feet landing; double leg take-off, single leg landing.'
+                },
+                {
+                    'name': '3 Jumps — How Far Can You Go?',
+                    'description': 'Each participant gets 3 jumps and tries to get as far as possible. Encourage "jet wings" (arm swing) to increase distance and a "motorbike" landing (arms out front, hips down).'
+                }
+            ]
+        },
+        'coaching_cues': [
+            'Ladder — fast feet, fast arms and low knees',
+            'Tall Hurdles (walking) — toes up, knees up and use your arms',
+            'Tall Hurdles (running) — fast arms and knees up, pump your arms the whole way',
+            'Low hurdles — short fast arms and run over fast',
+            'Hoops — drive your arms and bring knees up to your belly button',
+            'Sprints — head still, short fast arms and fast feet. Look up and run straight. Pump your elbows back past your hips.',
+            'Speed Bounce — use thick yellow or white lines. Jump forward and back and side to side. Count how many in 20 secs.',
+            'Jump and Land — use hoops, mini hurdles or flat sticks. Demonstrate power position using Jet wings; Motorbike for landing.',
+            'Cues: Swing arms back (Jet wings), swing arms forward as you jump. Arms out in front and drop your hips (Motorbike) on landing. Increase distance and height progressively.'
+        ],
+        'coach_run_sheet': [
+            'Coach 1 — Leads the warmup game, provides instruction, calls end to each round',
+            'Coach 2 — Observes that players are following the rules, helps with timeouts for players to tuck in tags',
+            'Coach 1 — Instructs the key movements for each drill and calls each athlete\'s turn',
+            'Coach 2 — Demonstrates the drills, provides feedback on form and execution, realigns equipment',
+            'Coach 2 — Packs up the equipment to clear the space',
+            'Coach 1 (Partner Run) — Starts the partners and instructs for running arms, knee drive and head still',
+            'Coach 2 (Partner Run) — Prepares to high-5 students at the finish line, gives encouragement and feedback',
+            'Coach 1 (Out & Backs) — Has the stopwatch and whistle to monitor start/stop time and recovery time',
+            'Coach 2 (Out & Backs) — Runs with the students, provides encouragement and feedback during recovery',
+            'Coach 2 (Jumps) — Sets out the cones, hoops and hurdles with wider spacing for each line',
+            'Coach 1 (Jumps) — Explains and demonstrates the different jumps and landing positions',
+            'Pack up: Coach 1 marshals students, collects bags and supervises until parent pickup. Coach 2 packs all equipment.'
+        ],
+        'resources': [
+            {'name': 'Partner Tag activity sheet', 'url': 'https://www.sportaus.gov.au/__data/assets/pdf_file/0004/703975/Partner-Tag.pdf'}
+        ]
+    },
+    {
+        'week': 2,
+        'title': 'Weaving, Agility & Power Throw',
+        'duration': '60 mins',
+        'group': 'Emerging Athletes — Grade 3 to Grade 6',
+        'equipment': 'Coaches bag, agility ladder, hurdles of varying heights, soft shot put or 1kg med ball',
+        'warmup': {
+            'name': 'Snowball Tag',
+            'duration': '6 mins',
+            'description': 'One player starts with a tennis ball — they are "it". Players move in random directions in a marked area to avoid being tagged. Players who are tagged receive a tennis ball from the coach and are also it. Start with walking, then change locomotion several times (skipping, lateral movements, running). Play until only one player is left without a tennis ball.',
+            'coaching_notes': 'Alternative: Rob the Nest — mark a large circle with cones and use coloured tennis balls that students try to take from each other\'s nest.'
+        },
+        'main_block': {
+            'name': 'RUN',
+            'focus': 'Weaving and agility',
+            'duration': '25 mins',
+            'activities': [
+                {
+                    'name': 'Skills — Weaving and Agility Circuit',
+                    'description': 'Set up a circuit of 5 stations: ladders, weaving cones, hurdles of varying heights, dodge and weave cones, skater hop hoops. 3-4 participants at each station. Participants have 3-4 turns at each station then move to the next.'
+                },
+                {
+                    'name': 'Activity — Out and Back Run (Judge Your Pace)',
+                    'description': 'Set up on a running track or create a cross country course. Participants run at a steady pace out for 60 seconds. Rest is double the time run. Run back, aiming to reach the starting point in 60 seconds. Repeat for 2 minutes, then 3 minutes, increasing rest time as running time increases. Encourage steady, relaxed running.'
+                }
+            ]
+        },
+        'secondary_block': {
+            'name': 'THROW',
+            'focus': 'Power & push throw with leg drive',
+            'duration': '15 mins',
+            'activities': [
+                {
+                    'name': 'Skills — Power Throw',
+                    'description': 'Set up a throwing area. Pair participants, each pair with a soft shot put or 1kg med ball. Demonstrate the power position for throwing and explain the importance of leg drive. Demonstrate the following throws: bucket, push, overhead, backward overhead and rotation. Allow participants to have multiple throws after each demonstration. Throwers may only throw and collect on the coach\'s command.'
+                },
+                {
+                    'name': 'Activity — Throw for Points',
+                    'description': 'Set up a throwing area with zones worth different points. The zone closest is worth the least, the zone furthest away is worth the most. Participants are grouped into three teams. Each participant gets three throws using only the throws taught in Power Throw. The aim is to get maximum points for your team.'
+                }
+            ]
+        },
+        'coaching_cues': [
+            'Ladder — fast feet, fast arms and low knees',
+            'Tall Hurdles (walking) — toes up, knees up and use your arms',
+            'Tall Hurdles (running) — fast arms and knees up, pump your arms the whole way',
+            'Out and Backs — judge your pace and run smooth. Relaxed shoulders and breathing, head still.',
+            'Rob the Nest (alternative warmup) — mark a large circle with cones and use coloured tennis balls that students try to take from each other\'s Nest.',
+            'Power Throw — bean bag or shot put into neck, high elbow, strong push until arm is straight out in front.',
+            '"Point your arm out in front, strong push past your nose."',
+            'Demonstrate how to use the legs and rotation to generate more power. Throwers may only throw and collect on the coach\'s command.'
+        ],
+        'coach_run_sheet': [
+            'Coach 1 — Leads the warmup game, provides instruction, calls end to each round, enforces rules',
+            'Coach 2 — Observes that players are following the rules, throws balls to tagged players',
+            'Coach 1 — Instructs the key movements for each drill, calls each athlete\'s turn',
+            'Coach 2 — Demonstrates the drills, provides feedback on form and execution, realigns equipment',
+            'Coach 2 — Packs up equipment to clear the space',
+            'Coach 1 (Weaving drill) — Starts partners, instructs for running arms and weaving movement',
+            'Coach 2 (Weaving drill) — Ensures students run around end cones, provides encouragement',
+            'Coach 1 (Out & Backs) — Has the stopwatch and whistle to monitor start/stop and recovery time',
+            'Coach 2 (Out & Backs) — Runs with students, provides encouragement and feedback during recovery',
+            'Coach 2 (Throws) — Sets out the cones, hoops and buckets for scoring zones, resets equipment',
+            'Coach 1 (Throws) — Explains and demonstrates throwing position and actions',
+            'Pack up: Coach 1 marshals students and supervises until parent pickup. Coach 2 packs all equipment.'
+        ],
+        'resources': []
+    },
+    {
+        'week': 3,
+        'title': 'Quick Reactions, Fast Starts & Bounding',
+        'duration': '60 mins',
+        'group': 'Emerging Athletes — Grade 3 to Grade 6',
+        'equipment': 'Coaches bag, 15cm hurdles, hoops, coloured marker dots',
+        'warmup': {
+            'name': 'Flip It + Balance Games (Hoop Stretch)',
+            'duration': '6 mins',
+            'description': 'Flip It: Divide into 2 groups. Each player has a cone. One group places cones right way up (Hats), the other places them upside down (Cups). On the coach\'s command, participants move around the marked area trying to flip the other group\'s cones. Play for 60 seconds, stop and count. Whichever team has the most in their position wins. Play several times using different movement patterns.\n\nHoop Stretch: Players stand in a hoop. Make a body position with both feet inside and both arms outside. Hold for a set time. CHANGE IT: 2 hands and 1 foot on the floor; 1 hand and 2 feet on the floor; 1 hand and 1 foot off the floor. Vary hold time 5–30 seconds.',
+            'coaching_notes': 'Coach 1 leads Flip It and calls end to each round. Coach 2 observes rules and helps count cones. Coach 2 leads Hoop Stretch — both coaches provide correction and feedback.'
+        },
+        'main_block': {
+            'name': 'RUN',
+            'focus': 'Quick reaction and fast starting',
+            'duration': '25 mins',
+            'activities': [
+                {
+                    'name': 'Activity — First One Back',
+                    'description': 'Set up a line of marker cones approx. 2m apart. Place another line of cones 10m out. Participants pair up and stand opposite each other next to a cone. On the command, sprint to their end cone and sprint back. First one back wins 1 point. Change start positions: sitting facing each other, lying prone facing away, kneeling with hands behind head. Change pairs after 2-3 races.'
+                },
+                {
+                    'name': 'Activity — Partner Chase',
+                    'description': 'Set up cones: start line, then cones at 10m and 20m. One partner stands on the start line, the other stands 1m directly behind. On the command, sprint to the first line of cones at 10m. The front partner aims to get there first; the back partner aims to tag them before 10m. Swap roles. Change starting positions: standing, kneeling, sitting, lying.\n\nCHANGE IT: Set up for bend running and longer distances.'
+                }
+            ]
+        },
+        'secondary_block': {
+            'name': 'JUMP',
+            'focus': 'Jump and land, bounding, hop-step-jump',
+            'duration': '15 mins',
+            'activities': [
+                {
+                    'name': 'Skills — Jump and Land',
+                    'description': 'Jump over 15cm hurdles, hops, lateral jumps — encourage a stable "hips down" landing to stick it.\n\nProgression: single leg take-off to 2 feet landing; 2 feet take-off to single leg landing.'
+                },
+                {
+                    'name': 'Activity — Bounding Hoops',
+                    'description': 'Set up 2-3 lines of 3-4 hoops and coloured marker dots, making each subsequent line further apart to increase difficulty. Participants bound through the hoops. Cues: "drive knee to the sky" and "drive the arm stronger and longer" to encourage a stronger and further bound.'
+                },
+                {
+                    'name': 'Activity — Hop, Step and Jump',
+                    'description': 'Each participant has a hurdle, dot and hoop which they place in order in front of them, each about 1m apart. Standing behind the hurdle, the participant hops over the hurdle, bounds to the dot, and lands in the hoop. Increase the distances between hurdle, dot and hoop — keep them approximately equal apart.'
+                }
+            ]
+        },
+        'coaching_cues': [
+            'Bounding Hoops — encourage strong arm and knee drive. Toe and knee come up together. Push strong to the middle of the hoop. Make distance wider to encourage more knee drive.',
+            'Multi-jumps — jump and land on 2 feet; jump from 2 feet and land on 1. Side-to-side jumps along the yellow line — how many did you get?',
+            'Variations — speed jumps/hops (higher count = better), long strong jumps/hops (lower count = better)',
+            'Sprints — line students up in 2-4 lines. Head still, short fast arms and fast feet. Look up and run straight. Pump your arms and elbows back past your hips.',
+            'Equipment — use dots, hoops, 15cm hurdles, cones and ladder'
+        ],
+        'coach_run_sheet': [
+            'Coach 1 — Leads Flip It warmup, provides instruction, calls end to each round, checks rules',
+            'Coach 2 — Observes rules, helps count cones',
+            'Coach 2 — Leads Hoop Stretch, both coaches provide correction and feedback',
+            'Coach 2 — Packs up equipment to clear the space',
+            'Coach 1 (First One Back / Partner Chase) — Starts pairs, instructs rules, judges first one back',
+            'Coach 2 (First One Back / Partner Chase) — Ensures students run fully to end cones',
+            'Coach 2 (Jumps) — Sets out cones, hoops and hurdles for jumping zones with wider spacing for each line',
+            'Coach 1 (Jumps) — Explains and demonstrates jumping positions and actions',
+            'Pack up: Coach 1 marshals students and supervises until parent pickup. Coach 2 packs all equipment.'
+        ],
+        'resources': [
+            {'name': 'Flip It activity sheet', 'url': 'https://www.sportaus.gov.au/__data/assets/pdf_file/0009/703917/Flip-it.pdf'},
+            {'name': 'Flip It video', 'url': 'https://youtu.be/MdZSmrxlbxM'},
+            {'name': 'Hoop Stretch activity sheet', 'url': 'https://www.sportaus.gov.au/__data/assets/pdf_file/0004/703939/Hoop-stretch.pdf'}
+        ]
+    },
+    {
+        'week': 4,
+        'title': 'Fast Starts, Hurdle Introduction & Rotational Throw',
+        'duration': '60 mins',
+        'group': 'Emerging Athletes — Grade 3 to Grade 6',
+        'equipment': 'Coaches bag, 30cm hurdles, flat hoops / hula hoops, relay batons',
+        'warmup': {
+            'name': 'Shuttle Relay + Reaction Games',
+            'duration': '15 mins',
+            'description': 'Shuttle Relay: Place 2 lines of marker cones 15m apart. Groups of approx. 4, with 2 at each cone. Coach designates different activities between cones: skipping, side skipping, skipping for height, skipping backwards, knees-up running. Pass baton between team members. Continuous relay for 5-6 minutes.\n\nReaction Games — Heads, Shoulders, Knees, Toes, CONE!! Participants stand along a line of cones with a partner. The coach calls different body parts (both hands touch). Participants aim to be first to grab the cone! Make sure students stand up straight in the Head and Shoulders position.',
+            'coaching_notes': 'Shuttle Relay: Start with Push Pass facing the incoming runner. Demonstrate the "Butterfly" 2-handed receive. Progress to 1 hand out in front making a "V". For Emerging — move to "arm straight back, behind your back" and "call to run" receive.'
+        },
+        'main_block': {
+            'name': 'RUN',
+            'focus': 'Start practice, partner chase and hurdle introduction',
+            'duration': '25 mins',
+            'activities': [
+                {
+                    'name': 'Activity — Fast Starts & Variations',
+                    'description': 'Place 2 lines of marker cones 10m apart. Participants complete 7-8 accelerations over 10m using different starting positions, walking back after each. Include standing, 3-point, crouching starts, and lateral, backwards, and run-and-turn (team sport) starts.'
+                },
+                {
+                    'name': 'Activity — Partner Chase',
+                    'description': 'Set up cones: start line, then 10m and 20m. One partner on the start line, the other 1m behind. On the command, sprint to 10m. Front partner aims to get there first; back partner aims to tag them before 10m. Swap roles. Change starting positions: standing, kneeling, sitting, lying.'
+                },
+                {
+                    'name': 'Skill — Intro to Hurdling',
+                    'description': 'Set up lines of 30cm hurdles at hurdle spacing.\nLine 1–3: 4 × 30cm hurdles at 8m apart.\nLine 4: 6-8 × 30cm hurdles at 6m apart.\n\nAll participants start at Line 1 and progress through to Line 4. Give participants 4-5 turns at each line before progressing.'
+                }
+            ]
+        },
+        'secondary_block': {
+            'name': 'THROW',
+            'focus': 'Rotational (sling) throwing mechanics',
+            'duration': '10 mins',
+            'activities': [
+                {
+                    'name': 'Activity — Hoop Throw',
+                    'description': 'Participants throw flat hoops or hula hoops using a sling throw for distance. Set up zones in the throwing area with a points system (closest = 5 points, furthest = 20 points). Participants throw one at a time when their name is called, to allow for instruction and correction. One coach instructs, the other stands in the throwing area to give feedback on release. Collect on the coaches "Collect" instruction.\n\nTowards the end, all participants throw on a "1, 2, 3 Throw" command to get more turns practising technique.'
+                }
+            ]
+        },
+        'coaching_cues': [
+            'Hurdles — run fast and quick step over the hurdle. Swing your back leg through.',
+            'Sling throw — grip the ring or hoop with knuckles up. Make a T with your arms and feet behind the line. Swing the hoop up to your other hand. 1-2-3 Throw!!',
+            'Shuttle Relay (Emerging) — progress to "arm straight back, behind your back" and "call to run" receive.',
+            'Sprints — head still, short fast arms and fast feet. Look up and run straight. Pump your arms and elbows back past your hips.'
+        ],
+        'coach_run_sheet': [
+            'Coach 1 — Leads Reaction Games warmup, provides instruction, calls each body part',
+            'Coach 2 — Observes fairness and rules, resets cones',
+            'Coach 1 — Leads Shuttle Relay, assigns teams, explains and demonstrates baton change',
+            'Coach 2 — Assists to keep teams in order, cues for how to pass the baton',
+            'Coach 1 (Fast Starts) — Instructs different types of starts, demonstrates actions, provides corrections',
+            'Coach 2 (Fast Starts) — Ensures students run fully to end cones, gives feedback on running form',
+            'Coach 1 (Hurdle Intro) — Gives feedback on running and stepping over the hurdle action',
+            'Coach 2 (Hurdle Intro) — Sets out hurdles, resets any that get knocked over',
+            'Coach 2 (Throws) — Sets out cones, hoops and witches\' hats for throwing zones',
+            'Coach 1 (Throws) — Explains and demonstrates throwing positions and actions, calls students to throw and collect',
+            'Pack up: Coach 1 marshals students and supervises until parent pickup. Coach 2 packs all equipment.'
+        ],
+        'resources': []
+    },
+    {
+        'week': 5,
+        'title': 'Hurdle Rhythm, Technique & Relay Baton Changes',
+        'duration': '60 mins',
+        'group': 'Emerging Athletes — Grade 3 to Grade 6',
+        'equipment': 'Coaches bag, adjustable hurdles (50-60cm), relay batons, agility ladder, bounding hoops',
+        'warmup': {
+            'name': 'Paired Run + Run Drill Circuit',
+            'duration': '10 mins',
+            'description': 'Paired Run: Set up a cross country course in the space available — include hills if possible. Pair participants of similar ability. Each pair completes a 6-minute easy run around the cross country course.\n\nRun Drill Circuit / Obstacle Course: Set out agility ladder, 30cm hurdles, witches\' hats, bounding hoops and 15cm hurdles as per the Run Drill Circuit diagram. Alternatively, set up an Obstacle Course with ladder at the start and adequate run-off between obstacles.',
+            'coaching_notes': 'Coach 1 explains the course and pairs students by similar ability. Runs with the group towards the front/middle. Coach 2 runs towards the back and provides encouragement for slower runners.'
+        },
+        'main_block': {
+            'name': 'RUN',
+            'focus': 'Hurdle rhythm and technique',
+            'duration': '25 mins',
+            'activities': [
+                {
+                    'name': 'Skills — Hurdle Running',
+                    'description': 'Set up two lines of hurdles approx. 50-60cm in height, with 4 hurdles in each line. Space hurdles 5-8m apart. Participants run over the hurdles. Encourage fast, relaxed running, maintaining speed and attacking the hurdle. Walk back to start between each run. Change hurdle heights and spacing to suit all participants. Use a coloured cone to assist getting the lead leg down "inside the box."'
+                },
+                {
+                    'name': 'Activity — Hurdle Relay',
+                    'description': 'Set up two lines of hurdles at the same height and spacing. Divide into two groups. The first participant in each group races over the hurdles, runs around a cone marker and sprints back to pass the baton to the next participant. Continue until all have raced. Run multiple times, changing order or teams as necessary.'
+                }
+            ]
+        },
+        'secondary_block': {
+            'name': 'RELAY',
+            'focus': 'Baton changes and teamwork',
+            'duration': '15 mins',
+            'activities': [
+                {
+                    'name': 'Skills — Relay Changes',
+                    'description': 'Demonstrate a relay baton change. Pair participants and practise relay changes. Gather into groups of four, standing approx. 1m apart, all facing the same way. The baton starts in the right hand of the person at the back. Pass the baton down the middle of the line from right hand to left hand. Groups can race against each other to see which team can pass fastest.'
+                },
+                {
+                    'name': 'Activity — Quick Changes',
+                    'description': 'Set up 2-3 relay changeover zones with marker cones 20-30m apart. From each marker cone walk out 20m and place another cone. Divide into 2-3 teams. Teams must change baton in the changeover zone. The relay continues until all members have changed at least once. Run at high speed.\n\nUp-and-back variation: last runners sprint straight back from the finish while others wait at their cone to receive the baton.'
+                }
+            ]
+        },
+        'coaching_cues': [
+            'Emerging hurdles — use a strong push off the take-off leg. Bring knee up to clear the hurdle. Pull the back leg through.',
+            'Relay changes (Emerging) — "arm straight back, behind your back" and "call to run" receive. Use 3-4 changeover boxes per team.',
+            'Show the difference between an early "hand" call and a late one. Show how a faster run-off changes the exchange.',
+            'Sprints — head still, short fast arms and fast feet. Look up and run straight. Pump your arms and elbows back past your hips.'
+        ],
+        'coach_run_sheet': [
+            'Coach 1 (Paired Run) — Explains course and pairs students by similar ability. Runs front/middle of group.',
+            'Coach 2 (Paired Run) — Runs towards the back, provides encouragement for slower runners',
+            'Coach 1 — Explains each running drill and what proficiency looks like',
+            'Coach 2 — Demonstrates each drill, reinforces instruction via cues and feedback',
+            'Coach 1 (Hurdles) — Demonstrates an effective lead leg and trail leg action. Provides corrective feedback.',
+            'Coach 2 (Hurdles) — Sets out hurdles, resets any that get knocked over, provides feedback on performance',
+            'Coach 1 (Relays) — Works with Coach 2 to demonstrate an effective baton pass and "hand" call',
+            'Coach 1 (Relays) — Pairs up participants to practise fast baton changes, watches for multiple reps',
+            'Coach 2 (Relays) — Provides feedback on baton change performance and suggests adjustments',
+            'Pack up: Coach 1 marshals students and supervises until parent pickup. Coach 2 packs all equipment.'
+        ],
+        'resources': []
+    },
+    {
+        'week': 6,
+        'title': 'Endurance, Curve Running & High Jump',
+        'duration': '60 mins',
+        'group': 'Emerging Athletes — Grade 3 to Grade 6',
+        'equipment': 'Coaches bag, Plyo Pole kit, 12 hurdles (for wicket runs)',
+        'warmup': {
+            'name': 'Tennis Ball Toss + Run Skills & Drills',
+            'duration': '15 mins',
+            'description': 'Tennis Ball Toss: Pair participants 2m apart. Partners underarm throw the ball back and forth to reach 10 throws without dropping. Continue while jogging on the spot, then jumping, then hopping. Progress to moving pairs slightly further apart. Participants must be continually moving while throwing.\n\nRun Skills & Drills: Over 10-15m — easy skipping, skipping for height, skipping for distance, side skip, backwards skip. \'A\' Skip ×2, Butt Kickers ×2, High knee running with fast arms, Scissors with long strides and strong arms.\n\nWicket Runs: Mark out wicket runs with 12 hurdles. Start with wickets 3 feet apart and progress to 3.5 and 4 feet apart to encourage a faster running action and stronger foot push off the ground.',
+            'coaching_notes': 'Coach 1 explains each throw/movement and provides alternative instruction for participants having difficulty. Coach 2 assists students who are struggling.'
+        },
+        'main_block': {
+            'name': 'RUN',
+            'focus': 'Endurance and curve running',
+            'duration': '25 mins',
+            'activities': [
+                {
+                    'name': 'Activity — Endurance Challenge',
+                    'description': 'Participants run continuously for a time equivalent to half their age. E.g., a 9-year-old runs for 4.5 minutes. Score 10 points for each minute completed without walking.\n\nMark out a cross-country course within the available space. Jog the course as a group first so participants understand the comfortable pace. Start older participants first so everyone finishes at the same time.\n\nACTIVE: Run for half your age in minutes as a team (2 teams). 1 point for a half lap, 2 points for a full lap.\nACCELERATE: Same format with 3 teams, slightly faster pace.\n\nProgression: Students run for 5 mins without walking, up to a maximum of 10 mins.'
+                },
+                {
+                    'name': 'Activity — Curve Running',
+                    'description': 'Set out 2-3 curved lanes and at least 4 different coloured cones to run to, maximum 50m. Students run with a partner or group of 3 and attempt to be first to the cones while following the curve.\n\nACTIVE: Use the big yellow circle or yellow half-circle line.\nACCELERATE: Run in lanes to a coloured cone. Athletes "hug the line" — as close to the curved line as possible without running on it.\n\nCHANGE IT: Set up a "beat your partner" circle with 2 cones as a start/finish gate on each side. Each participant starts on the opposite side and races to be first through the gate.\n\nTEAM CHALLENGE: Continuous circular relay, each student running at least twice. High-5 to pass baton. First team all sitting down wins.'
+                }
+            ]
+        },
+        'secondary_block': {
+            'name': 'SCISSOR JUMP / HIGH JUMP',
+            'focus': 'Knee drive, approach and scissor technique',
+            'duration': '10 mins',
+            'activities': [
+                {
+                    'name': 'Activity — High Jump (Scissor Technique)',
+                    'description': 'Set up 4 high jump stations at different heights. Use cones to mark a 30-degree approach angle. Demonstrate the scissor action to get over the bar.\n\nThe leg closest to the bar drives up with a bent leg and straightens as they step over. Push off the back leg and swing it through (similar to hurdles). The bar goes up a notch if cleared, or they can progress to a station where the bar is already higher.\n\nMark out 2 stations — have the 2nd station start at a higher height for stronger, more advanced athletes. Set up plyometric poles with the crossbar at a low height. Mark out a short run-up with cones or dots on both sides so participants can practise from either side. Ensure multiple turns to learn the scissor action.'
+                }
+            ]
+        },
+        'coaching_cues': [
+            'ACTIVE — run for half your age in minutes as a team (2 teams). 1 point for a half lap, 2 points for a full lap.',
+            'ACCELERATE — run for half your age in minutes as a team (3 teams). 1 point for a half lap, 2 points for a full lap.',
+            'Curve running — athletes "hug the line." Run as close to the curved line as possible but not on the line.',
+            'Scissor Jump — the leg closest to the bar drives up with a bent leg and straightens as they step over. Push off back leg and swing it through (like hurdles).',
+            'The bar goes up a notch if cleared — ensure athletes have multiple turns to learn the scissor action.'
+        ],
+        'coach_run_sheet': [
+            'Coach 1 (Tennis Ball Toss) — Explains which throw to use and each movement. Provides alternative instruction for those having difficulty.',
+            'Coach 2 (Tennis Ball Toss) — Assists students having difficulty',
+            'Coach 1 — Explains each running drill and what proficiency looks like',
+            'Coach 2 — Demonstrates each drill, reinforces instruction via cues and feedback',
+            'Coach 1 (Endurance) — Assigns running time for each student, calls out times via stopwatch',
+            'Coach 2 (Endurance) — Runs in the middle and towards the back of the group, provides feedback and encouragement',
+            'Coach 1 (Curve Running) — Assigns partners and a designated cone to run to, acts as the Starter',
+            'Coach 2 (Curve Running) — Observes running action, provides feedback on performance, determines who won',
+            'Coach 1 (High Jump) — Demonstrates scissor technique or uses Coach 2 as model. Observes from the bar, resets bar when knocked down, changes heights.',
+            'Coach 2 (High Jump) — Runs the 2nd High Jump zone, resets bar and changes heights',
+            'Pack up: Coach 1 marshals students and supervises until parent pickup. Coach 2 packs all equipment.'
+        ],
+        'resources': [
+            {'name': 'Scissor High Jump video', 'url': 'https://youtu.be/XE54eKUbWc8'},
+            {'name': 'How to teach Scissors High Jump', 'url': 'https://coachingyoungathletes.com/2016/05/19/how-to-teach-scissors-high-jump-to-young-athletes/'}
+        ]
+    },
+    {
+        'week': 7,
+        'title': 'Teamwork, Relay Practice & Overarm Throw',
+        'duration': '60 mins',
+        'group': 'Emerging Athletes — Grade 3 to Grade 6',
+        'equipment': 'Coaches bag, skipping ropes, relay batons, coloured sashes, tennis balls, buckets/hoops',
+        'warmup': {
+            'name': 'Skipping, Plyometric & Strength Fitness Circuit',
+            'duration': '15 mins',
+            'description': 'Set up 4 different areas and rotate participants through:\n\nAREA 1 — SKIPPING: Use skipping ropes — skipping on the spot, running skip, high knee skip\nAREA 2 — PLYO: Pogos up/down, side to side, forward and back, star jumps\nAREA 3 — STRENGTH: Push-ups, squats, walking lunges, planks, plank high-5s (partners)\nAREA 4 — JUMPING: Burpees, star jumps, high knees, squat jumps, bench jumps',
+            'coaching_notes': 'Pogos — nice and springy with bouncy toes, see if you can bounce higher. Squats — arms out in front, squat down like you\'re on the toilet. Lunges — nice long stride, lower your hips so your knee touches the ground. Push-ups — legs straight, butts down and elbows in. Burpees — legs out, legs in, jump up. Squat Jumps — squat down, jump up and reach for the sky. Planks — straight legs, tummy in, butt down and head straight.'
+        },
+        'main_block': {
+            'name': 'RUN',
+            'focus': 'Teamwork and relay practice',
+            'duration': '25 mins',
+            'activities': [
+                {
+                    'name': 'Activity — Throw & Go Relay',
+                    'description': 'Set up 2-4 team lines. 3 cones with tennis balls on top for each team. Start line is 20m back from the cones and a "throw cone" is 5m from the target zone. Participants run to their team hoop, pick up a ball, run to the throw cone and attempt to hit the target. If they miss, retrieve the ball, drop it back in the hoop and run back to tag the next teammate. First team to knock down all 3 cones wins.\n\nCHANGE IT: Time how quickly they can pick up the ball, throw, retrieve, and run back to the line.'
+                },
+                {
+                    'name': 'Activity — Circular Relay',
+                    'description': 'Mark out a circular relay course with 4 changeover zones. Divide into groups of 4. Give each group a different coloured sash and a baton. Each team must have a participant at each changeover zone. The relay can be run continuously for a time limit or as a 1-lap race. Change teams around to keep races close. Change starting positions for each subsequent race.'
+                }
+            ]
+        },
+        'secondary_block': {
+            'name': 'THROW',
+            'focus': 'Overarm throw for accuracy',
+            'duration': '10 mins',
+            'activities': [
+                {
+                    'name': 'Skill — Overarm Throw for Accuracy',
+                    'description': 'Create a throwing zone. Each participant has 3 tennis balls. Assess correct starting position and get participants to throw one at a time (when their name is called) to observe correct throwing action. Continue until each participant has thrown 3 balls. Call "Collect" and retrieve as a group.'
+                },
+                {
+                    'name': 'Activity — Tennis Ball Target',
+                    'description': 'Set up targets using buckets, hoops and a "Bullseye/Endzone" for stronger throwers. Allocate points to each target. Approx. 3 participants throw at a time, collect as a group when all balls are thrown.\n\nCreate a challenge: first person to reach 50 points.'
+                }
+            ]
+        },
+        'coaching_cues': [
+            'Stand upright with ball in your throwing hand and face the target.',
+            'Right hand: turn sideways 90 degrees to your right. Left hand: turn 90 degrees to your left. Feet shoulder-width apart.',
+            'Point your finger at the target and shift your weight to your back foot. Lift your throwing hand and take the ball back past your ear.',
+            'In one motion: shift weight to front foot, drop pointing arm, twist torso, bring throwing arm over shoulder to release at target.',
+            'Circular Relay — smooth baton exchange, call early, extend arm back for the incoming runner.'
+        ],
+        'coach_run_sheet': [
+            'Coach 1 — Explains all exercises in the circuit and uses other coaches to demonstrate. Mans one station and calls "next station."',
+            'Coach 2 — Coaches at one fitness station, demonstrates exercises',
+            'Coach 3 (if available) — Coaches at one fitness station, demonstrates exercises',
+            'Coach 1 (Throw & Go) — Explains which throw to use. Provides alternative instruction for those having difficulty.',
+            'Coach 2 (Throw & Go) — Assists students having difficulty',
+            'Coach 1 — Explains each running drill and what proficiency looks like',
+            'Coach 2 — Demonstrates drills, reinforces main instruction via cues and feedback',
+            'Coach 1 (Throws) — Calls each athlete\'s name for throwing assessment, observes technique',
+            'Coach 2 (Throws) — Stands in throwing area, provides immediate feedback on release',
+            'Pack up: Coach 1 marshals students and supervises until parent pickup. Coach 2 packs all equipment.'
+        ],
+        'resources': []
+    },
+    {
+        'week': 8,
+        'title': 'Hurdle Rhythm (Reinforcement) & Relay Baton Changes',
+        'duration': '60 mins',
+        'group': 'Emerging Athletes — Grade 3 to Grade 6',
+        'equipment': 'Coaches bag, adjustable hurdles (50-60cm), relay batons, agility ladder, bounding hoops',
+        'warmup': {
+            'name': 'Paired Run + Run Drill Circuit',
+            'duration': '10 mins',
+            'description': 'Repeat the warm-up from Week 5 — students should be more confident with the pace and the circuit.\n\nPaired Run: Cross country course including hills if possible. Each pair completes a 6-minute easy run. Push for a slightly faster tempo than Week 5.\n\nRun Drill Circuit / Obstacle Course: Set out agility ladder, 30cm hurdles, witches\' hats, bounding hoops and 15cm hurdles. Focus this week on quality of movement — not just getting through the circuit.',
+            'coaching_notes': 'Same as Week 5 — but challenge participants to improve their running form and cross country pace. Note which athletes are more comfortable with the drills compared to Week 5.'
+        },
+        'main_block': {
+            'name': 'RUN',
+            'focus': 'Hurdle rhythm and technique (reinforcement)',
+            'duration': '25 mins',
+            'activities': [
+                {
+                    'name': 'Skills — Hurdle Running',
+                    'description': 'Repeat the hurdle running from Week 5. Two lines of hurdles approx. 50-60cm in height with 4 hurdles in each line, spaced 5-8m apart. Focus on improvement from Week 5 — have participants notice their own technique getting smoother. Walk back to start between each run. Change heights and spacing to suit all participants.'
+                },
+                {
+                    'name': 'Activity — Hurdle Relay',
+                    'description': 'Repeat from Week 5. Two lines of hurdles at same height and spacing. Teams race over hurdles, around cone marker and sprint back to pass baton. This week emphasise smooth baton exchange — the handover should be faster and more confident than Week 5.'
+                }
+            ]
+        },
+        'secondary_block': {
+            'name': 'RELAY',
+            'focus': 'Baton changes and teamwork (reinforcement)',
+            'duration': '15 mins',
+            'activities': [
+                {
+                    'name': 'Skills — Relay Changes',
+                    'description': 'Repeat from Week 5. Groups of four, all facing the same way. Baton starts in right hand at the back. Pass from right to left. Race against other teams. This week, focus on the "hand" call timing — early vs late — and how it affects the exchange.'
+                },
+                {
+                    'name': 'Activity — Quick Changes',
+                    'description': 'Repeat from Week 5 with an improvement focus. Changeover zones 20-30m apart. Teams change baton in the zone at high speed. Up-and-back variation: last runners sprint straight back while others wait at their cone. Push for faster exchanges this week — athletes should feel the improvement in timing from Week 5.'
+                }
+            ]
+        },
+        'coaching_cues': [
+            'Hurdles — notice if you\'re improving from Week 5. Is your knee coming up higher? Is your trail leg swinging through faster?',
+            'Focus on consistency of hurdle technique across all 4 hurdles — don\'t slow down between hurdles.',
+            'Relay — faster, more confident baton exchanges this week. The "hand" call should come earlier.',
+            'Emerging relay — arm straight back behind your back and "call to run" receive. Use 3-4 changeover boxes per team.'
+        ],
+        'coach_run_sheet': [
+            'Same structure as Week 5 — shift coaching emphasis to quality and improvement from Week 5 baseline.',
+            'Coach 1 (Paired Run) — Pairs students by ability, runs front/middle of group',
+            'Coach 2 (Paired Run) — Runs towards the back, encourages slower runners to maintain pace',
+            'Coach 1 (Hurdles) — Provides corrective feedback on lead and trail leg action',
+            'Coach 2 (Hurdles) — Resets hurdles, gives performance feedback, notes individual improvements vs Week 5',
+            'Coach 1 (Relays) — Works with Coach 2 to demonstrate baton pass timing improvements',
+            'Coach 2 (Relays) — Provides feedback on baton change performance, suggests zone adjustments',
+            'Pack up: Coach 1 marshals students and supervises until parent pickup. Coach 2 packs all equipment.'
+        ],
+        'resources': []
+    },
+    {
+        'week': 9,
+        'title': 'Endurance, Curve Running & High Jump (Reinforcement)',
+        'duration': '60 mins',
+        'group': 'Emerging Athletes — Grade 3 to Grade 6',
+        'equipment': 'Coaches bag, Plyo Pole kit, 12 hurdles (for wicket runs)',
+        'warmup': {
+            'name': 'Tennis Ball Toss + Run Skills & Drills',
+            'duration': '15 mins',
+            'description': 'Repeat from Week 6 — participants should be more confident with the throwing and the drill sequence.\n\nTennis Ball Toss: Partners 2m apart. Underarm throw to reach 10 without dropping. Progress: stationary → jogging → jumping → hopping. Increase distance. Challenge: can they beat their Week 6 success rate?\n\nRun Skills & Drills: easy skipping, skipping for height, skipping for distance, side skip, backwards skip. \'A\' Skip ×2, Butt Kickers ×2, High knee running with fast arms, Scissors with long strides and strong arms.\n\nWicket Runs: 12 hurdles — start at 3.5 feet apart (wider than Week 6) to challenge faster running and stronger foot push.',
+            'coaching_notes': 'Challenge participants to remember the drill sequence without re-explaining everything. Focus coaching attention on quality of movement this week rather than learning new actions.'
+        },
+        'main_block': {
+            'name': 'RUN',
+            'focus': 'Endurance and curve running (reinforcement)',
+            'duration': '25 mins',
+            'activities': [
+                {
+                    'name': 'Activity — Endurance Challenge',
+                    'description': 'Repeat from Week 6. Run continuously for half their age in minutes without stopping. Push participants to beat their Week 6 performance — more laps, less walking.\n\nACTIVE: Run for half your age in minutes as a team (2 teams). 1 point for a half lap, 2 points for a full lap.\nACCELERATE: Same format with 3 teams. Slightly faster pace.\n\nProgression: Students run for 5 mins without walking, up to a maximum of 10 mins.'
+                },
+                {
+                    'name': 'Activity — Curve Running',
+                    'description': 'Repeat from Week 6. 2-3 curved lanes with 4+ colour-coded cones, maximum 50m. Partner or group of 3 racing. This week focus on lean angle and inside arm drive.\n\nACCELERATE: Run in lanes to a coloured cone. Athletes "hug the line" — as close to the curved line as possible without running on it.\n\nCHANGE IT: Beat Your Partner circle — race to be first through the gate.\nTEAM CHALLENGE: Circular relay, each student runs at least twice.'
+                }
+            ]
+        },
+        'secondary_block': {
+            'name': 'SCISSOR JUMP / HIGH JUMP',
+            'focus': 'Technique refinement and personal best heights',
+            'duration': '10 mins',
+            'activities': [
+                {
+                    'name': 'Activity — High Jump (Reinforcement)',
+                    'description': 'Repeat from Week 6 with plyometric poles. Start each participant at the same height they achieved in Week 6 — challenge them to improve.\n\nMark out 2 stations with different starting heights (higher bar for more advanced athletes). Use cones to maintain the 30-degree approach angle. Emphasise the run-up rhythm and consistent take-off point. Each athlete should get multiple attempts — reinforce the scissor action with immediate feedback.'
+                }
+            ]
+        },
+        'coaching_cues': [
+            'Endurance — can you run further or longer than Week 6? That\'s the goal. Consistent pace, relaxed arms.',
+            'Curve running — lean into the bend, drive the inside arm, look ahead not at your feet. Hug the line.',
+            'High Jump — same approach run every time. Find your take-off spot and trust it.',
+            'Scissor action — leg closest to bar drives up bent, straightens over the bar. Back leg swings through like hurdles.'
+        ],
+        'coach_run_sheet': [
+            'Same structure as Week 6 — emphasis shifts to quality and improvement from Week 6 baseline.',
+            'Coach 1 (Tennis Ball Toss) — Challenges participants to beat their Week 6 success rate',
+            'Coach 2 — Assists students with technique, encourages improvement',
+            'Coach 1 (Endurance) — Manages timing and scoring, notes improvement vs Week 6',
+            'Coach 2 (Endurance) — Encourages athletes during the run, monitors pace consistency',
+            'Coach 1 (High Jump) — Tracks each athlete\'s Week 6 height and sets bar accordingly. Resets bar, changes heights.',
+            'Coach 2 (High Jump) — Runs the 2nd station, resets bar and changes heights',
+            'Pack up: Coach 1 marshals students and supervises until parent pickup. Coach 2 packs all equipment.'
+        ],
+        'resources': [
+            {'name': 'Scissor High Jump video', 'url': 'https://youtu.be/XE54eKUbWc8'},
+            {'name': 'How to teach Scissors High Jump', 'url': 'https://coachingyoungathletes.com/2016/05/19/how-to-teach-scissors-high-jump-to-young-athletes/'}
+        ]
+    },
+    {
+        'week': 10,
+        'title': 'COMPETITION DAY 🏆',
+        'duration': '60 mins',
+        'group': 'Emerging Athletes — Grade 3 to Grade 6',
+        'equipment': 'Coaches bag, stopwatches, measuring tapes, recording sheets, portable speaker (Boomie)',
+        'warmup': {
+            'name': 'Fun & Motivating Warm-Up',
+            'duration': '10 mins',
+            'description': 'Bring the Boomie and pump up the vibe!!! Skipping and running drill warm-up, run-throughs and fast start practice.\n\nCoach Motivation Talk — remind athletes of how much they\'ve improved over 9 weeks. This is their day to show what they\'ve got.',
+            'coaching_notes': 'Energy and atmosphere are everything on Comp Day. Play upbeat music. Get the athletes excited. Keep the motivation talk short but personal — mention specific improvements you\'ve noticed in individual athletes.'
+        },
+        'main_block': {
+            'name': 'RUN — COMPETITION & READY TO RACE',
+            'focus': 'Sprint competition and endurance challenge',
+            'duration': '25 mins',
+            'activities': [
+                {
+                    'name': '100m Sprint — Heats and Final',
+                    'description': 'Run heats of 100m sprint. Depending on numbers per heat, first 2-3 progress to the Final. Record all times. Celebrate every finisher.'
+                },
+                {
+                    'name': '200m Sprint — Heats and Final',
+                    'description': 'Run heats of 200m sprint. First 2 per heat progress to the Final. Record all times.'
+                },
+                {
+                    'name': 'Rest and Drink Break — Hydration & Refuel Station',
+                    'description': 'Mandatory break between sprint events and endurance/team events. Ensure all participants hydrate.'
+                },
+                {
+                    'name': '2 Lap — 800m in 5 Mins or Under Challenge',
+                    'description': '2 laps of approximately 400m each. Complete in 5 minutes or under. Running for 5 minutes without stopping also counts. Record time and effort — celebrate both fast finishers and those who kept going.'
+                },
+                {
+                    'name': 'Team Circular Relay',
+                    'description': 'Circular relay course with 4 changeover zones. Groups of 4. Each group has a different coloured sash and baton. Run as a 1-lap race. Change starting positions for each subsequent race to keep outcomes varied and all athletes encouraged.'
+                }
+            ]
+        },
+        'secondary_block': {
+            'name': 'JUMP — PERFORMING A LEGAL JUMP',
+            'focus': 'Long jump and high jump competition',
+            'duration': '10 mins',
+            'activities': [
+                {
+                    'name': 'Long Jump',
+                    'description': 'Use different coloured cones to mark 1m and 20cm intervals as a distance guide. Each participant gets 3 jumps and records their best. Celebrate all distances — focus on improvement over the term.'
+                },
+                {
+                    'name': 'High Jump',
+                    'description': 'Set up 2 high jump stations with 2 competitions running simultaneously. Each participant gets 3 attempts at each height. Miss all 3 = out (standard high jump rules). Record height number — e.g. Station 1 position 4 = 80cm, Station 2 position 4 = 110cm.'
+                }
+            ]
+        },
+        'coaching_cues': [
+            'Sprint — arms pumping, eyes forward, drive all the way through the finish line.',
+            '800m — find a pace they can hold. Encourage, don\'t push. Finishing is the win.',
+            'Long Jump — legal jump = feet behind the line. Jet wings and motorbike landing.',
+            'High Jump — same approach run they\'ve been practising. Trust the run-up. Scissor action — bend, straighten, back leg through.'
+        ],
+        'coach_run_sheet': [
+            'Coach 1 — Manages all sprint timing, calls heats and finals, records all results',
+            'Coach 2 — Manages athlete safety at starting line and finish, celebrates every finisher',
+            'Both coaches — 800m: position at different points on the track to encourage athletes',
+            'Coach 1 — Manages long jump: judges legal jumps, records distances',
+            'Coach 2 — Manages high jump: adjusts bar heights, records performances',
+            'Coach 1 — Leads Fun Finish (human pyramid, octopus game or similar team activity)',
+            'Coach 2 — Sets up Fun Finish, ensures all athletes are included and celebrated'
+        ],
+        'resources': []
+    }
+]
+
+# ============================================================
+# Emerging Program — Term 2 Lesson Plans (Endurance Focus)
+# ============================================================
+# Weeks 1, 8, 9 & 10 are identical to Term 1 — imported at bottom.
+# Weeks 2, 3, 4, 6, 7 are new Term 2 content.
+# Week 5 repeats Term 1 Week 5 (not changed for Term 2).
+
+EMERGING_T2_LESSON_WEEKS = [
+    # ── Week 1 — same as Term 1 ──────────────────────────────────────────
+    {
+        'week': 1,
+        'title': 'Running Form, Arms & Jumping',
+        'duration': '60 mins',
+        'group': 'Emerging Athletes — Grade 3 to Grade 6',
+        'equipment': 'Coaches bag, agility ladder, 30cm hurdles, 15cm hurdles, bounding hoops, witches\' hats',
+        'warmup': {
+            'name': 'Partner Tag',
+            'duration': '10 mins',
+            'description': 'Set out a large circled area using cones according to the size of the group. Players are given a coloured tag to tuck into the top of their shorts and move to avoid getting their tag taken. Start with skipping, then side skip, butt kicks, scissors etc. Blow whistle to reset each round. Monitor play for fairness and respect.',
+            'coaching_notes': 'Mark out a large circle with cones and use coloured sashes. Coach 1 leads the game and calls each round. Coach 2 observes fair play and helps players tuck in loose tags.'
+        },
+        'main_block': {
+            'name': 'RUN',
+            'focus': 'Running form, arms, pace & tempo',
+            'duration': '20 mins',
+            'activities': [
+                {
+                    'name': 'Skills & Drills — Run Drill Circuit or Obstacle Course',
+                    'description': 'RUN DRILL CIRCUIT: Set out agility ladder, 30cm hurdles, witches\' hats, bounding hoops and 15cm hurdles as per the Run Drill Circuit diagram.\n\nOBSTACLE COURSE: Use coloured cones to mark Start and Finish and use the ladder at the start of the course. Allow adequate run-off before the next obstacle.'
+                },
+                {
+                    'name': 'Activity — Partner Run',
+                    'description': 'Pair up participants (similar ability if possible) and get them to run either side of a straight line to a cone 20m away. First one to high-5 the coach wins. Focus on encouraging strong arm drive and knee lift throughout the run to beat their partner.'
+                },
+                {
+                    'name': 'Activity — Out and Backs',
+                    'description': 'Introduction to changing pace. Set up start cones. Participants run at a steady pace out for 30 seconds, blow whistle to stop. Standing rest for 30 seconds. Run back, aiming to reach the starting point in 30 seconds. Repeat for 60 seconds, then for 2 minutes, increasing rest time as running time increases. Encourage steady, relaxed running.'
+                }
+            ]
+        },
+        'secondary_block': {
+            'name': 'JUMP',
+            'focus': 'Fast & springy jumping',
+            'duration': '10 mins',
+            'activities': [
+                {
+                    'name': 'Skills — Pogos',
+                    'description': 'Participants spring up and down on the spot and count how many jumps they do in 20 seconds. Repeat for jumping back and forth over a line or cone, then side to side (lateral) pogos.'
+                },
+                {
+                    'name': 'Jump and Land Variations',
+                    'description': 'Set out hoops and coloured marker dots with plenty of space to jump and land easily. Use a 2-foot jump and land and increase distance between hoops and dots to increase difficulty. To encourage a higher jump, use 15cm or 30cm hurdles.\n\nCHANGE IT: single leg take-off, 2 feet landing; double leg take-off, single leg landing.'
+                },
+                {
+                    'name': '3 Jumps — How Far Can You Go?',
+                    'description': 'Each participant gets 3 jumps and tries to get as far as possible. Encourage "jet wings" (arm swing) to increase distance and a "motorbike" landing (arms out front, hips down).'
+                }
+            ]
+        },
+        'coaching_cues': [
+            'Ladder — fast feet, fast arms and low knees',
+            'Tall Hurdles (walking) — toes up, knees up and use your arms',
+            'Tall Hurdles (running) — fast arms and knees up, pump your arms the whole way',
+            'Low hurdles — short fast arms and run over fast',
+            'Hoops — drive your arms and bring knees up to your belly button',
+            'Sprints — head still, short fast arms and fast feet. Look up and run straight. Pump your elbows back past your hips.',
+        ],
+        'coach_run_sheet': [
+            'Coach 1 — Leads the warmup game, provides instruction, calls end to each round',
+            'Coach 2 — Observes that players are following the rules, helps with timeouts for players to tuck in tags',
+            'Coach 1 — Instructs the key movements for each drill and calls each athlete\'s turn',
+            'Coach 2 — Demonstrates the drills, provides feedback on form and execution, realigns equipment',
+            'Pack up: Coach 1 marshals students, collects bags and supervises until parent pickup. Coach 2 packs all equipment.'
+        ],
+        'resources': []
+    },
+    # ── Week 2 — NEW Term 2 ───────────────────────────────────────────────
+    {
+        'week': 2,
+        'title': 'Cross Country Intro, Tempo Sandwich & Power Throw',
+        'duration': '60 mins',
+        'group': 'Emerging Athletes — Grade 3 to Grade 6',
+        'equipment': 'Coaches bag, agility ladder, hurdles of varying heights, soft shot put or 1kg med ball',
+        'warmup': {
+            'name': 'Snowball Tag',
+            'duration': '6 mins',
+            'description': 'One player starts with a tennis ball — they are "it". Players move in random directions in a marked area to avoid being tagged. Players who are tagged receive a tennis ball from the coach and are also it. Start with walking, then change locomotion several times (skipping, lateral movements, running). Play until only one player is left without a tennis ball.',
+            'coaching_notes': 'Alternative: Rob the Nest — mark a large circle with cones and use coloured tennis balls that students try to take from each other\'s nest.'
+        },
+        'main_block': {
+            'name': 'RUN',
+            'focus': 'Cross country running and tempo endurance',
+            'duration': '25 mins',
+            'activities': [
+                {
+                    'name': 'Skills — Weaving and Agility Circuit',
+                    'description': 'Set up a circuit of 5 stations: ladders, weaving cones, hurdles of varying heights, dodge and weave cones, skater hop hoops. 3-4 participants at each station. Participants have 3-4 turns at each station then move to the next.'
+                },
+                {
+                    'name': 'Activity — Cross Country Intro',
+                    'description': 'From a common starting point, participants run at a steady pace around the school XCR course. The goal is to complete 2 laps or 10 minutes without stopping. Rest is half the time run. Time each participant for their 2nd lap and encourage them for effort. 3rd lap they aim to run to beat their time or get close to it.\n\nEncourage steady, relaxed running.'
+                },
+                {
+                    'name': 'Activity — Tempo Sandwich',
+                    'description': 'Participants run 1 lap at a steady pace, then have 2 minutes rest and run 4 × 30 sec ON/OFF, 2 minutes rest and then run 1 lap at a steady pace to complete the "sandwich".\n\nBuild up to 2 laps (5 mins) for a bigger "sandwich."'
+                }
+            ]
+        },
+        'secondary_block': {
+            'name': 'THROW',
+            'focus': 'Power & push throw with leg drive',
+            'duration': '15 mins',
+            'activities': [
+                {
+                    'name': 'Skills — Power Throw',
+                    'description': 'Set up a throwing area. Pair participants, each pair with a soft shot put or 1kg med ball. Demonstrate the power position for throwing and explain the importance of leg drive.\n\nDemonstrate the following throws: bucket, push, overhead, backward overhead and rotation. Allow participants to have multiple throws after each demonstration. Throwers may only throw and collect on the coach\'s command.'
+                },
+                {
+                    'name': 'Activity — Throw for Points',
+                    'description': 'Set up a throwing area with zones worth different points. The zone closest is worth the least, the zone furthest away is worth the most. Participants are grouped into three teams. Each participant gets three throws using only the throws taught in Power Throw. The aim is to get maximum points for your team.'
+                }
+            ]
+        },
+        'coaching_cues': [
+            'Ladder — fast feet, fast arms and low knees',
+            'Tall Hurdles (walking) — toes up, knees up and use your arms',
+            'Cross country — judge your pace and run smooth. Relaxed shoulders and breathing, head still. Run with a partner and work together.',
+            'Tempo Sandwich — run steady for the first lap, then fast bursts in the middle, steady again to finish.',
+            'Power Throw — bean bag or shot put into neck, high elbow, strong push until arm is straight out in front.',
+            '"Point your arm out in front, strong push past your nose."',
+            'Throwers may only throw and collect on the coach\'s command.'
+        ],
+        'coach_run_sheet': [
+            'Coach 1 — Leads the warmup game, provides instruction, calls end to each round, enforces rules',
+            'Coach 2 — Observes that players are following the rules, throws balls to tagged players',
+            'Coach 1 — Instructs key movements for each drill, calls each athlete\'s turn',
+            'Coach 2 — Demonstrates drills, provides feedback on form and execution, realigns equipment',
+            'Coach 2 — Packs up equipment to clear the space',
+            'Coach 1 (Cross Country) — Explains course and pairs students by ability, times laps',
+            'Coach 2 (Cross Country) — Runs with the group, provides encouragement and feedback',
+            'Coach 1 (Tempo Sandwich) — Has the stopwatch and whistle to monitor intervals and recovery time',
+            'Coach 2 (Tempo Sandwich) — Runs with the students, provides encouragement during recovery',
+            'Coach 2 (Throws) — Sets out the cones, hoops and buckets for scoring zones, resets equipment',
+            'Coach 1 (Throws) — Explains and demonstrates throwing position and actions',
+            'Pack up: Coach 1 marshals students and supervises until parent pickup. Coach 2 packs all equipment.'
+        ],
+        'resources': []
+    },
+    # ── Week 3 — NEW Term 2 ───────────────────────────────────────────────
+    {
+        'week': 3,
+        'title': 'Hill Efforts, Surge & Pass, Jump',
+        'duration': '60 mins',
+        'group': 'Emerging Athletes — Grade 3 to Grade 6',
+        'equipment': 'Coaches bag, 15cm hurdles, hoops, coloured marker dots',
+        'warmup': {
+            'name': 'Flip It + Balance Games (Hoop Stretch)',
+            'duration': '6 mins',
+            'description': 'Flip It: Divide into 2 groups. Each player has a cone. One group places cones right way up (Hats), the other places them upside down (Cups). On the coach\'s command, participants move around the marked area trying to flip the other group\'s cones. Play for 60 seconds, stop and count. Whichever team has the most in their position wins. Play several times using different movement patterns.\n\nHoop Stretch: Players stand in a hoop. Make a body position with both feet inside and both arms outside. Hold for a set time. CHANGE IT: 2 hands and 1 foot on the floor; 1 hand and 2 feet on the floor; 1 hand and 1 foot off the floor. Vary hold time 5–30 seconds.',
+            'coaching_notes': 'Coach 1 leads Flip It and calls end to each round. Coach 2 observes rules and helps count cones. Coach 2 leads Hoop Stretch — both coaches provide correction and feedback.'
+        },
+        'main_block': {
+            'name': 'RUN',
+            'focus': 'Hill efforts and surge/pass tactics',
+            'duration': '25 mins',
+            'activities': [
+                {
+                    'name': 'Activity — Hill Efforts',
+                    'description': 'Participants pair up and stand opposite each other, approx. 1m apart, next to a cone. Upon the coach\'s command, participants run up the hill to their end cone and walk down the stairs and jog back to the start and repeat the run. Their next recovery is walking back + 1 minute rest. Complete 4 efforts.'
+                },
+                {
+                    'name': 'Activity — Partner Chase: Surge and Pass',
+                    'description': 'Place a line of cones marking a start point, then a line of cones at 10m from the start. Participants pair up — one is the chaser and must catch and go past their opponent before the finish cone. Swap chaser each rep.\n\nCHANGE IT: Set up for bend running and longer distances or hill reps and change chase distance.'
+                }
+            ]
+        },
+        'secondary_block': {
+            'name': 'JUMP',
+            'focus': 'Jump and land, bounding, hop-step-jump',
+            'duration': '15 mins',
+            'activities': [
+                {
+                    'name': 'Skills — Jump and Land',
+                    'description': 'Jump over 15cm hurdles, hops, lateral jumps — encourage a stable "hips down" landing to stick it.\n\nProgression: single leg take-off to 2 feet landing; 2 feet take-off to single leg landing.'
+                },
+                {
+                    'name': 'Activity — Bounding Hoops',
+                    'description': 'Set up 2-3 lines of 3-4 hoops and coloured marker dots, making each subsequent line further apart to increase difficulty. Participants bound through the hoops. Cues: "drive knee to the sky" and "drive the arm stronger and longer" to encourage a stronger and further bound.'
+                },
+                {
+                    'name': 'Activity — Hop, Step and Jump',
+                    'description': 'Each participant has a hurdle, dot and hoop which they place in order in front of them, each about 1m apart. Standing behind the hurdle, the participant hops over the hurdle, bounds to the dot, and lands in the hoop. Increase the distances between hurdle, dot and hoop — keep them approximately equal apart.'
+                }
+            ]
+        },
+        'coaching_cues': [
+            'Hill Efforts — drive your arms and knees. Short strong strides up the hill. Walk and jog back for full recovery.',
+            'Surge and Pass — when you make your surge, pump the arms hard and lift the knees. Hold your form even when tired.',
+            'Bounding Hoops — encourage strong arm and knee drive. Toe and knee come up together. Push strong to the middle of the hoop.',
+            'Multi-jumps — jump and land on 2 feet; jump from 2 feet and land on 1. Side-to-side jumps along the yellow line.',
+            'Equipment — use dots, hoops, 15cm hurdles, cones and ladder'
+        ],
+        'coach_run_sheet': [
+            'Coach 1 — Leads Flip It warmup, provides instruction, calls end to each round, checks rules',
+            'Coach 2 — Observes rules, helps count cones',
+            'Coach 2 — Leads Hoop Stretch, both coaches provide correction and feedback',
+            'Coach 2 — Packs up equipment to clear the space',
+            'Coach 1 (Hill Efforts) — Demonstrates effort, explains the recovery walk, times rest',
+            'Coach 2 (Hill Efforts) — Encourages athletes during efforts, ensures safe descent',
+            'Coach 1 (Surge & Pass) — Starts pairs, instructs rules, judges surge distance',
+            'Coach 2 (Surge & Pass) — Ensures students run fully to end cones, swaps roles fairly',
+            'Coach 2 (Jumps) — Sets out cones, hoops and hurdles for jumping zones with wider spacing for each line',
+            'Coach 1 (Jumps) — Explains and demonstrates jumping positions and actions',
+            'Pack up: Coach 1 marshals students and supervises until parent pickup. Coach 2 packs all equipment.'
+        ],
+        'resources': [
+            {'name': 'Flip It activity sheet', 'url': 'https://www.sportaus.gov.au/__data/assets/pdf_file/0009/703917/Flip-it.pdf'},
+            {'name': 'Flip It video', 'url': 'https://youtu.be/MdZSmrxlbxM'},
+            {'name': 'Hoop Stretch activity sheet', 'url': 'https://www.sportaus.gov.au/__data/assets/pdf_file/0004/703939/Hoop-stretch.pdf'}
+        ]
+    },
+    # ── Week 4 — NEW Term 2 ───────────────────────────────────────────────
+    {
+        'week': 4,
+        'title': 'Fartlek Running, Speedmakers & Hoop Throw',
+        'duration': '60 mins',
+        'group': 'Emerging Athletes — Grade 3 to Grade 6',
+        'equipment': 'Coaches bag, relay batons, flat hoops / hula hoops, stopwatch',
+        'warmup': {
+            'name': 'Shuttle Relay + Reaction Games',
+            'duration': '15 mins',
+            'description': 'Shuttle Relay: Place 2 lines of marker cones 15m apart. Groups of approx. 4, with 2 at each cone. Coach designates different activities between cones: skipping, side skipping, skipping for height, skipping backwards, knees-up running. Pass baton between team members. Continuous relay for 5-6 minutes.\n\nReaction Games — Heads, Shoulders, Knees, Toes, CONE!! Participants stand along a line of cones with a partner. The coach calls different body parts (both hands touch). Participants aim to be first to grab the cone! Make sure students stand up straight in the Head and Shoulders position.',
+            'coaching_notes': 'For Emerging — move to "arm straight back, behind your back" and "call to run" receive for baton changes.'
+        },
+        'main_block': {
+            'name': 'RUN',
+            'focus': 'Intro to Fartlek running and pace variation',
+            'duration': '25 mins',
+            'activities': [
+                {
+                    'name': 'Activity — Tempo Run',
+                    'description': 'Participants start with run 100m, walk 100m and run at an even pace for 2 laps. Extend this to Run 200m, jog 100m, walk 100m for 3 laps.'
+                },
+                {
+                    'name': 'Activity — Fartlek Intro',
+                    'description': 'Participants complete 30 secs ON, 30 secs off for 4-5 minutes. ON = run fast. OFF = jog or walk. Encourage athletes to find a rhythm rather than sprint and collapse.'
+                },
+                {
+                    'name': 'Activity — Speedmakers',
+                    'description': 'Sprint for 10 secs, jog for 20 secs, walk for 30 secs × 5 (5 minutes total), continuously around the track or oval. Encourage athletes to really sprint during the sprint phase, not just run fast.'
+                }
+            ]
+        },
+        'secondary_block': {
+            'name': 'THROW',
+            'focus': 'Rotational (sling) throwing for distance',
+            'duration': '10 mins',
+            'activities': [
+                {
+                    'name': 'Activity — Hoop Throw',
+                    'description': 'Participants throw flat hoops or hula hoops using a sling throw for distance. Set up zones in the throwing area with a points system (closest = 5 points, furthest = 20 points). Participants throw one at a time when their name is called, to allow for instruction and correction. One coach instructs, the other stands in the throwing area to give feedback on release. Collect on the coaches "Collect" instruction.\n\nTowards the end, all participants throw on a "1, 2, 3 Throw" command to get more turns practising technique.'
+                }
+            ]
+        },
+        'coaching_cues': [
+            'Fartlek — find a rhythm. ON = run purposefully fast, OFF = recover with a jog or walk, don\'t stop completely.',
+            'Speedmakers — really sprint during the 10 secs. The jog and walk are your reward. Count the seconds.',
+            'Sling throw — grip the ring or hoop with knuckles up. Make a T with your arms and feet behind the line. Swing the hoop up to your other hand. 1-2-3 Throw!!',
+            'Shuttle Relay (Emerging) — arm straight back, behind your back, and "call to run" receive.',
+            'Sprints — head still, short fast arms and fast feet. Look up and run straight. Pump your arms and elbows back past your hips.'
+        ],
+        'coach_run_sheet': [
+            'Coach 1 — Leads Reaction Games warmup, provides instruction, calls each body part',
+            'Coach 2 — Observes fairness and rules, resets cones',
+            'Coach 1 — Leads Shuttle Relay, assigns teams, explains and demonstrates baton change',
+            'Coach 2 — Assists to keep teams in order, cues for how to pass the baton',
+            'Coach 1 (Fartlek) — Explains fartlek concept, uses stopwatch and whistle to call intervals',
+            'Coach 2 (Fartlek) — Runs with the group, provides encouragement, notes athletes\' effort levels',
+            'Coach 1 (Speedmakers) — Calls and times each phase (sprint/jog/walk), counts reps',
+            'Coach 2 (Speedmakers) — Runs alongside or observes, provides feedback on sprint effort',
+            'Coach 2 (Throws) — Sets out cones, hoops and witches\' hats for throwing zones',
+            'Coach 1 (Throws) — Explains and demonstrates throwing action, calls students to throw and collect',
+            'Pack up: Coach 1 marshals students and supervises until parent pickup. Coach 2 packs all equipment.'
+        ],
+        'resources': []
+    },
+    # ── Week 5 — same as Term 1 ──────────────────────────────────────────
+    {
+        'week': 5,
+        'title': 'Hurdle Rhythm, Technique & Relay Baton Changes',
+        'duration': '60 mins',
+        'group': 'Emerging Athletes — Grade 3 to Grade 6',
+        'equipment': 'Coaches bag, adjustable hurdles (50-60cm), relay batons, agility ladder, bounding hoops',
+        'warmup': {
+            'name': 'Paired Run + Run Drill Circuit',
+            'duration': '10 mins',
+            'description': 'Paired Run: Set up a cross country course in the space available — include hills if possible. Pair participants of similar ability. Each pair completes a 6-minute easy run around the cross country course.\n\nRun Drill Circuit / Obstacle Course: Set out agility ladder, 30cm hurdles, witches\' hats, bounding hoops and 15cm hurdles as per the Run Drill Circuit diagram.',
+            'coaching_notes': 'Coach 1 explains the course and pairs students by similar ability. Runs with the group towards the front/middle. Coach 2 runs towards the back and provides encouragement for slower runners.'
+        },
+        'main_block': {
+            'name': 'RUN',
+            'focus': 'Hurdle rhythm and technique',
+            'duration': '25 mins',
+            'activities': [
+                {
+                    'name': 'Skills — Hurdle Running',
+                    'description': 'Set up two lines of hurdles approx. 50-60cm in height, with 4 hurdles in each line. Space hurdles 5-8m apart. Participants run over the hurdles. Encourage fast, relaxed running, maintaining speed and attacking the hurdle. Walk back to start between each run. Change hurdle heights and spacing to suit all participants. Use a coloured cone to assist getting the lead leg down "inside the box."'
+                },
+                {
+                    'name': 'Activity — Hurdle Relay',
+                    'description': 'Set up two lines of hurdles at the same height and spacing. Divide into two groups. The first participant in each group races over the hurdles, runs around a cone marker and sprints back to pass the baton to the next participant. Continue until all have raced. Run multiple times.'
+                }
+            ]
+        },
+        'secondary_block': {
+            'name': 'RELAY',
+            'focus': 'Baton changes and teamwork',
+            'duration': '15 mins',
+            'activities': [
+                {
+                    'name': 'Skills — Relay Changes',
+                    'description': 'Demonstrate a relay baton change. Pair participants and practise relay changes. Gather into groups of four, all facing the same way. The baton starts in the right hand of the person at the back. Pass the baton down the middle of the line from right hand to left hand.'
+                },
+                {
+                    'name': 'Activity — Quick Changes',
+                    'description': 'Set up 2-3 relay changeover zones with marker cones 20-30m apart. Teams must change baton in the changeover zone. The relay continues until all members have changed at least once. Run at high speed.\n\nUp-and-back variation: last runners sprint straight back while others wait at their cone.'
+                }
+            ]
+        },
+        'coaching_cues': [
+            'Emerging hurdles — strong push off the take-off leg. Bring knee up to clear the hurdle. Pull the back leg through.',
+            'Relay changes (Emerging) — arm straight back, behind your back. "Call to run" receive. Use 3-4 changeover boxes per team.',
+            'Show the difference between an early "hand" call and a late one.',
+            'Sprints — head still, short fast arms and fast feet. Look up and run straight. Pump your arms and elbows back past your hips.'
+        ],
+        'coach_run_sheet': [
+            'Coach 1 (Paired Run) — Explains course and pairs students by similar ability. Runs front/middle of group.',
+            'Coach 2 (Paired Run) — Runs towards the back, provides encouragement for slower runners',
+            'Coach 1 — Explains each running drill and what proficiency looks like',
+            'Coach 2 — Demonstrates each drill, reinforces instruction via cues and feedback',
+            'Coach 1 (Hurdles) — Demonstrates an effective lead leg and trail leg action. Provides corrective feedback.',
+            'Coach 2 (Hurdles) — Sets out hurdles, resets any that get knocked over, provides feedback on performance',
+            'Coach 1 (Relays) — Works with Coach 2 to demonstrate an effective baton pass and "hand" call',
+            'Coach 2 (Relays) — Provides feedback on baton change performance and suggests adjustments',
+            'Pack up: Coach 1 marshals students and supervises until parent pickup. Coach 2 packs all equipment.'
+        ],
+        'resources': []
+    },
+    # ── Week 6 — NEW Term 2 ───────────────────────────────────────────────
+    {
+        'week': 6,
+        'title': 'Endurance Challenge (Full Age), Modified Mona & High Jump',
+        'duration': '60 mins',
+        'group': 'Emerging Athletes — Grade 3 to Grade 6',
+        'equipment': 'Coaches bag, Plyo Pole kit, 12 hurdles (for wicket runs), stopwatch',
+        'warmup': {
+            'name': 'Run Skills & Drills (Wicket Runs)',
+            'duration': '15 mins',
+            'description': 'Over 10-15m — easy skipping, skipping for height, skipping for distance, side skip, backwards skip. \'A\' Skip ×2, Butt Kickers ×2, High knee running with fast arms, Scissors with long strides and strong arms.\n\nWicket Runs: Mark out wicket runs with 12 hurdles. Start with wickets 3 feet apart and progress to 3.5 and 4 feet apart to encourage a faster running action and stronger foot push off the ground.',
+            'coaching_notes': 'Coach 1 explains each running drill and what proficiency looks like. Coach 2 demonstrates each drill and reinforces the main instruction via cues and feedback.'
+        },
+        'main_block': {
+            'name': 'RUN',
+            'focus': 'Endurance challenge and Mona Fartlek',
+            'duration': '25 mins',
+            'activities': [
+                {
+                    'name': 'Activity — Endurance Challenge (Full Age)',
+                    'description': 'Participants are required to continuously run for a time equivalent to their age. E.g., a 9-year-old runs for 9 minutes. Students achieve 10 points for each lap they complete without walking.\n\nMark out a cross-country course within the available space. Jog the course as a group first so participants understand the comfortable pace. Start older participants first so everyone finishes at the same time.\n\nProgression: Students run for 10 minutes without walking.'
+                },
+                {
+                    'name': 'Activity — Modified Mona Fartlek',
+                    'description': '2 × 60 sec ON/OFF, 4 × 30 sec ON/OFF, 4 × 15 sec ON/OFF. Total time = 10 minutes.\n\nON = run fast. OFF = jog recovery. Advanced athletes progress to the complete "Mona" = 20 minutes.\n\nAlternative if students are fatigued: take students through a cooldown and extended static stretching routine and speak about recovery, re-fuelling and hydration practices.'
+                }
+            ]
+        },
+        'secondary_block': {
+            'name': 'SCISSOR JUMP / HIGH JUMP',
+            'focus': 'High jump technique and personal best heights',
+            'duration': '10 mins',
+            'activities': [
+                {
+                    'name': 'Activity — High Jump (Scissor Technique)',
+                    'description': 'Mark out 2 High Jump activities. The 2nd station starts at a higher height for stronger and more advanced athletes.\n\nSet up plyometric poles with the crossbar at a low height. Mark out a short run-up with cones or dots on both sides so participants can practise from either side. As participants clear heights, gradually move the bar up. Encourage knee drive with the leg closest to the bar, and hips moving vertically.\n\nChange the bar height so that all participants jump at a height suitable to their ability — ensure multiple turns.'
+                }
+            ]
+        },
+        'coaching_cues': [
+            'ACTIVE — run for your age in minutes as a team (2 teams). 10 points per lap completed without walking.',
+            'ACCELERATE — run for your age in minutes with 3 teams at a slightly faster pace.',
+            'Mona Fartlek — ON means run fast with purpose. OFF means recover, not stop. Control the effort.',
+            'Wicket Runs — quick step-over running action. Fast feet, strong push off the ground.',
+            'Scissor Jump — the leg closest to bar drives up bent, straightens as they step over. Push off back leg and swing it through (like hurdles).',
+            'The bar goes up a notch if cleared — ensure athletes have multiple turns to learn the action.'
+        ],
+        'coach_run_sheet': [
+            'Coach 1 — Explains each running drill and what proficiency looks like',
+            'Coach 2 — Demonstrates each drill, reinforces instruction via cues and feedback',
+            'Coach 1 (Endurance) — Assigns running time for each student based on their age, calls out times via stopwatch',
+            'Coach 2 (Endurance) — Runs in the middle and towards the back, provides feedback and encouragement',
+            'Coach 1 (Mona Fartlek) — Assigns partners, keeps track of intervals and calls out next rep',
+            'Coach 2 (Mona Fartlek) — Jogs with participants and encourages or modifies length of effort',
+            'Coach 1 (High Jump) — Demonstrates scissor technique or uses Coach 2 as model. Observes from the bar, resets bar, changes heights.',
+            'Coach 2 (High Jump) — Runs the 2nd High Jump zone, resets bar and changes heights',
+            'Pack up: Coach 1 marshals students and supervises until parent pickup. Coach 2 packs all equipment.'
+        ],
+        'resources': [
+            {'name': 'Scissor High Jump video', 'url': 'https://youtu.be/XE54eKUbWc8'},
+            {'name': 'How to teach Scissors High Jump', 'url': 'https://coachingyoungathletes.com/2016/05/19/how-to-teach-scissors-high-jump-to-young-athletes/'}
+        ]
+    },
+    # ── Week 7 — NEW Term 2 ───────────────────────────────────────────────
+    {
+        'week': 7,
+        'title': 'Hurdle Endurance & Core Fitness',
+        'duration': '60 mins',
+        'group': 'Emerging Athletes — Grade 3 to Grade 6',
+        'equipment': 'Coaches bag, adjustable hurdles (50-60cm), agility ladder, bounding hoops, mat (optional)',
+        'warmup': {
+            'name': 'Paired Run + Run Drill Circuit',
+            'duration': '10 mins',
+            'description': 'Paired Run: Set up a cross country course in the space available — include hills if possible. Pair participants of similar ability. Each pair completes a 6-minute easy run around the cross country course.\n\nRun Drill Circuit / Obstacle Course: Set out agility ladder, 30cm hurdles, witches\' hats, bounding hoops and 15cm hurdles as per the Run Drill Circuit diagram. Alternatively, set up an Obstacle Course with ladder at the start.',
+            'coaching_notes': 'Coach 1 explains the course and pairs students by similar ability. Runs with the group towards the front/middle. Coach 2 runs towards the back and provides encouragement for slower runners.'
+        },
+        'main_block': {
+            'name': 'RUN',
+            'focus': 'Hurdle rhythm, technique and endurance',
+            'duration': '25 mins',
+            'activities': [
+                {
+                    'name': 'Skills — Hurdle Running',
+                    'description': 'Set up two lines of hurdles approx. 50-60cm in height, with 4 hurdles in each line. Space hurdles 5-8m apart. Participants run over the hurdles. Encourage fast, relaxed running, maintaining speed and attacking the hurdle. Walk back to start between each run. Change hurdle heights and spacing to suit all participants. Use a coloured cone to assist getting the lead leg down "inside the box."'
+                },
+                {
+                    'name': 'Activity — Hurdle Endurance',
+                    'description': 'Set up two lines of hurdles at the same height and spacing. Divide participants into two groups. The first participant in each group races over the hurdles, runs around a cone marker, and jogs to the start and goes over the hurdles again, then jogs back — then the next participant goes.\n\nThis encourages athletes to maintain hurdling technique when fatigued later in a race.'
+                }
+            ]
+        },
+        'secondary_block': {
+            'name': 'CORE FITNESS',
+            'focus': 'Building muscle endurance',
+            'duration': '15 mins',
+            'activities': [
+                {
+                    'name': 'Core Circuit — 4-5 Exercises',
+                    'description': '4-5 core exercises done in a circuit with 30 seconds rest between exercises. Choose exercises the students can perform, such as:\n\n• V-Hold\n• Flutter kicks\n• Sit-ups\n• Plank shoulder taps\n• Supermans\n\nYou can add balance squats, bird dogs and "drinking bird" with partner hand taps for fun and variation.\n\nPerform 2-3 rounds with 2 minutes rest between sets.'
+                }
+            ]
+        },
+        'coaching_cues': [
+            'Emerging hurdles — strong push off the take-off leg. Bring knee up to clear the hurdle. Pull the back leg through.',
+            'Hurdle endurance — run fast and quick step over the hurdle. Keep your form even when you\'re tired — that\'s the point.',
+            'Focus on consistency of technique across all hurdles — don\'t slow down between hurdles.',
+            'V-Hold — lift both legs and upper body, balance on your bottom.',
+            'Plank shoulder taps — straight legs, tummy in, butt down, head straight. Tap shoulder without rotating hips.',
+            'Supermans — lie face down and lift both arms and legs at the same time. Hold for 2-3 seconds.',
+            'Sprints — head still, short fast arms and fast feet. Look up and run straight. Pump your arms and elbows back past your hips.'
+        ],
+        'coach_run_sheet': [
+            'Coach 1 (Paired Run) — Explains course and pairs students by similar ability. Runs front/middle of group.',
+            'Coach 2 (Paired Run) — Runs towards the back, encourages slower runners',
+            'Coach 1 — Explains each running drill and what proficiency looks like',
+            'Coach 2 — Demonstrates each drill, reinforces instruction via cues and feedback',
+            'Coach 1 (Hurdles) — Demonstrates lead and trail leg action. Provides corrective feedback.',
+            'Coach 2 (Hurdles) — Sets out hurdles, resets any that get knocked over, provides performance feedback',
+            'Coach 1 (Core Circuit) — Explains and demonstrates each exercise. Mans one station and calls "next station."',
+            'Coach 2 (Core Circuit) — Coaches at one fitness station, demonstrates exercises',
+            'Pack up: Coach 1 marshals students and supervises until parent pickup. Coach 2 packs all equipment.'
+        ],
+        'resources': []
+    },
+    # ── Week 8 — same as Term 1 ──────────────────────────────────────────
+    {
+        'week': 8,
+        'title': 'Hurdle Rhythm (Reinforcement) & Relay Baton Changes',
+        'duration': '60 mins',
+        'group': 'Emerging Athletes — Grade 3 to Grade 6',
+        'equipment': 'Coaches bag, adjustable hurdles (50-60cm), relay batons, agility ladder, bounding hoops',
+        'warmup': {
+            'name': 'Paired Run + Run Drill Circuit',
+            'duration': '10 mins',
+            'description': 'Repeat the warm-up from Week 5. Students should be more confident with the pace and the circuit.\n\nPaired Run: Cross country course including hills if possible. Each pair completes a 6-minute easy run. Push for a slightly faster tempo than Week 5.\n\nRun Drill Circuit / Obstacle Course: Focus this week on quality of movement — not just getting through the circuit.',
+            'coaching_notes': 'Challenge participants to improve their running form and cross country pace compared to Week 5.'
+        },
+        'main_block': {
+            'name': 'RUN',
+            'focus': 'Hurdle rhythm and technique (reinforcement)',
+            'duration': '25 mins',
+            'activities': [
+                {
+                    'name': 'Skills — Hurdle Running',
+                    'description': 'Repeat hurdle running from Week 5. Two lines of hurdles approx. 50-60cm with 4 hurdles spaced 5-8m apart. Focus on improvement from Week 5 — smoother technique, faster approach. Walk back between runs.'
+                },
+                {
+                    'name': 'Activity — Hurdle Relay',
+                    'description': 'Repeat from Week 5. Emphasise smooth baton exchange — the handover should be faster and more confident this week.'
+                }
+            ]
+        },
+        'secondary_block': {
+            'name': 'RELAY',
+            'focus': 'Baton changes and teamwork (reinforcement)',
+            'duration': '15 mins',
+            'activities': [
+                {
+                    'name': 'Skills — Relay Changes',
+                    'description': 'Repeat from Week 5. Groups of four, all facing the same way. Focus on "hand" call timing — early vs late — and how it affects the exchange.'
+                },
+                {
+                    'name': 'Activity — Quick Changes',
+                    'description': 'Repeat from Week 5 with an improvement focus. Push for faster exchanges — athletes should feel the improvement in timing compared to Week 5.'
+                }
+            ]
+        },
+        'coaching_cues': [
+            'Hurdles — notice if you\'re improving from Week 5. Is your knee coming up higher? Is your trail leg swinging through faster?',
+            'Focus on consistency of technique across all 4 hurdles — don\'t slow down between hurdles.',
+            'Relay — faster, more confident baton exchanges this week. The "hand" call should come earlier.',
+            'Emerging relay — arm straight back behind your back and "call to run" receive. Use 3-4 changeover boxes per team.'
+        ],
+        'coach_run_sheet': [
+            'Same structure as Week 5 — shift coaching emphasis to quality and improvement from Week 5 baseline.',
+            'Coach 1 (Paired Run) — Pairs students by ability, runs front/middle of group',
+            'Coach 2 (Paired Run) — Runs towards the back, encourages slower runners to maintain pace',
+            'Coach 1 (Hurdles) — Provides corrective feedback on lead and trail leg action',
+            'Coach 2 (Hurdles) — Resets hurdles, gives performance feedback, notes individual improvements vs Week 5',
+            'Coach 1 (Relays) — Works with Coach 2 to demonstrate baton pass timing improvements',
+            'Coach 2 (Relays) — Provides feedback on baton change performance, suggests zone adjustments',
+            'Pack up: Coach 1 marshals students and supervises until parent pickup. Coach 2 packs all equipment.'
+        ],
+        'resources': []
+    },
+    # ── Week 9 — same as Term 1 ──────────────────────────────────────────
+    {
+        'week': 9,
+        'title': 'Endurance, Curve Running & High Jump (Reinforcement)',
+        'duration': '60 mins',
+        'group': 'Emerging Athletes — Grade 3 to Grade 6',
+        'equipment': 'Coaches bag, Plyo Pole kit, 12 hurdles (for wicket runs)',
+        'warmup': {
+            'name': 'Tennis Ball Toss + Run Skills & Drills',
+            'duration': '15 mins',
+            'description': 'Repeat from Week 6 — participants should be more confident with the throwing and the drill sequence.\n\nTennis Ball Toss: Partners 2m apart. Underarm throw to reach 10 without dropping. Progress: stationary → jogging → jumping → hopping. Increase distance.\n\nRun Skills & Drills: easy skipping, skipping for height, skipping for distance, side skip, backwards skip. \'A\' Skip ×2, Butt Kickers ×2, High knee running with fast arms, Scissors.\n\nWicket Runs: 12 hurdles — start at 3.5 feet apart (wider than Week 6).',
+            'coaching_notes': 'Challenge participants to remember the drill sequence without re-explaining everything. Focus on quality of movement this week.'
+        },
+        'main_block': {
+            'name': 'RUN',
+            'focus': 'Endurance and curve running (reinforcement)',
+            'duration': '25 mins',
+            'activities': [
+                {
+                    'name': 'Activity — Endurance Challenge',
+                    'description': 'Repeat from Week 6. Push participants to beat their Week 6 performance — more laps, less walking.\n\nACTIVE: Run for half your age in minutes as a team (2 teams). 1 point for a half lap, 2 points for a full lap.\nACCELERATE: Same format with 3 teams.'
+                },
+                {
+                    'name': 'Activity — Curve Running',
+                    'description': 'Repeat from Week 6. 2-3 curved lanes with colour-coded cones, maximum 50m. Focus on lean angle and inside arm drive.\n\nBeat Your Partner circle: race to be first through the gate. Team circular relay: each student runs at least twice.'
+                }
+            ]
+        },
+        'secondary_block': {
+            'name': 'SCISSOR JUMP / HIGH JUMP',
+            'focus': 'Technique refinement and personal best heights',
+            'duration': '10 mins',
+            'activities': [
+                {
+                    'name': 'Activity — High Jump (Reinforcement)',
+                    'description': 'Repeat from Week 6. Start each participant at the same height they achieved in Week 6 — challenge them to improve.\n\nMark out 2 stations. Emphasise consistent run-up rhythm and take-off point. Each athlete gets multiple attempts with immediate feedback.'
+                }
+            ]
+        },
+        'coaching_cues': [
+            'Endurance — can you run further or longer than Week 6? Consistent pace, relaxed arms.',
+            'Curve running — lean into the bend, drive the inside arm, look ahead not at your feet. Hug the line.',
+            'High Jump — same approach run every time. Find your take-off spot and trust it.',
+            'Scissor action — leg closest to bar drives up bent, straightens over the bar. Back leg swings through like hurdles.'
+        ],
+        'coach_run_sheet': [
+            'Same structure as Week 6 — emphasis shifts to quality and improvement from Week 6 baseline.',
+            'Coach 1 (Endurance) — Manages timing and scoring, notes improvement vs Week 6',
+            'Coach 2 (Endurance) — Encourages athletes during the run, monitors pace consistency',
+            'Coach 1 (High Jump) — Tracks each athlete\'s Week 6 height and sets bar accordingly',
+            'Coach 2 (High Jump) — Runs the 2nd station, resets bar and changes heights',
+            'Pack up: Coach 1 marshals students and supervises until parent pickup. Coach 2 packs all equipment.'
+        ],
+        'resources': []
+    },
+    # ── Week 10 — same as Term 1 ─────────────────────────────────────────
+    {
+        'week': 10,
+        'title': 'COMPETITION DAY 🏆',
+        'duration': '60 mins',
+        'group': 'Emerging Athletes — Grade 3 to Grade 6',
+        'equipment': 'Coaches bag, stopwatches, measuring tapes, recording sheets, portable speaker (Boomie)',
+        'warmup': {
+            'name': 'Fun & Motivating Warm-Up',
+            'duration': '10 mins',
+            'description': 'Bring the Boomie and pump up the vibe!!! Skipping and running drill warm-up, run-throughs and fast start practice.\n\nCoach Motivation Talk — remind athletes of how much they\'ve improved over the term. This is their day to show what they\'ve got.',
+            'coaching_notes': 'Energy and atmosphere are everything on Comp Day. Play upbeat music. Get the athletes excited. Keep the motivation talk short but personal — mention specific improvements you\'ve noticed in individual athletes.'
+        },
+        'main_block': {
+            'name': 'RUN — COMPETITION & READY TO RACE',
+            'focus': 'Sprint competition and endurance challenge',
+            'duration': '25 mins',
+            'activities': [
+                {
+                    'name': '100m Sprint — Heats and Final',
+                    'description': 'Run heats of 100m sprint. First 2-3 per heat progress to the Final. Record all times. Celebrate every finisher.'
+                },
+                {
+                    'name': '200m Sprint — Heats and Final',
+                    'description': 'Run heats of 200m sprint. First 2 per heat progress to the Final. Record all times.'
+                },
+                {
+                    'name': 'Rest and Drink Break',
+                    'description': 'Mandatory break between sprint events and endurance/team events. Ensure all participants hydrate.'
+                },
+                {
+                    'name': '2 Lap — 800m in 5 Mins or Under Challenge',
+                    'description': '2 laps of approximately 400m each. Complete in 5 minutes or under. Running for 5 minutes without stopping also counts. Celebrate both fast finishers and those who kept going.'
+                },
+                {
+                    'name': 'Team Circular Relay',
+                    'description': 'Circular relay course with 4 changeover zones. Groups of 4. Each group has a different coloured sash and baton. Run as a 1-lap race.'
+                }
+            ]
+        },
+        'secondary_block': {
+            'name': 'JUMP — PERFORMING A LEGAL JUMP',
+            'focus': 'Long jump and high jump competition',
+            'duration': '10 mins',
+            'activities': [
+                {
+                    'name': 'Long Jump',
+                    'description': 'Use different coloured cones to mark 1m and 20cm intervals as a distance guide. Each participant gets 3 jumps and records their best.'
+                },
+                {
+                    'name': 'High Jump',
+                    'description': '2 high jump stations running simultaneously. Each participant gets 3 attempts at each height. Miss all 3 = out. Record height number.'
+                }
+            ]
+        },
+        'coaching_cues': [
+            'Sprint — arms pumping, eyes forward, drive all the way through the finish line.',
+            '800m — find a pace they can hold. Encourage, don\'t push. Finishing is the win.',
+            'Long Jump — legal jump = feet behind the line. Jet wings and motorbike landing.',
+            'High Jump — same approach run they\'ve been practising. Trust the run-up. Scissor action.'
+        ],
+        'coach_run_sheet': [
+            'Coach 1 — Manages all sprint timing, calls heats and finals, records all results',
+            'Coach 2 — Manages athlete safety at starting line and finish, celebrates every finisher',
+            'Both coaches — 800m: position at different points on the track to encourage athletes',
+            'Coach 1 — Manages long jump: judges legal jumps, records distances',
+            'Coach 2 — Manages high jump: adjusts bar heights, records performances',
+            'Pack up: Coach 1 marshals students and supervises until parent pickup. Coach 2 packs all equipment.'
+        ],
+        'resources': []
+    }
+]
+
+# ============================================================
+# Foundation Program — Term 2 Lesson Plans (Endurance Focus)
+# ============================================================
+# Week 2 uploaded. Additional weeks to be added as content is provided.
+
+FOUNDATION_T2_LESSON_WEEKS = [
+    {
+        'week': 2,
+        'title': 'Cross Country Run, Weaving & Bean Bag Throw',
+        'duration': '50 mins',
+        'group': 'Foundation Athletes — Prep to Grade 2',
+        'equipment': 'Coaches bag, agility ladder, hurdles of varying heights, bean bags (2 per athlete), marker cones, hoops or buckets',
+        'warmup': {
+            'name': 'Snowball Tag',
+            'duration': '6 mins',
+            'description': 'One player starts with a tennis ball — they are "it". Players move in random directions in a marked area to avoid being tagged. Players who are tagged receive a tennis ball from the coach and are also it. Start with walking, then change locomotion several times (skipping, lateral movements, running). Play until only one player is left without a tennis ball.',
+            'coaching_notes': 'Alternative: Rob the Nest — mark a large circle with cones and use coloured tennis balls that students try to take from each other\'s nest.'
+        },
+        'main_block': {
+            'name': 'RUN',
+            'focus': 'Cross country running and pace judgement',
+            'duration': '25 mins',
+            'activities': [
+                {
+                    'name': 'Skills — Weaving and Agility Circuit',
+                    'description': 'Set up a circuit of 5 stations: ladders, weaving cones, hurdles of varying heights, dodge and weave cones, skater hop hoops. 3-4 participants at each station. Participants have 3-4 turns at each station then move to the next.'
+                },
+                {
+                    'name': 'Activity — Cross Country Run (Judge Your Pace)',
+                    'description': 'From a common starting point, participants run at a steady pace around the school XCR course. The goal is to complete 1 lap without stopping. Rest is double the time run.\n\nTime each participant for their 2nd lap and encourage them for effort. 3rd lap they aim to run to beat their time or get close to it.\n\nEncourage steady, relaxed running.'
+                }
+            ]
+        },
+        'secondary_block': {
+            'name': 'THROW',
+            'focus': 'Multiple throwing actions for accuracy',
+            'duration': '15 mins',
+            'activities': [
+                {
+                    'name': 'Skills — Bean Bag Throw',
+                    'description': 'Set up a large throwing area with marker cones as "scoring zones" (e.g. Red cones = 5 points, Blue = 10). Participants have 2 bean bags each and stand behind a cone at the edge of the throwing area.\n\nThe coach demonstrates 5 throws: bucket, chest pass, overhead, reverse bucket and single arm. Have participants throw when their name is called and observe for correct throwing action. Provide corrective feedback or further demonstration if needed.\n\nTowards the end, all participants throw on the coach\'s command and collect on the coach\'s command. Ensure participants practise each throw multiple times.'
+                },
+                {
+                    'name': 'Activity — Bucket and Hoop Target Throw',
+                    'description': 'Set up hoops or buckets in your throwing area. Create a points system where red hoops are worth 5 points, buckets are worth 10 points, etc.\n\nGroup participants in groups of 3. Each team has 3 bean bags. One participant from each group throws at the same time and must score as many points as they can, only choosing the throws they have practised. Points are scored if the bean bag lands in the hoop/bucket. Winning team has the greatest number of points after each participant has thrown.\n\nProgression: Use a stand or pole to elevate the hoop or bucket as a more difficult target and "Bonus points."'
+                }
+            ]
+        },
+        'coaching_cues': [
+            'Cross country — judge your pace and run smooth. Relaxed shoulders and breathing, head still. Run with a buddy.',
+            'Ladder — fast feet, fast arms and low knees',
+            'Tall Hurdles (walking) — toes up, knees up and use your arms',
+            'Tall Hurdles (running) — fast arms and knees up, pump your arms the whole way',
+            'Rob the Nest (alternative warmup) — mark a large circle with cones and use coloured tennis balls.',
+            'Bean bag throw — bean bag into neck, high elbow, strong push until arm is straight out in front.',
+            '"Point your arm out in front, strong push past your nose."',
+            'Throwers may only throw and collect on the coach\'s command.'
+        ],
+        'coach_run_sheet': [
+            'Coach 1 — Leads the warmup game, provides instruction, calls end to each round, throws ball to tagged players, enforces rules',
+            'Coach 2 — Observes that players are following the rules and throws balls to tagged players',
+            'Coach 1 — Instructs the key movements for each drill and calls each athlete\'s turn',
+            'Coach 2 — Demonstrates drills, provides feedback on form and execution, realigns equipment',
+            'Coach 2 — Packs up the equipment to clear the space',
+            'Coach 1 (Weaving drill) — Starts partners, instructs running arms and weaving movement',
+            'Coach 2 (Weaving drill) — Ensures students run around end cone, provides encouragement and feedback',
+            'Coach 1 (Cross Country) — Explains course, times laps, calls out encouragement and splits',
+            'Coach 2 (Cross Country) — Runs with students, provides encouragement and feedback',
+            'Coach 2 (Throws) — Sets out the cones, hoops and buckets for scoring zones, resets equipment',
+            'Coach 1 (Throws) — Explains and demonstrates throwing position and actions',
+            'Pack up: Coach 1 marshals students and supervises until parent pickup. Coach 2 packs all equipment.'
+        ],
+        'resources': [
+            {'name': 'Hit the Target activity sheet', 'url': 'https://www.sportaus.gov.au/__data/assets/pdf_file/0011/703937/Hit-the-target.pdf'},
+            {'name': 'Long Throw activity sheet', 'url': 'https://www.sportaus.gov.au/__data/assets/pdf_file/0011/703955/long-throw.pdf'}
+        ]
+    }
+]
+
+# ============================================================
 # Career Progression — Level Pathway Guides
 # ============================================================
 

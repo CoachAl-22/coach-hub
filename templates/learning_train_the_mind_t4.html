@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+{% block title %}Train the Mind — Term 4{% endblock %}
+{% block page_title %}Train the Mind — Term 4{% endblock %}
+
+{% block top_actions %}
+<a href="{{ url_for('learning_train_the_mind_t4_pdf') }}" class="btn btn-secondary btn-sm mind-pdf-top">Download PDF</a>
+{% endblock %}
+
+{% block content %}
+<style>
+.mind-guide {
+    width: 100%;
+    max-width: 920px;
+    min-width: 0;
+    margin: 0 auto;
+    overflow-wrap: anywhere;
+}
+.mind-guide * { min-width: 0; }
+.mind-hero {
+    background: linear-gradient(135deg, rgba(139,92,246,.18), rgba(242,101,34,.12));
+    border: 1px solid rgba(139,92,246,.35);
+    border-radius: 14px;
+    padding: 1.35rem;
+    margin-bottom: 1rem;
+}
+.mind-eyebrow { color: #a78bfa; font-size: .75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.mind-hero h2 { margin: .4rem 0 .55rem; font-size: 1.35rem; }
+.mind-hero p { margin: 0; color: var(--text-muted); line-height: 1.6; }
+.mind-meta { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .9rem; }
+.mind-pill {
+    background: rgba(255,255,255,.06);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: .35rem .65rem;
+    font-size: .76rem;
+    color: var(--text-muted);
+}
+.mind-themes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: .7rem;
+    margin: 1rem 0;
+}
+.mind-theme { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: .9rem; }
+.mind-theme strong { display: block; margin: .2rem 0; font-size: .9rem; }
+.mind-theme span { font-size: .78rem; color: var(--text-muted); line-height: 1.4; }
+.theme-blue { border-top: 3px solid #3498db; }
+.theme-amber { border-top: 3px solid #f0a500; }
+.theme-green { border-top: 3px solid #27ae60; }
+.week-jump {
+    display: flex;
+    gap: .45rem;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    padding: .25rem 0 .8rem;
+    scrollbar-width: thin;
+}
+.week-jump a {
+    flex: 0 0 42px;
+    min-width: 42px;
+    text-align: center;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-muted);
+    padding: .45rem;
+    font-size: .78rem;
+    text-decoration: none;
+}
+.week-jump a:hover { border-color: #8b5cf6; color: var(--text); }
+.mind-section-title { margin: 1.35rem 0 .7rem; font-size: 1.05rem; }
+.week-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid #3498db;
+    border-radius: 11px;
+    padding: 1rem;
+    margin-bottom: .8rem;
+    scroll-margin-top: 1rem;
+}
+.week-card.expect { border-left-color: #f0a500; }
+.week-card.momentum { border-left-color: #27ae60; }
+.week-head { display: flex; justify-content: space-between; align-items: flex-start; gap: .75rem; margin-bottom: .8rem; }
+.week-number { color: #a78bfa; font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+.week-title { font-size: 1.05rem; font-weight: 700; margin-top: .15rem; }
+.week-date { color: var(--text-muted); font-size: .78rem; white-space: nowrap; }
+.week-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .65rem; }
+.week-panel { background: var(--surface2); border-radius: 8px; padding: .8rem; }
+.week-panel h4 { margin: 0 0 .35rem; font-size: .76rem; color: #a78bfa; text-transform: uppercase; letter-spacing: .04em; }
+.week-panel p { margin: 0; color: var(--text-muted); font-size: .86rem; line-height: 1.5; }
+.running-cue { grid-column: 1 / -1; border: 1px solid rgba(242,101,34,.3); background: rgba(242,101,34,.08); }
+.running-cue h4 { color: #F26522; }
+.coach-notes {
+    display: grid;
+    grid-template-columns: 1.15fr .85fr;
+    gap: .8rem;
+    margin-top: 1.2rem;
+}
+.note-card { background: var(--surface); border: 1px solid var(--border); border-radius: 11px; padding: 1rem; }
+.note-card h3 { margin: 0 0 .65rem; font-size: 1rem; }
+.note-card ul { margin: 0; padding-left: 1.1rem; color: var(--text-muted); }
+.note-card li { margin-bottom: .6rem; font-size: .86rem; line-height: 1.5; }
+.note-card li:last-child { margin-bottom: 0; }
+.pdf-note {
+    display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+    background: var(--surface2); border-radius: 10px; padding: .9rem 1rem; margin-top: 1rem;
+}
+.pdf-note p { margin: 0; color: var(--text-muted); font-size: .8rem; line-height: 1.45; }
+@media (max-width: 700px) {
+    .mind-pdf-top { display: none; }
+    .mind-themes, .week-grid, .coach-notes { grid-template-columns: 1fr; }
+    .running-cue { grid-column: auto; }
+    .mind-hero { padding: 1.05rem; }
+    .week-card { padding: .9rem; }
+    .week-jump {
+        flex-wrap: wrap;
+        overflow-x: visible;
+    }
+    .week-jump a {
+        flex: 1 1 16%;
+        min-width: 0;
+    }
+    .mind-pill { max-width: 100%; border-radius: 9px; }
+    .week-head { gap: .5rem; }
+    .week-title { font-size: 1rem; }
+    .pdf-note { align-items: flex-start; flex-direction: column; }
+}
+</style>
+
+{% set weeks = [
+    {'n':1,'date':'5 Oct','phase':'nerves','title':'What nerves feel like','chapter':'Ch. 2','foundation':'“Where do you feel butterflies?” Point to tummy, hands and legs. Everyone gets them, even Coach Al at Nationals.','emerging':'Nerves drain energy before the race if we let them. Share Al’s Nationals story.','cue':'Before the first sprint, name one butterfly spot, then go.'},
+    {'n':2,'date':'12 Oct','phase':'nerves','title':'Calm breathing','chapter':'Ch. 3','foundation':'Balloon breaths: blow up a big balloon in the belly, 5 slow breaths.','emerging':'Box breathing: in 4, hold 4, out 4, hold 4. Repeat 4 times.','cue':'Every start line: one balloon or box breath before “set”.'},
+    {'n':3,'date':'19 Oct','phase':'nerves','title':'Pre-race routine','chapter':'Ch. 4','foundation':'Make a ready routine: breath, shake the hands, “I’m ready!”','emerging':'Build a personal 3-step routine: breath, cue word, stance. Write it on a card.','cue':'Use the routine before every timed rep.'},
+    {'n':4,'date':'26 Oct','phase':'nerves','title':'Play the videotape','chapter':'Ch. 4 & 8','foundation':'Eyes shut: “see” yourself run fast to the cone, then do it.','emerging':'60-second visualisation of warm-up, start and finish. Real time, not fast-forward.','cue':'Visualise, then run. Ask: “Did it feel like your movie?”'},
+    {'n':5,'date':'2 Nov','phase':'expect','title':'Growth mindset: “yet”','chapter':'Ch. 6','foundation':'“I can’t do it… YET!” Coach names a hard skill and the kids shout “YET!”','emerging':'Fixed vs growth sort: read statements and have kids step left for fixed or right for growth.','cue':'For the hard drill of the day, add “yet” out loud.'},
+    {'n':6,'date':'9 Nov','phase':'expect','title':'Beat your old self','chapter':'Ch. 7','foundation':'Race your own shadow: time a run, then try to beat your time, not a friend’s.','emerging':'Use a personal-best board. Each athlete tracks only their own number from week 1 to week 6.','cue':'Compare every timed rep with the athlete’s own previous rep.'},
+    {'n':7,'date':'16 Nov','phase':'expect','title':'Changing the script','chapter':'Ch. 6','foundation':'Swap “I can’t” for “I’ll try my best.” Practise with a hurdle or tricky drill.','emerging':'Ask “Is that voice telling the truth?” Reframe one negative thought on paper.','cue':'Choose a cue word such as “strong”, “quick” or “tall”.'},
+    {'n':8,'date':'23 Nov','phase':'momentum','title':'“I can, if I…”','chapter':'Ch. 6 & 10','foundation':'“I can run fast, if I… pump my arms!” Each child finishes the sentence.','emerging':'Summer goal: “I can ___, if I ___.” Fill in a card.','cue':'Use the “if I” action as the focus cue for the session.'},
+    {'n':9,'date':'30 Nov','phase':'momentum','title':'Challenge point','chapter':'Ch. 9','foundation':'Choose your cone: easy, just right or super hard. Pick “just right”.','emerging':'Athletes adjust drill difficulty themselves: not boring and not overwhelming.','cue':'Athletes choose their own level for one station.'},
+    {'n':10,'date':'7 Dec','phase':'momentum','title':'Momentum and flow','chapter':'Ch. 4 & 5','foundation':'Star moments: each child shares one thing they improved this term.','emerging':'Review the week 1 card and PB board. Name 3 wins and set 1 summer habit.','cue':'Finish with a fun race using the full routine.'}
+] %}
+
+<div class="mind-guide">
+    <div class="mind-hero">
+        <div class="mind-eyebrow">Power2ADAPT · Term 4 2026</div>
+        <h2>Train the Mind</h2>
+        <p>A 5–8 minute segment each session, followed by one cue used immediately in the running work. Mind skills stick when athletes practise them, not when they are taught like a classroom lesson.</p>
+        <div class="mind-meta">
+            <span class="mind-pill">Peninsula Grammar</span>
+            <span class="mind-pill">Toorak College</span>
+            <span class="mind-pill">Foundation</span>
+            <span class="mind-pill">Emerging</span>
+            <span class="mind-pill">Junior Academy</span>
+        </div>
+    </div>
+
+    <div class="mind-themes">
+        <div class="mind-theme theme-blue"><span>Weeks 1–4</span><strong>Managing nerves</strong><span>“Nerves are energy. We can steer them.”</span></div>
+        <div class="mind-theme theme-amber"><span>Weeks 5–7</span><strong>Healthy expectations</strong><span>“Beat your old self, not the kid next to you.”</span></div>
+        <div class="mind-theme theme-green"><span>Weeks 8–10</span><strong>Building momentum</strong><span>“Small wins stack up.”</span></div>
+    </div>
+
+    <div class="week-jump" aria-label="Jump to week">
+        {% for week in weeks %}<a href="#week-{{ week.n }}">W{{ week.n }}</a>{% endfor %}
+    </div>
+
+    <h3 class="mind-section-title">Weekly plan</h3>
+    {% for week in weeks %}
+    <article class="week-card {{ week.phase }}" id="week-{{ week.n }}">
+        <div class="week-head">
+            <div>
+                <div class="week-number">Week {{ week.n }} · {{ week.chapter }}</div>
+                <div class="week-title">{{ week.title }}</div>
+            </div>
+            <div class="week-date">{{ week.date }}</div>
+        </div>
+        <div class="week-grid">
+            <div class="week-panel">
+                <h4>Foundation · Prep–Grade 2</h4>
+                <p>{{ week.foundation }}</p>
+            </div>
+            <div class="week-panel">
+                <h4>Emerging · Grade 3–6</h4>
+                <p>{{ week.emerging }}</p>
+            </div>
+            <div class="week-panel running-cue">
+                <h4>Carry into the running</h4>
+                <p>{{ week.cue }}</p>
+            </div>
+        </div>
+    </article>
+    {% endfor %}
+
+    <p style="color:var(--text-muted);font-size:.8rem;line-height:1.5;">
+        Friday Team Sport Speed uses the Emerging version from Friday 9 October. If a school carnival is coming up, move week 4 visualisation to the week before it.
+    </p>
+
+    <div class="coach-notes">
+        <section class="note-card">
+            <h3>Coach rules</h3>
+            <ul>
+                <li><strong>Keep it short.</strong> 5 minutes for Foundation and 8 for Emerging. If athletes are restless, go straight to the drill.</li>
+                <li><strong>Use it immediately.</strong> Apply every mind skill in the next running rep.</li>
+                <li><strong>No comparing kids.</strong> Focus on each athlete’s own improvement and never rank children in this segment.</li>
+                <li><strong>Normalise, don’t fix.</strong> Say “that’s your body getting ready” and offer the breath.</li>
+                <li><strong>Flag, don’t counsel.</strong> Tell Alistair about ongoing anxiety or distress beyond normal race nerves.</li>
+                <li><strong>Parent loop.</strong> Include the week’s skill in the parent recap so athletes can demonstrate it at home.</li>
+            </ul>
+        </section>
+        <div>
+            <section class="note-card">
+                <h3>Kit</h3>
+                <ul>
+                    <li>Cue cards for Emerging weeks 3, 7 and 8</li>
+                    <li>Personal-best board or clipboard</li>
+                    <li>Stopwatch or timing gates for weeks 6 and 10</li>
+                </ul>
+            </section>
+            <section class="note-card" style="margin-top:.8rem;">
+                <h3>Quick scripts</h3>
+                <ul>
+                    <li><strong>Box breath:</strong> “In for 4… hold for 4… out for 4… hold for 4.”</li>
+                    <li><strong>Balloon breath:</strong> “Hands on tummy. Blow up the balloon slowly… and let it go.”</li>
+                    <li><strong>Nerves:</strong> “Butterflies mean your body is getting ready to go fast.”</li>
+                </ul>
+            </section>
+        </div>
+    </div>
+
+    <div class="pdf-note">
+        <p><strong>Need a printed copy?</strong><br>The PDF is best for printing or viewing the complete three-page plan on a larger screen.</p>
+        <a href="{{ url_for('learning_train_the_mind_t4_pdf') }}" class="btn btn-secondary btn-sm">Download PDF</a>
+    </div>
+</div>
+{% endblock %}

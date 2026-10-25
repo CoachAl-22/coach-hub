@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+{% block title %}Athlete Board{% endblock %}
+{% block page_title %}Athlete Board{% endblock %}
+
+{% block content %}
+<style>
+.board-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  padding: 4px 0 40px;
+}
+.athlete-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: border-color .15s, transform .15s;
+}
+.athlete-card:hover { border-color: #F26522; transform: translateY(-1px); }
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.card-avatar {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #F26522, #d4521a);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 700; color: #fff; flex-shrink: 0;
+}
+.card-name { font-size: 15px; font-weight: 600; color: var(--text); }
+.card-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.card-body { padding: 12px 16px 14px; }
+.section-label {
+  font-size: 10px; font-weight: 600; letter-spacing: .8px;
+  text-transform: uppercase; color: var(--text-muted);
+  margin-bottom: 7px;
+}
+.session-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 9px; border-radius: 20px;
+  font-size: 11px; font-weight: 500;
+  border: 1px solid var(--border);
+  margin: 0 4px 4px 0;
+}
+.session-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.result-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 4px 0; border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+.result-row:last-child { border-bottom: none; }
+.result-metric { color: var(--text-muted); }
+.result-val { font-weight: 600; color: var(--text); }
+.result-pb { font-size: 10px; color: #f59e0b; margin-left: 4px; font-weight: 500; }
+.card-actions {
+  display: flex; gap: 8px; padding: 0 16px 14px;
+}
+.card-btn {
+  flex: 1; padding: 7px; border-radius: 8px;
+  font-size: 12px; font-weight: 500; cursor: pointer;
+  border: 1px solid var(--border); background: var(--surface2);
+  color: var(--text-muted); text-align: center; text-decoration: none;
+  transition: background .15s, color .15s;
+}
+.card-btn:hover { background: var(--surface); color: var(--text); }
+.card-btn.primary { background: rgba(242,101,34,.12); border-color: #F26522; color: #F26522; }
+.card-btn.primary:hover { background: rgba(242,101,34,.2); }
+.empty-state { color: var(--text-muted); font-size: 12px; font-style: italic; }
+</style>
+
+{% set TM = {
+  'Speed':           ('#F26522', 'rgba(242,101,34,.12)'),
+  'Speed_Endurance': ('#00B4D8', 'rgba(0,180,216,.12)'),
+  'Technical':       ('#a78bfa', 'rgba(167,139,250,.12)'),
+  'Aerobic':         ('#34d399', 'rgba(52,211,153,.12)'),
+  'Plyo_Power':      ('#f59e0b', 'rgba(245,158,11,.12)'),
+  'Testing':         ('#f87171', 'rgba(248,113,113,.12)'),
+} %}
+{% set DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'] %}
+{% set METRIC_LABEL = {'20m':'20m','60m':'60m','150m':'150m','slj':'SLJ','vj':'VJ'} %}
+
+<!-- Today label bar -->
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+  <span style="font-size:11px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:#F26522;">Today</span>
+  <span style="font-size:12px;color:var(--text-muted);">{{ DAYS[today_dow] }}</span>
+  <div style="flex:1;height:1px;background:var(--border);"></div>
+</div>
+
+<div class="board-grid">
+  {% for a in athletes %}
+  {% set initials = a.initials or (a.name[:1] + a.name.split()|last|first) %}
+
+  {% set today_sessions = a.sessions | selectattr('day_of_week', 'equalto', today_dow) | list %}
+  {% set other_sessions = a.sessions | rejectattr('day_of_week', 'equalto', today_dow) | list %}
+
+  <div class="athlete-card">
+    <div class="card-header">
+      <div class="card-avatar">{{ initials }}</div>
+      <div>
+        <div class="card-name">{{ a.name }}</div>
+        <div class="card-meta">
+          {{ a.event_group or 'No event' }}{% if a.squad %} · {{ a.squad }}{% endif %}
+        </div>
+      </div>
+      {% if today_sessions %}
+      <span style="margin-left:auto;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:rgba(242,101,34,.15);color:#F26522;white-space:nowrap;">Today ●</span>
+      {% endif %}
+    </div>
+
+    <div class="card-body">
+
+      <!-- Today's sessions -->
+      {% if today_sessions %}
+      <div class="section-label" style="color:#F26522;">Today's Sessions</div>
+      <div style="margin-bottom:12px;">
+        {% for s in today_sessions %}
+          {% set color = TM.get(s.session_type, ('#888','rgba(128,128,128,.1)'))[0] %}
+          {% set bg    = TM.get(s.session_type, ('#888','rgba(128,128,128,.1)'))[1] %}
+          <span class="session-pill" style="background:{{ bg }};border-color:{{ color }}40;color:{{ color }};font-weight:600;">
+            <span class="session-dot" style="background:{{ color }};"></span>
+            {{ s.session_name }}
+          </span>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <!-- Rest of week -->
+      {% if other_sessions %}
+      <div class="section-label">Other Sessions</div>
+      <div style="margin-bottom:12px;">
+        {% for s in other_sessions %}
+          {% set color = TM.get(s.session_type, ('#888','rgba(128,128,128,.1)'))[0] %}
+          {% set bg    = TM.get(s.session_type, ('#888','rgba(128,128,128,.1)'))[1] %}
+          <span class="session-pill" style="background:{{ bg }};border-color:{{ color }}20;color:{{ color }};">
+            <span class="session-dot" style="background:{{ color }};"></span>
+            {% if s.day_of_week is not none %}
+              <span style="font-size:9px;opacity:.7;">{{ DAYS[s.day_of_week][:3] }} · </span>
+            {% endif %}
+            {{ s.session_name }}
+          </span>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if not a.sessions %}
+      <div class="empty-state" style="margin-bottom:12px;">No sessions assigned yet.</div>
+      {% endif %}
+
+      <!-- Latest test results -->
+      <div class="section-label">Latest Results</div>
+      {% if a.results %}
+        <div>
+          {% for r in a.results %}
+          <div class="result-row">
+            <span class="result-metric">{{ METRIC_LABEL.get(r.metric, r.metric) }}</span>
+            <span>
+              <span class="result-val">{{ '%.2f'|format(r.value|float) }} {{ r.unit }}</span>
+              {% if r.is_pb %}<span class="result-pb">PB</span>{% endif %}
+              <span style="font-size:10px;color:var(--text-muted);margin-left:6px;">{{ r.test_date }}</span>
+            </span>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-state">No test results recorded yet.</div>
+      {% endif %}
+
+    </div>
+
+    <div class="card-actions">
+      <a href="{{ url_for('athlete_view', athlete_id=a.id) }}" class="card-btn">Profile</a>
+      <a href="{{ url_for('athlete_performance', athlete_id=a.id) }}" class="card-btn primary">Performance</a>
+    </div>
+  </div>
+  {% endfor %}
+
+  {% if not athletes %}
+  <div style="grid-column:1/-1;padding:60px;text-align:center;color:var(--text-muted);">
+    No active athletes found. <a href="{{ url_for('athletes') }}" style="color:#F26522;">Add athletes</a> to get started.
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,366 @@
+{% extends "base.html" %}
+{% block title %}{{ athlete.name }} — Performance{% endblock %}
+{% block page_title %}Performance Dashboard{% endblock %}
+
+{% set colors = ['#F26522','#00B4D8','#a78bfa','#34d399','#f59e0b','#f87171','#818cf8','#fb923c'] %}
+
+{% block top_actions %}
+<a href="{{ url_for('athlete_view', athlete_id=athlete_id) }}" class="btn btn-sm" style="background:var(--surface2);color:var(--text-muted);">← Profile</a>
+<button onclick="document.getElementById('test-modal').style.display='flex'" class="btn btn-primary btn-sm">+ Record Test</button>
+{% endblock %}
+
+{% block content %}
+
+{# ── Athlete selector ── #}
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;overflow-x:auto;">
+  {% for a in all_athletes %}
+  {% set c = colors[loop.index0 % colors|length] %}
+  <a href="{{ url_for('athlete_performance', athlete_id=a.id) }}"
+     style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;text-decoration:none;flex-shrink:0;
+       background:{{ 'var(--surface2)' if a.id == athlete_id else 'transparent' }};
+       border:{{ '1.5px solid ' + c if a.id == athlete_id else '1px solid var(--border)' }};">
+    <div style="width:28px;height:28px;border-radius:50%;background:{{ c }}22;color:{{ c }};
+        display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;">
+      {{ a.initials or a.name[:2].upper() }}
+    </div>
+    <div>
+      <div style="font-size:13px;font-weight:500;color:{{ 'var(--text)' if a.id == athlete_id else 'var(--text-muted)' }};">{{ a.name }}</div>
+      <div style="font-size:10px;color:{{ c if a.id == athlete_id else '#555' }};">{{ a.event_group or '—' }}</div>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+
+{# ── Metric selector ── #}
+<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;">
+  {% for key, label in [('20m','20m Sprint'),('60m','60m Sprint'),('150m','150m Sprint'),('slj','Standing Long Jump'),('vj','Vertical Jump')] %}
+  <button class="metric-pill" data-metric="{{ key }}"
+    style="padding:5px 14px;border-radius:20px;font-size:12px;cursor:pointer;
+           background:transparent;border:1px solid var(--border);color:var(--text-muted);">
+    {{ label }}
+  </button>
+  {% endfor %}
+</div>
+
+{# ── Stats cards ── #}
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;">
+  {% for sid, slabel in [('stat-latest','Latest'),('stat-pb','Personal Best'),('stat-impr','Improvement'),('stat-std','Standard')] %}
+  <div id="{{ sid }}" class="card" style="padding:14px 16px;">
+    <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">{{ slabel }}</div>
+    <div class="stat-value" style="font-size:20px;font-weight:600;">—</div>
+    <div class="stat-sub" style="font-size:10px;color:#555;margin-top:2px;">—</div>
+  </div>
+  {% endfor %}
+</div>
+
+{# ── Chart ── #}
+<div class="card" style="margin-bottom:16px;padding:16px;">
+  <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px;">
+    <span id="chart-title" style="font-size:13px;font-weight:600;color:var(--text);">20m Sprint</span>
+    <span id="chart-desc" style="font-size:11px;color:var(--text-muted);">Acceleration from standing start</span>
+  </div>
+  <div style="display:flex;gap:16px;margin-bottom:12px;flex-wrap:wrap;">
+    <span style="font-size:10px;color:#888;display:flex;align-items:center;gap:5px;">
+      <span style="display:inline-block;width:22px;border-top:1px dashed #888;"></span>Good
+    </span>
+    <span style="font-size:10px;color:#00B4D8;display:flex;align-items:center;gap:5px;">
+      <span style="display:inline-block;width:22px;border-top:1px dashed #00B4D8;"></span>State
+    </span>
+    <span style="font-size:10px;color:#34d399;display:flex;align-items:center;gap:5px;">
+      <span style="display:inline-block;width:22px;border-top:1px dashed #34d399;"></span>National
+    </span>
+    <span style="font-size:10px;color:#34d399;margin-left:auto;">★ = Personal best</span>
+  </div>
+  <div style="position:relative;height:240px;">
+    <canvas id="perf-chart"></canvas>
+    <div id="chart-empty" style="display:none;position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text-muted);">
+      <div style="font-size:28px;margin-bottom:8px;">📊</div>
+      <div style="font-weight:500;margin-bottom:4px;">No test data yet</div>
+      <div style="font-size:12px;">Test results will appear here once recorded.</div>
+    </div>
+  </div>
+</div>
+
+{# ── Results table ── #}
+<div class="card">
+  <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+    <span id="table-title" style="font-size:13px;font-weight:600;color:var(--text);">All results — 20m Sprint</span>
+    <span style="font-size:11px;color:var(--text-muted);">★ = Personal best</span>
+  </div>
+  <table class="data-table" style="width:100%;">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Result</th>
+        <th>vs PB</th>
+        <th>Standard</th>
+        <th>Benchmarks</th>
+      </tr>
+    </thead>
+    <tbody id="results-tbody">
+      <tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text-muted);">No test results recorded yet.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+{# ── Record Test Modal ── #}
+<div id="test-modal" class="modal" style="display:none;">
+    <div class="modal-overlay" onclick="document.getElementById('test-modal').style.display='none'"></div>
+    <div class="modal-box" style="max-width:480px;">
+        <div class="modal-header">
+            <h3>Record Performance Test — {{ athlete.name }}</h3>
+            <button onclick="document.getElementById('test-modal').style.display='none'">×</button>
+        </div>
+        <form action="{{ url_for('add_performance_test', athlete_id=athlete_id) }}" method="post">
+            <div style="padding:20px;display:flex;flex-direction:column;gap:14px;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <div>
+                        <label>Test Date *</label>
+                        <input type="date" name="test_date" required id="test-date-field">
+                    </div>
+                    <div>
+                        <label>Conditions</label>
+                        <input type="text" name="conditions" placeholder="e.g. Calm, 18°C, grass">
+                    </div>
+                </div>
+                <div>
+                    <label>Protocol</label>
+                    <input type="text" name="protocol" placeholder="e.g. Full acceleration, 3-point start">
+                </div>
+                <div style="background:var(--surface2);border-radius:8px;padding:14px;">
+                    <div style="font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;">Results (leave blank if not tested)</div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                        <div>
+                            <label>20m Sprint (s)</label>
+                            <input type="number" name="metric_20m" step="0.01" min="2" max="5" placeholder="e.g. 2.85">
+                        </div>
+                        <div>
+                            <label>60m Sprint (s)</label>
+                            <input type="number" name="metric_60m" step="0.01" min="6" max="10" placeholder="e.g. 7.05">
+                        </div>
+                        <div>
+                            <label>150m Sprint (s)</label>
+                            <input type="number" name="metric_150m" step="0.1" min="14" max="25" placeholder="e.g. 16.8">
+                        </div>
+                        <div>
+                            <label>Standing Long Jump (m)</label>
+                            <input type="number" name="metric_slj" step="0.01" min="1" max="4" placeholder="e.g. 2.65">
+                        </div>
+                        <div>
+                            <label>Vertical Jump (cm)</label>
+                            <input type="number" name="metric_vj" step="1" min="20" max="90" placeholder="e.g. 52">
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label>Notes</label>
+                    <textarea name="notes" rows="2" placeholder="Conditions, observations, context…" style="resize:vertical;"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="document.getElementById('test-modal').style.display='none'" class="btn btn-sm" style="background:var(--surface2);color:var(--text-muted);">Cancel</button>
+                <button type="submit" class="btn btn-primary btn-sm">Save Results</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+<script>
+const metricsData = {{ metrics_data_json | safe }};
+const benchmarks  = {{ benchmarks_json | safe }};
+
+const METRICS = {
+  '20m':  { label:'20m Sprint',         unit:'s',  lower:true,  dec:2, desc:'Acceleration from standing start' },
+  '60m':  { label:'60m Sprint',         unit:'s',  lower:true,  dec:2, desc:'Speed development & max velocity' },
+  '150m': { label:'150m Sprint',        unit:'s',  lower:true,  dec:1, desc:'Speed endurance' },
+  'slj':  { label:'Standing Long Jump', unit:'m',  lower:false, dec:2, desc:'Explosive leg power' },
+  'vj':   { label:'Vertical Jump',      unit:'cm', lower:false, dec:0, desc:'Reactive leg power' },
+};
+
+let selectedMetric = '20m';
+let chart = null;
+
+function bmLevel(val, metric) {
+  const m = METRICS[metric];
+  const bm = benchmarks[metric];
+  if (!bm) return { label:'No benchmark', color:'#888' };
+  const better = m.lower ? (a,b) => a<=b : (a,b) => a>=b;
+  if (better(val, bm.national)) return { label:'National', color:'#34d399' };
+  if (better(val, bm.state))    return { label:'State',    color:'#00B4D8' };
+  if (better(val, bm.good))     return { label:'Good',     color:'#F26522' };
+  return { label:'Building', color:'#888' };
+}
+
+function getStats(metric) {
+  const data = metricsData[metric] || [];
+  if (!data.length) return null;
+  const m  = METRICS[metric];
+  const vals = data.map(d=>d.value);
+  const first=vals[0], latest=vals[vals.length-1];
+  const pb  = m.lower ? Math.min(...vals) : Math.max(...vals);
+  const pbIdx = vals.indexOf(pb);
+  const impr = m.lower ? (first-latest)/first*100 : (latest-first)/first*100;
+  return { data, vals, first, latest, pb, pbIdx, impr };
+}
+
+function renderStats() {
+  const stats  = getStats(selectedMetric);
+  const m      = METRICS[selectedMetric];
+  const bm     = benchmarks[selectedMetric];
+  const level  = stats ? bmLevel(stats.latest, selectedMetric) : null;
+
+  const defs = [
+    { id:'stat-latest', val: stats?`${stats.latest.toFixed(m.dec)} ${m.unit}`:'—',    sub: stats?stats.data[stats.data.length-1].date:'No data',    color:'#F26522' },
+    { id:'stat-pb',     val: stats?`${stats.pb.toFixed(m.dec)} ${m.unit}`:'—',        sub: stats?stats.data[stats.pbIdx].date:'No data',             color:'#34d399' },
+    { id:'stat-impr',   val: stats?`${stats.impr>0?'+':''}${stats.impr.toFixed(1)}%`:'—', sub:'since first test', color: stats?(stats.impr>0?'#34d399':'#f87171'):'#888' },
+    { id:'stat-std',    val: stats?(level.label):'—', sub:'vs U20M benchmarks', color: stats?level.color:'#888' },
+  ];
+  defs.forEach(({id,val,sub,color}) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.querySelector('.stat-value').textContent = val;
+    el.querySelector('.stat-value').style.color  = color;
+    el.querySelector('.stat-sub').textContent    = sub;
+  });
+}
+
+function buildChart() {
+  const stats = getStats(selectedMetric);
+  const m     = METRICS[selectedMetric];
+  const bm    = benchmarks[selectedMetric];
+  const ctx   = document.getElementById('perf-chart').getContext('2d');
+  const empty = document.getElementById('chart-empty');
+
+  if (chart) { chart.destroy(); chart=null; }
+
+  if (!stats) {
+    empty.style.display = 'flex';
+    document.getElementById('perf-chart').style.opacity = '0';
+    // Still render benchmark reference lines on empty chart
+    const dummyLabels = ['', ''];
+    const datasets = bm ? [
+      { label:`Good (${bm.good})`,     data:[bm.good,bm.good],         borderColor:'#888',    borderWidth:1, borderDash:[4,3], pointRadius:0, fill:false },
+      { label:`State (${bm.state})`,   data:[bm.state,bm.state],       borderColor:'#00B4D8', borderWidth:1, borderDash:[4,3], pointRadius:0, fill:false },
+      { label:`National (${bm.national})`, data:[bm.national,bm.national], borderColor:'#34d399', borderWidth:1, borderDash:[4,3], pointRadius:0, fill:false },
+    ] : [];
+    chart = new Chart(ctx, {
+      type:'line',
+      data:{ labels:dummyLabels, datasets },
+      options:{ responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{ display:false } },
+        scales:{ x:{ display:false }, y:{ reverse:m.lower, grid:{color:'#1e1e1e'}, ticks:{color:'#888',font:{size:11}} } }
+      }
+    });
+    return;
+  }
+
+  empty.style.display = 'none';
+  document.getElementById('perf-chart').style.opacity = '1';
+  const labels = stats.data.map(d=>d.date);
+  const datasets = [{
+    label: m.label,
+    data: stats.vals,
+    borderColor: '#F26522',
+    backgroundColor: 'rgba(242,101,34,.08)',
+    borderWidth: 2,
+    pointRadius: stats.data.map(d => d.is_pb ? 7 : 4),
+    pointBackgroundColor: stats.data.map(d => d.is_pb ? '#34d399' : '#F26522'),
+    pointBorderColor: '#0d0d0d',
+    pointBorderWidth: 2,
+    tension: 0.3,
+    fill: false,
+  }];
+  if (bm) {
+    datasets.push(
+      { label:`Good (${bm.good})`,         data:labels.map(()=>bm.good),     borderColor:'#888',    borderWidth:1, borderDash:[4,3], pointRadius:0, fill:false },
+      { label:`State (${bm.state})`,        data:labels.map(()=>bm.state),    borderColor:'#00B4D8', borderWidth:1, borderDash:[4,3], pointRadius:0, fill:false },
+      { label:`National (${bm.national})`,  data:labels.map(()=>bm.national), borderColor:'#34d399', borderWidth:1, borderDash:[4,3], pointRadius:0, fill:false }
+    );
+  }
+  chart = new Chart(ctx, {
+    type:'line',
+    data:{ labels, datasets },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{ display:false },
+        tooltip:{
+          backgroundColor:'#1a1a1a', borderColor:'#2e2e2e', borderWidth:1,
+          titleColor:'#888', bodyColor:'#f0f0f0',
+          callbacks:{
+            label: ctx => ctx.datasetIndex===0
+              ? `${ctx.parsed.y.toFixed(m.dec)} ${m.unit}`
+              : ctx.dataset.label
+          }
+        }
+      },
+      scales:{
+        x:{ grid:{color:'#1e1e1e'}, ticks:{color:'#888',font:{size:11}} },
+        y:{ reverse:m.lower, grid:{color:'#1e1e1e'},
+            ticks:{color:'#888',font:{size:11}, callback:v=>v.toFixed(m.dec)} }
+      }
+    }
+  });
+}
+
+function renderTable() {
+  const stats = getStats(selectedMetric);
+  const m   = METRICS[selectedMetric];
+  const bm  = benchmarks[selectedMetric];
+  const tb  = document.getElementById('results-tbody');
+  document.getElementById('table-title').textContent = `All results — ${m.label}`;
+
+  if (!stats) {
+    tb.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text-muted);">No test results recorded yet.</td></tr>`;
+    return;
+  }
+  tb.innerHTML = stats.data.map(d => {
+    const level = bmLevel(d.value, selectedMetric);
+    const diff  = m.lower ? d.value - stats.pb : stats.pb - d.value;
+    const diffStr = d.is_pb ? 'PB ★' : (diff > 0 ? `+${diff.toFixed(m.dec)}` : diff.toFixed(m.dec));
+    const diffColor = d.is_pb ? '#34d399' : (diff > 0 ? '#f87171' : '#888');
+    return `
+      <tr style="border-bottom:1px solid var(--border);background:${d.is_pb?'rgba(52,211,153,.05)':'transparent'}">
+        <td style="padding:10px 16px;font-size:12px;color:var(--text);">${d.date}</td>
+        <td style="padding:10px 16px;font-size:13px;font-weight:500;color:${d.is_pb?'#34d399':'var(--text)'};">${d.value.toFixed(m.dec)} ${m.unit} ${d.is_pb?'★':''}</td>
+        <td style="padding:10px 16px;font-size:12px;color:${diffColor};">${diffStr}</td>
+        <td style="padding:10px 16px;"><span style="font-size:11px;padding:2px 8px;border-radius:20px;background:${level.color}22;color:${level.color};font-weight:500;">${level.label}</span></td>
+        <td style="padding:10px 16px;font-size:11px;color:var(--text-muted);">
+          ${bm?`Good: ${bm.good} · State: ${bm.state} · National: ${bm.national}`:'—'}
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+function selectMetric(key) {
+  selectedMetric = key;
+  const m = METRICS[key];
+  document.getElementById('chart-title').textContent = m.label;
+  document.getElementById('chart-desc').textContent  = m.desc;
+  document.querySelectorAll('.metric-pill').forEach(btn => {
+    const a = btn.dataset.metric === key;
+    btn.style.background  = a ? '#F26522' : 'transparent';
+    btn.style.color       = a ? '#fff'    : 'var(--text-muted)';
+    btn.style.fontWeight  = a ? '500'     : '400';
+    btn.style.border      = a ? 'none'    : '1px solid var(--border)';
+  });
+  renderStats();
+  buildChart();
+  renderTable();
+}
+
+document.querySelectorAll('.metric-pill').forEach(btn => {
+  btn.addEventListener('click', () => selectMetric(btn.dataset.metric));
+});
+
+selectMetric('20m');
+
+// Default test date to today
+const testDateField = document.getElementById('test-date-field');
+if (testDateField) testDateField.value = new Date().toISOString().split('T')[0];
+</script>
+{% endblock %}

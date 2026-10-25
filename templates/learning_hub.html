@@ -85,6 +85,20 @@
 
 <div class="track-grid">
 
+    <a href="{{ url_for('learning_train_the_mind_t4') }}" class="track-card">
+        <div class="track-header">
+            <div class="track-icon">🧠</div>
+            <div>
+                <div class="track-title">Train the Mind — Term 4</div>
+                <div class="track-subtitle">10-week mobile coach guide · Foundation & Emerging</div>
+            </div>
+        </div>
+        <div style="font-size:0.82rem; color:var(--text-muted); line-height:1.55;">
+            Managing nerves, healthy expectations and building momentum. Includes weekly activities, running cues and coach notes.
+        </div>
+        <span class="track-status ts-progress">Open Guide</span>
+    </a>
+
     <a href="{{ url_for('learning_induction') }}" class="track-card">
         <div class="track-header">
             <div class="track-icon">📋</div>
@@ -128,6 +142,75 @@
         </div>
         <span class="track-status {% if lesson_done == lesson_total %}ts-complete{% elif lesson_done > 0 %}ts-progress{% else %}ts-empty{% endif %}">
             {% if lesson_done == lesson_total %}✓ Complete{% elif lesson_done > 0 %}In Progress{% else %}Not Started{% endif %}
+        </span>
+    </a>
+
+    <a href="{{ url_for('learning_lesson_plans') }}#foundation-t2" class="track-card">
+        <div class="track-header">
+            <div class="track-icon">🏃</div>
+            <div>
+                <div class="track-title">Foundation Program — Term 2</div>
+                <div class="track-subtitle">Endurance focus · Prep to Grade 2</div>
+            </div>
+        </div>
+        <div>
+            <div class="progress-bar-wrap">
+                <div class="progress-bar-fill {% if foundation_t2_done == foundation_t2_total %}complete{% endif %}"
+                     style="width:{{ (foundation_t2_done / foundation_t2_total * 100) | int if foundation_t2_total > 0 else 0 }}%"></div>
+            </div>
+            <div class="progress-label">
+                <span>{{ foundation_t2_done }}/{{ foundation_t2_total }} weeks reviewed</span>
+                <span>{{ (foundation_t2_done / foundation_t2_total * 100) | int if foundation_t2_total > 0 else 0 }}%</span>
+            </div>
+        </div>
+        <span class="track-status {% if foundation_t2_done == foundation_t2_total %}ts-complete{% elif foundation_t2_done > 0 %}ts-progress{% else %}ts-empty{% endif %}">
+            {% if foundation_t2_done == foundation_t2_total %}✓ Complete{% elif foundation_t2_done > 0 %}In Progress{% else %}Not Started{% endif %}
+        </span>
+    </a>
+
+    <a href="{{ url_for('learning_lesson_plans') }}#emerging" class="track-card">
+        <div class="track-header">
+            <div class="track-icon">⚡</div>
+            <div>
+                <div class="track-title">Emerging Program — Term 1</div>
+                <div class="track-subtitle">10 weeks · Grade 3 to Grade 6 lesson plans</div>
+            </div>
+        </div>
+        <div>
+            <div class="progress-bar-wrap">
+                <div class="progress-bar-fill {% if emerging_done == emerging_total %}complete{% endif %}"
+                     style="width:{{ (emerging_done / emerging_total * 100) | int }}%"></div>
+            </div>
+            <div class="progress-label">
+                <span>{{ emerging_done }}/{{ emerging_total }} weeks reviewed</span>
+                <span>{{ (emerging_done / emerging_total * 100) | int }}%</span>
+            </div>
+        </div>
+        <span class="track-status {% if emerging_done == emerging_total %}ts-complete{% elif emerging_done > 0 %}ts-progress{% else %}ts-empty{% endif %}">
+            {% if emerging_done == emerging_total %}✓ Complete{% elif emerging_done > 0 %}In Progress{% else %}Not Started{% endif %}
+        </span>
+    </a>
+
+    <a href="{{ url_for('learning_lesson_plans') }}#emerging-t2" class="track-card">
+        <div class="track-header">
+            <div class="track-icon">⚡</div>
+            <div>
+                <div class="track-title">Emerging Program — Term 2</div>
+                <div class="track-subtitle">Endurance focus · Grade 3 to Grade 6</div>
+            </div>
+        </div>
+        <div>
+            <div class="progress-bar-wrap">
+                <div class="progress-bar-fill {% if emerging_t2_done == emerging_t2_total %}complete{% endif %}"
+                     style="width:{{ (emerging_t2_done / emerging_t2_total * 100) | int if emerging_t2_total > 0 else 0 }}%"></div>
+            </div>
+            <div class="progress-label">
+                <span>{{ emerging_t2_done }}/{{ emerging_t2_total }} weeks reviewed</span>
+                <span>{{ (emerging_t2_done / emerging_t2_total * 100) | int if emerging_t2_total > 0 else 0 }}%</span>
+            </div>
+        </div>
+        <span class="track-status {% if emerging_t2_done == emerging_t2_total %}ts-complete{% elif emerging_t2_done > 0 %}ts-progress{% else %}ts-empty{% endif %}">
+            {% if emerging_t2_done == emerging_t2_total %}✓ Complete{% elif emerging_t2_done > 0 %}In Progress{% else %}Not Started{% endif %}
         </span>
     </a>
 

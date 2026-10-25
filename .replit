@@ -1,0 +1,66 @@
+modules = ["python-3.11", "nodejs-24", "postgresql-16"]
+[agent]
+expertMode = true
+integrations = ["python_openai_ai_integrations:1.0.0", "python_database:1.0.0", "google-sheet:1.0.0", "google-calendar:1.0.0"]
+
+[nix]
+channel = "stable-25_05"
+packages = ["freetype", "gumbo", "harfbuzz", "jbig2dec", "libjpeg_turbo", "mupdf", "openjpeg", "swig", "systemdUkify", "xcbuild"]
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Flask App"
+
+[[workflows.workflow]]
+name = "Flask App"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python app.py"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[[ports]]
+localPort = 5050
+externalPort = 3000
+
+[[ports]]
+localPort = 5051
+externalPort = 3001
+
+[[ports]]
+localPort = 5055
+externalPort = 3002
+
+[userenv]
+
+[userenv.shared]
+
+[userenv.production]
+COACH_AUTH_BASE_URL = "https://athletic-coach-hub.replit.app"
+COACH_AUTH_FROM_NUMBER = "+19786253879"
+COACH_AUTH_SMS_ENABLED = "1"
+
+[deployment]
+deploymentTarget = "vm"
+run = ["gunicorn", "--bind=0.0.0.0:5000", "--workers=1", "app:app"]
+build = ["npm", "ci", "--omit=dev", "--no-audit"]
+
+[postMerge]
+path = "scripts/post-merge.sh"
+timeoutMs = 60000

@@ -4,9 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Coach Hub{% endblock %} | Power2ADAPT</title>
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Coach Hub">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0d0f14">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    {% set _ep = request.endpoint or '' %}
+    {% if _ep == 'dashboard' %}
+      <style>:root { --pc: #F26522; --pc-rgb: 242,101,34; }</style>
+    {% elif 'learning' in _ep %}
+      <style>:root { --pc: #8b5cf6; --pc-rgb: 139,92,246; }</style>
+    {% elif 'roster' in _ep %}
+      <style>:root { --pc: #06b6d4; --pc-rgb: 6,182,212; }</style>
+    {% elif 'availability' in _ep %}
+      <style>:root { --pc: #22c55e; --pc-rgb: 34,197,94; }</style>
+    {% elif _ep == 'alerts' %}
+      <style>:root { --pc: #f59e0b; --pc-rgb: 245,158,11; }</style>
+    {% elif 'fixture' in _ep %}
+      <style>:root { --pc: #3b82f6; --pc-rgb: 59,130,246; }</style>
+    {% elif _ep == 'athlete_board' %}
+      <style>:root { --pc: #ec4899; --pc-rgb: 236,72,153; }</style>
+    {% elif _ep in ['athletes', 'athlete_view', 'athlete_performance'] %}
+      <style>:root { --pc: #f97316; --pc-rgb: 249,115,22; }</style>
+    {% elif _ep == 'session_library' %}
+      <style>:root { --pc: #6366f1; --pc-rgb: 99,102,241; }</style>
+    {% elif 'coaches' in _ep %}
+      <style>:root { --pc: #94a3b8; --pc-rgb: 148,163,184; }</style>
+    {% elif 'sessions' in _ep %}
+      <style>:root { --pc: #64748b; --pc-rgb: 100,116,139; }</style>
+    {% else %}
+      <style>:root { --pc: #F26522; --pc-rgb: 242,101,34; }</style>
+    {% endif %}
 </head>
 <body>
     {% if current_user.is_authenticated %}
@@ -15,41 +47,116 @@
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-logo">
-                <span class="logo-power">Power</span><span class="logo-2">2</span><span class="logo-adapt">ADAPT</span>
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="Power2ADAPT" class="sidebar-logo-img">
                 <div class="logo-sub">Coach Hub</div>
             </div>
 
             <nav class="sidebar-nav">
-                <a href="{{ url_for('dashboard') }}" class="nav-item {% if request.endpoint == 'dashboard' %}active{% endif %}">
+                <div class="nav-section-label">Coaching</div>
+
+                <a href="{{ url_for('dashboard') }}"
+                   class="nav-item {% if request.endpoint == 'dashboard' %}active{% endif %}"
+                   style="--nc:#F26522;--nc-rgb:242,101,34">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
                     Dashboard
                 </a>
+
+                <a href="{{ url_for('learning_hub') }}"
+                   class="nav-item {% if 'learning' in request.endpoint %}active{% endif %}"
+                   style="--nc:#8b5cf6;--nc-rgb:139,92,246">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                    </svg>
+                    Learning Hub
+                </a>
+
                 {% if current_user.is_admin %}
-                <a href="{{ url_for('roster') }}" class="nav-item {% if request.endpoint in ('roster', 'roster_term') %}active{% endif %}">
+                <a href="{{ url_for('roster') }}"
+                   class="nav-item {% if 'roster' in request.endpoint and request.endpoint != 'my_roster' %}active{% endif %}"
+                   style="--nc:#06b6d4;--nc-rgb:6,182,212">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                     Roster
                 </a>
                 {% else %}
-                <a href="{{ url_for('my_roster') }}" class="nav-item {% if request.endpoint == 'my_roster' %}active{% endif %}">
+                <a href="{{ url_for('my_roster') }}"
+                   class="nav-item {% if request.endpoint == 'my_roster' %}active{% endif %}"
+                   style="--nc:#06b6d4;--nc-rgb:6,182,212">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                     My Roster
                 </a>
+
+                <a href="{{ url_for('team_roster') }}"
+                   class="nav-item {% if request.endpoint in ['team_roster', 'team_roster_term'] %}active{% endif %}"
+                   style="--nc:#06b6d4;--nc-rgb:6,182,212">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    Team View
+                </a>
                 {% endif %}
+
+                <a href="{{ url_for('fixtures') }}"
+                   class="nav-item {% if 'fixture' in request.endpoint %}active{% endif %}"
+                   style="--nc:#3b82f6;--nc-rgb:59,130,246">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    Fixtures
+                </a>
+
                 {% if current_user.is_admin %}
-                <a href="{{ url_for('availability') }}" class="nav-item {% if 'availability' in request.endpoint %}active{% endif %}">
+                <a href="{{ url_for('availability') }}"
+                   class="nav-item {% if 'availability' in request.endpoint %}active{% endif %}"
+                   style="--nc:#22c55e;--nc-rgb:34,197,94">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
                     Availability
                 </a>
-                <a href="{{ url_for('alerts') }}" class="nav-item {% if request.endpoint == 'alerts' %}active{% endif %}">
+
+                <a href="{{ url_for('alerts') }}"
+                   class="nav-item {% if request.endpoint == 'alerts' %}active{% endif %}"
+                   style="--nc:#f59e0b;--nc-rgb:245,158,11">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                     Alerts
                 </a>
+                {% endif %}
+
                 <div class="nav-divider"></div>
-                <a href="{{ url_for('admin_coaches') }}" class="nav-item {% if 'coaches' in request.endpoint %}active{% endif %}">
+                <div class="nav-section-label">Performance</div>
+
+                {% if current_user.is_admin %}
+                <a href="{{ url_for('athlete_board') }}"
+                   class="nav-item {% if request.endpoint == 'athlete_board' %}active{% endif %}"
+                   style="--nc:#ec4899;--nc-rgb:236,72,153">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    Athlete Board
+                </a>
+                {% endif %}
+
+                <a href="{{ url_for('athletes') }}"
+                   class="nav-item {% if request.endpoint in ['athletes','athlete_view','athlete_performance'] %}active{% endif %}"
+                   style="--nc:#f97316;--nc-rgb:249,115,22">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                    Athletes
+                </a>
+
+                <a href="{{ url_for('session_library') }}"
+                   class="nav-item {% if request.endpoint == 'session_library' %}active{% endif %}"
+                   style="--nc:#6366f1;--nc-rgb:99,102,241">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                    Session Library
+                </a>
+
+                {% if current_user.is_admin %}
+                <div class="nav-divider"></div>
+                <div class="nav-section-label">Admin</div>
+
+                <a href="{{ url_for('admin_coaches') }}"
+                   class="nav-item {% if 'coaches' in request.endpoint %}active{% endif %}"
+                   style="--nc:#94a3b8;--nc-rgb:148,163,184">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                     Coaches
                 </a>
-                <a href="{{ url_for('admin_sessions') }}" class="nav-item {% if 'sessions' in request.endpoint %}active{% endif %}">
+
+                <a href="{{ url_for('admin_sessions') }}"
+                   class="nav-item {% if 'sessions' in request.endpoint %}active{% endif %}"
+                   style="--nc:#64748b;--nc-rgb:100,116,139">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                     Sessions
                 </a>
@@ -57,6 +164,7 @@
             </nav>
 
             <div class="sidebar-footer">
+                <a href="{{ url_for('change_password') }}" class="nav-item {% if request.endpoint == 'change_password' %}active{% endif %}" style="--nc:#94a3b8;--nc-rgb:148,163,184">Change Password</a>
                 <div class="user-info">
                     <div class="user-avatar">{{ current_user.name[0] }}</div>
                     <div class="user-details">

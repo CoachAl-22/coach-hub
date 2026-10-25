@@ -3,7 +3,7 @@
 {% block page_title %}Week {{ week.week }} — {{ week.title }}{% endblock %}
 
 {% block top_actions %}
-<a href="{{ url_for('learning_lesson_plans') }}" class="btn btn-sm btn-outline">← All Weeks</a>
+<a href="{{ back_url }}" class="btn btn-sm btn-outline">← All Weeks</a>
 {% endblock %}
 
 {% block content %}
@@ -119,20 +119,18 @@
     <span>🎒 {{ week.equipment }}</span>
 </div>
 
-<!-- Completion bar -->
 <div class="complete-bar {% if completed %}done{% endif %}">
     {% if completed %}
         <small>✓ You've reviewed this session plan</small>
         <button class="btn btn-sm btn-outline" disabled>Reviewed ✓</button>
     {% else %}
         <small>Review this plan before coaching the session.</small>
-        <form method="POST" action="{{ url_for('complete_lesson_week', week_num=week.week) }}" style="margin:0;">
+        <form method="POST" action="{{ complete_url }}" style="margin:0;">
             <button type="submit" class="btn btn-sm btn-primary">Mark as Reviewed ✓</button>
         </form>
     {% endif %}
 </div>
 
-<!-- WARM UP -->
 <div class="section-card">
     <div class="section-header">
         <span class="section-badge badge-warmup">Warm Up</span>
@@ -147,7 +145,6 @@
     </div>
 </div>
 
-<!-- MAIN BLOCK -->
 <div class="section-card">
     <div class="section-header">
         <span class="section-badge badge-run">{{ week.main_block.name }}</span>
@@ -166,7 +163,6 @@
     </div>
 </div>
 
-<!-- SECONDARY BLOCK -->
 {% if week.secondary_block %}
 <div class="section-card">
     <div class="section-header">
@@ -191,7 +187,6 @@
 </div>
 {% endif %}
 
-<!-- COACHING CUES -->
 {% if week.coaching_cues %}
 <div class="section-card">
     <div class="section-header"><div class="section-header-title">🎯 Coaching Cues</div></div>
@@ -205,7 +200,6 @@
 </div>
 {% endif %}
 
-<!-- COACH RUN SHEET -->
 {% if week.coach_run_sheet %}
 <div class="section-card">
     <div class="section-header">
@@ -222,7 +216,6 @@
 </div>
 {% endif %}
 
-<!-- RESOURCES -->
 {% if week.resources %}
 <div class="section-card">
     <div class="section-header"><div class="section-header-title">🔗 Activity Resources</div></div>
@@ -236,16 +229,15 @@
 </div>
 {% endif %}
 
-<!-- Prev / Next nav -->
 <div class="lw-nav">
-    {% if prev_week %}
-    <a href="{{ url_for('learning_lesson_week', week_num=prev_week.week) }}" class="btn-lw-nav">
+    {% if prev_url %}
+    <a href="{{ prev_url }}" class="btn-lw-nav">
         ← <div><span class="btn-nav-label">Previous</span>Week {{ prev_week.week }}</div>
     </a>
     {% else %}<div style="flex:1;"></div>{% endif %}
 
-    {% if next_week %}
-    <a href="{{ url_for('learning_lesson_week', week_num=next_week.week) }}" class="btn-lw-nav btn-lw-nav-right">
+    {% if next_url %}
+    <a href="{{ next_url }}" class="btn-lw-nav btn-lw-nav-right">
         <div style="text-align:right;"><span class="btn-nav-label">Next</span>Week {{ next_week.week }}</div> →
     </a>
     {% else %}<div style="flex:1;"></div>{% endif %}

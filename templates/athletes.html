@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% block title %}Athletes{% endblock %}
+{% block page_title %}Athletes{% endblock %}
+
+{% block top_actions %}
+<button onclick="document.getElementById('add-modal').style.display='flex'" class="btn btn-primary">+ Add Athlete</button>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    {% if athletes %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Athlete</th>
+                <th>Event Group</th>
+                <th>Squad</th>
+                <th>Linked Profile</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for a in athletes %}
+            <tr style="opacity:{{ '0.5' if not a['is_active'] else '1' }}">
+                <td>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <div style="width:36px;height:36px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;">
+                            {{ a['initials'] or a['name'][:2].upper() }}
+                        </div>
+                        <strong>{{ a['name'] }}</strong>
+                    </div>
+                </td>
+                <td><small>{{ a['event_group'] or '—' }}</small></td>
+                <td>
+                    {% if a['squad'] %}
+                    <span class="badge badge-info">{{ a['squad'] }}</span>
+                    {% else %}—{% endif %}
+                </td>
+                <td>
+                    {% if a['client_first'] %}
+                    <span class="badge badge-success">✓ Linked</span>
+                    {% else %}
+                    <span class="badge">No link</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if a['is_active'] %}
+                    <span class="badge badge-success">Active</span>
+                    {% else %}
+                    <span class="badge">Inactive</span>
+                    {% endif %}
+                </td>
+                <td style="display:flex;gap:6px;flex-wrap:wrap;">
+                    <a href="{{ url_for('athlete_view', athlete_id=a['id']) }}" class="btn btn-sm btn-primary">View</a>
+                    {% if a['is_active'] %}
+                    <form action="{{ url_for('deactivate_athlete', athlete_id=a['id']) }}" method="post" style="margin:0;">
+                        <button type="submit" class="btn btn-sm" style="background:var(--surface2);color:var(--text-muted);"
+                            onclick="return confirm('Deactivate {{ a['name'] }}?')">Deactivate</button>
+                    </form>
+                    {% else %}
+                    <form action="{{ url_for('reactivate_athlete', athlete_id=a['id']) }}" method="post" style="margin:0;">
+                        <button type="submit" class="btn btn-sm btn-primary">Reactivate</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div style="text-align:center;padding:48px 0;color:var(--text-muted);">
+        <div style="font-size:32px;margin-bottom:8px;">🏃</div>
+        <p>No athletes added yet.</p>
+        <button onclick="document.getElementById('add-modal').style.display='flex'" class="btn btn-primary" style="margin-top:12px;">+ Add First Athlete</button>
+    </div>
+    {% endif %}
+</div>
+
+{# ── Add Athlete Modal ── #}
+<div id="add-modal" class="modal" style="display:none;">
+    <div class="modal-overlay" onclick="document.getElementById('add-modal').style.display='none'"></div>
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3>Add Athlete</h3>
+            <button onclick="document.getElementById('add-modal').style.display='none'">×</button>
+        </div>
+        <form action="{{ url_for('add_athlete') }}" method="post">
+            <div style="padding:20px;display:flex;flex-direction:column;gap:14px;">
+                <div>
+                    <label>Full Name *</label>
+                    <input type="text" name="name" required placeholder="e.g. Alex Johnson" oninput="autoInitials(this)">
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <div>
+                        <label>Initials</label>
+                        <input type="text" name="initials" id="initials-field" maxlength="3" placeholder="AJ">
+                    </div>
+                    <div>
+                        <label>Event Group</label>
+                        <select name="event_group">
+                            <option value="">— Select —</option>
+                            <option value="100m">100m</option>
+                            <option value="200m">200m</option>
+                            <option value="400m">400m</option>
+                            <option value="Multi">Multi-event</option>
+                            <option value="800m_1500m">800m / 1500m</option>
+                            <option value="Field">Field</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <div>
+                        <label>Squad</label>
+                        <input type="text" name="squad" placeholder="e.g. Elite, Development">
+                    </div>
+                    <div>
+                        <label>Date of Birth</label>
+                        <input type="date" name="dob">
+                    </div>
+                </div>
+                <div>
+                    <label>Assessment Code</label>
+                    <input type="text" name="assessment_code" placeholder="Links to speed-assessment.online profile">
+                    <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Optional — used to pull contact info and linked profile from the assessment app.</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="document.getElementById('add-modal').style.display='none'" class="btn btn-sm" style="background:var(--surface2);color:var(--text-muted);">Cancel</button>
+                <button type="submit" class="btn btn-primary btn-sm">Add Athlete</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function autoInitials(nameInput) {
+    const parts = nameInput.value.trim().split(/\s+/).filter(Boolean);
+    if (parts.length >= 2) {
+        const initField = document.getElementById('initials-field');
+        if (!initField.dataset.userEdited) {
+            initField.value = (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
+        }
+    }
+}
+document.getElementById('initials-field').addEventListener('input', function() {
+    this.dataset.userEdited = 'true';
+});
+</script>
+{% endblock %}

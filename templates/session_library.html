@@ -1,0 +1,434 @@
+{% extends "base.html" %}
+{% block title %}Session Library{% endblock %}
+{% block page_title %}Session Library{% endblock %}
+
+{% block top_actions %}
+<input type="text" id="sl-search" placeholder="Search sessions, tags…"
+  style="width:220px;font-size:13px;padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);outline:none;">
+{% endblock %}
+
+{% block content %}
+<div style="display:flex;height:calc(100vh - 120px);gap:0;overflow:hidden;margin:-28px;">
+
+  <!-- Filter sidebar -->
+  <div style="width:190px;flex-shrink:0;padding:16px 14px;border-right:1px solid var(--border);overflow-y:auto;background:#111;">
+    <div style="margin-bottom:16px;">
+      <div class="nav-section-label" style="padding:0 0 6px;">Type</div>
+      <div id="f-type" style="display:flex;flex-wrap:wrap;gap:4px;"></div>
+    </div>
+    <div style="margin-bottom:16px;">
+      <div class="nav-section-label" style="padding:0 0 6px;">Event</div>
+      <div id="f-event" style="display:flex;flex-wrap:wrap;gap:4px;"></div>
+    </div>
+    <div style="margin-bottom:16px;">
+      <div class="nav-section-label" style="padding:0 0 6px;">Phase</div>
+      <div id="f-phase" style="display:flex;flex-wrap:wrap;gap:4px;"></div>
+    </div>
+    <div style="margin-bottom:16px;">
+      <div class="nav-section-label" style="padding:0 0 6px;">Intensity</div>
+      <div id="f-intensity" style="display:flex;flex-wrap:wrap;gap:4px;"></div>
+    </div>
+    <button id="sl-clear" style="display:none;width:100%;padding:5px;border-radius:6px;font-size:12px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text-muted);margin-top:4px;">Clear filters</button>
+  </div>
+
+  <!-- Cards grid -->
+  <div id="sl-cards" style="flex:1;overflow-y:auto;padding:14px 16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;align-content:start;"></div>
+
+  <!-- Detail panel -->
+  <div id="sl-detail" style="width:0;flex-shrink:0;border-left:1px solid var(--border);overflow:hidden;display:flex;flex-direction:column;transition:width .2s;background:#111;"></div>
+
+</div>
+
+<!-- Footer -->
+<div id="sl-footer" style="position:fixed;bottom:0;left:220px;right:0;padding:6px 20px;border-top:1px solid var(--border);background:#111;display:flex;gap:16px;font-size:11px;color:var(--text-muted);z-index:40;"></div>
+
+<script>
+const SESSIONS = {{ sessions_json | safe }};
+
+const TM = {
+  Speed:           { label:'Speed',       color:'#F26522', bg:'rgba(242,101,34,.12)'  },
+  Speed_Endurance: { label:'Speed End.',  color:'#00B4D8', bg:'rgba(0,180,216,.12)'   },
+  Technical:       { label:'Technical',   color:'#a78bfa', bg:'rgba(167,139,250,.12)' },
+  Aerobic:         { label:'Aerobic',     color:'#34d399', bg:'rgba(52,211,153,.12)'  },
+  Plyo_Power:      { label:'Plyo/Power',  color:'#f59e0b', bg:'rgba(245,158,11,.12)'  },
+  Testing:         { label:'Testing',     color:'#f87171', bg:'rgba(248,113,113,.12)' },
+};
+const IC = { Low:'#34d399', Moderate:'#00B4D8', High:'#f59e0b', Max:'#f87171' };
+
+let F = { type:'', event:'', phase:'', intensity:'' };
+let selectedId = null;
+let detailTab   = 'desc';
+let search      = '';
+
+const types      = [...new Set(SESSIONS.map(s=>s.session_type).filter(Boolean))].sort();
+const events     = [...new Set(SESSIONS.map(s=>s.event_group).filter(Boolean))].sort();
+const phases     = [...new Set(SESSIONS.map(s=>s.training_phase).filter(Boolean))].sort();
+const intensities= ['Low','Moderate','High','Max'];
+
+function pill(label, key, val, color) {
+  const b = document.createElement('button');
+  const active = F[key]===val;
+  b.textContent = label;
+  b.style.cssText = `padding:3px 8px;border-radius:12px;font-size:11px;cursor:pointer;border:none;margin:0;
+    background:${active?(color||'#F26522'):'var(--surface2)'};
+    color:${active?'#fff':'var(--text-muted)'};font-weight:${active?500:400};`;
+  b.onclick = () => { F[key] = F[key]===val?'':val; renderAll(); };
+  return b;
+}
+
+function filtered() {
+  return SESSIONS.filter(s => {
+    if (F.type      && s.session_type   !== F.type)      return false;
+    if (F.event     && s.event_group    !== F.event)     return false;
+    if (F.phase     && s.training_phase !== F.phase)     return false;
+    if (F.intensity && s.intensity_level!== F.intensity) return false;
+    if (search) {
+      const q = search.toLowerCase();
+      return s.name.toLowerCase().includes(q)
+          || (s.description||'').toLowerCase().includes(q)
+          || (s.tags||[]).some(t=>t.toLowerCase().includes(q));
+    }
+    return true;
+  });
+}
+
+function renderFilters() {
+  const defs = [
+    ['f-type',      'type',      types,       (v)=>TM[v]?.color],
+    ['f-event',     'event',     events,      ()=>null],
+    ['f-phase',     'phase',     phases,      ()=>null],
+    ['f-intensity', 'intensity', intensities, (v)=>IC[v]],
+  ];
+  defs.forEach(([id,key,vals,colorFn]) => {
+    const el = document.getElementById(id);
+    el.innerHTML = '';
+    vals.forEach(v => el.appendChild(pill(v.replace(/_/g,' '), key, v, colorFn(v))));
+  });
+  const any = Object.values(F).some(v=>v) || search;
+  document.getElementById('sl-clear').style.display = any ? 'block' : 'none';
+}
+
+function renderCards() {
+  const list = filtered();
+  const grid = document.getElementById('sl-cards');
+  grid.style.gridTemplateColumns = selectedId
+    ? 'repeat(auto-fill,minmax(220px,1fr))'
+    : 'repeat(auto-fill,minmax(220px,1fr))';
+
+  if (!list.length) {
+    grid.innerHTML = '<div style="padding:40px;text-align:center;color:var(--text-muted);font-size:13px;grid-column:1/-1;">No sessions match your filters.</div>';
+    return;
+  }
+  grid.innerHTML = '';
+  list.forEach(s => {
+    const tm = TM[s.session_type] || { label:s.session_type, color:'#888', bg:'rgba(128,128,128,.1)' };
+    const ic = IC[s.intensity_level] || '#888';
+    const isActive = s.id === selectedId;
+    const tags = Array.isArray(s.tags) ? s.tags : [];
+    const d = document.createElement('div');
+    d.style.cssText = `background:${isActive?'var(--surface2)':'var(--surface)'};
+      border-left:3px solid ${tm.color};
+      border-top:1px solid ${isActive?tm.color:'var(--border)'};
+      border-right:1px solid ${isActive?tm.color:'var(--border)'};
+      border-bottom:1px solid ${isActive?tm.color:'var(--border)'};
+      border-radius:10px;padding:12px 14px;cursor:pointer;`;
+    d.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+        <span style="font-size:13px;font-weight:500;color:var(--text);line-height:1.3;">${s.name}</span>
+        <span style="font-size:10px;font-weight:500;padding:2px 6px;border-radius:10px;background:${tm.bg};color:${tm.color};white-space:nowrap;margin-left:6px;flex-shrink:0;">${tm.label}</span>
+      </div>
+      <div style="font-size:10px;color:var(--text-muted);margin-bottom:${tags.length?6:0}px;">
+        ${(s.event_group||'').replace(/_/g,'/')} · ${(s.training_phase||'').replace(/_/g,' ')}
+        <span style="color:${ic};font-weight:500;margin-left:4px;">${s.intensity_level}</span>
+      </div>
+      ${tags.length?`<div style="display:flex;gap:4px;flex-wrap:wrap;">
+        ${tags.slice(0,3).map(t=>`<span style="font-size:10px;padding:1px 6px;border-radius:10px;background:var(--surface2);color:var(--text-muted);border:1px solid var(--border);">${t}</span>`).join('')}
+        ${tags.length>3?`<span style="font-size:10px;color:var(--text-muted);">+${tags.length-3}</span>`:''}
+      </div>`:''}
+    `;
+    d.onclick = () => { detailTab='desc'; selectedId = isActive?null:s.id; renderAll(); };
+    grid.appendChild(d);
+  });
+}
+
+const SESSION_TYPES = ['Speed','Speed_Endurance','Technical','Aerobic','Plyo_Power','Testing'];
+const EVENT_GROUPS  = ['100m','200m','400m','100m_200m','200m_400m','100m_400m','Sprints','Hurdles','Jumps','Multi','All'];
+const PHASES        = ['General_Prep','Specific_Prep','Pre_Comp','Competition','Transition'];
+const INTENSITIES   = ['Low','Moderate','High','Max'];
+
+let editMode = false;
+
+function fmtRecovery(secs) {
+  if (!secs) return '—';
+  const mins = secs / 60;
+  return (mins % 1 === 0) ? mins + ' min' : mins.toFixed(1) + ' min';
+}
+
+function renderDetail() {
+  const panel = document.getElementById('sl-detail');
+  if (!selectedId) { panel.style.width='0'; panel.innerHTML=''; editMode=false; return; }
+  const s = SESSIONS.find(x=>x.id===selectedId);
+  if (!s) return;
+  panel.style.width = '340px';
+  const tm = TM[s.session_type] || { label:s.session_type, color:'#888', bg:'rgba(128,128,128,.1)' };
+  const ic = IC[s.intensity_level] || '#888';
+  const tags = Array.isArray(s.tags) ? s.tags : [];
+
+  if (editMode) {
+    panel.innerHTML = `
+      <div style="padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-size:13px;font-weight:600;color:#F26522;">Edit Session</span>
+        <div style="display:flex;gap:6px;">
+          <button id="edit-cancel" style="padding:5px 12px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);font-size:12px;cursor:pointer;">Cancel</button>
+          <button id="edit-save" style="padding:5px 14px;border-radius:7px;border:none;background:#F26522;color:#fff;font-size:12px;font-weight:500;cursor:pointer;">Save</button>
+        </div>
+      </div>
+      <div id="edit-form" style="flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:11px;">
+        <div>
+          <div class="nav-section-label" style="padding:0 0 4px;">Name</div>
+          <input id="ef-name" type="text" value="${s.name}" style="width:100%;">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div>
+            <div class="nav-section-label" style="padding:0 0 4px;">Type</div>
+            <select id="ef-type" style="width:100%;">
+              ${SESSION_TYPES.map(t=>`<option value="${t}"${s.session_type===t?' selected':''}>${t.replace(/_/g,' ')}</option>`).join('')}
+            </select>
+          </div>
+          <div>
+            <div class="nav-section-label" style="padding:0 0 4px;">Intensity</div>
+            <select id="ef-intensity" style="width:100%;">
+              ${INTENSITIES.map(t=>`<option value="${t}"${s.intensity_level===t?' selected':''}>${t}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div>
+            <div class="nav-section-label" style="padding:0 0 4px;">Event Group</div>
+            <select id="ef-event" style="width:100%;">
+              <option value="">—</option>
+              ${EVENT_GROUPS.map(t=>`<option value="${t}"${s.event_group===t?' selected':''}>${t.replace(/_/g,'/')}</option>`).join('')}
+            </select>
+          </div>
+          <div>
+            <div class="nav-section-label" style="padding:0 0 4px;">Phase</div>
+            <select id="ef-phase" style="width:100%;">
+              <option value="">—</option>
+              ${PHASES.map(t=>`<option value="${t}"${s.training_phase===t?' selected':''}>${t.replace(/_/g,' ')}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div>
+          <div class="nav-section-label" style="padding:0 0 4px;">Description</div>
+          <textarea id="ef-desc" rows="5" style="width:100%;resize:vertical;font-size:12px;line-height:1.6;">${s.description||''}</textarea>
+        </div>
+        <div>
+          <div class="nav-section-label" style="padding:0 0 4px;">Tags <span style="font-weight:400;">(comma-separated)</span></div>
+          <input id="ef-tags" type="text" value="${tags.join(', ')}" placeholder="e.g. blocks, acceleration, short" style="width:100%;">
+        </div>
+        <div style="border-top:1px solid var(--border);padding-top:11px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:#00B4D8;margin-bottom:9px;">Session Structure &amp; Targets</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+            <div>
+              <div class="nav-section-label" style="padding:0 0 4px;">Sets</div>
+              <input id="ef-sets" type="number" min="1" max="20" value="${s.target_sets||''}" placeholder="—" style="width:100%;">
+            </div>
+            <div>
+              <div class="nav-section-label" style="padding:0 0 4px;">Reps</div>
+              <input id="ef-reps" type="number" min="1" max="50" value="${s.target_reps||''}" placeholder="—" style="width:100%;">
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+            <div>
+              <div class="nav-section-label" style="padding:0 0 4px;">Recovery (mins)</div>
+              <input id="ef-recovery" type="number" min="0.5" max="60" step="0.5" value="${s.target_recovery_secs ? (s.target_recovery_secs/60) : ''}" placeholder="e.g. 3" style="width:100%;">
+            </div>
+            <div>
+              <div class="nav-section-label" style="padding:0 0 4px;">Intensity %</div>
+              <input id="ef-ipct" type="number" min="0" max="100" value="${s.target_intensity_pct||''}" placeholder="e.g. 85" style="width:100%;">
+            </div>
+          </div>
+          <div>
+            <div class="nav-section-label" style="padding:0 0 4px;">Target Times / Notes</div>
+            <textarea id="ef-tnotes" rows="3" placeholder="e.g. 20m: 2.85s · 60m: 6.9s · Flying 30: 3.1s" style="width:100%;resize:vertical;font-size:12px;line-height:1.5;">${s.target_notes||''}</textarea>
+          </div>
+        </div>
+        <div>
+          <div class="nav-section-label" style="padding:0 0 4px;">Coach Notes</div>
+          <textarea id="ef-cnotes" rows="3" style="width:100%;resize:vertical;font-size:12px;line-height:1.5;">${s.coach_notes||''}</textarea>
+        </div>
+        <div id="edit-status" style="font-size:12px;min-height:16px;"></div>
+      </div>
+    `;
+    document.getElementById('edit-cancel').addEventListener('click', () => { editMode=false; renderDetail(); });
+    document.getElementById('edit-save').addEventListener('click', () => {
+      const fd = new FormData();
+      fd.append('name',            document.getElementById('ef-name').value);
+      fd.append('session_type',    document.getElementById('ef-type').value);
+      fd.append('intensity_level', document.getElementById('ef-intensity').value);
+      fd.append('event_group',     document.getElementById('ef-event').value);
+      fd.append('training_phase',  document.getElementById('ef-phase').value);
+      fd.append('description',     document.getElementById('ef-desc').value);
+      fd.append('tags',            document.getElementById('ef-tags').value);
+      fd.append('target_sets',     document.getElementById('ef-sets').value);
+      fd.append('target_reps',     document.getElementById('ef-reps').value);
+      const recMins = parseFloat(document.getElementById('ef-recovery').value);
+      fd.append('target_recovery_secs', isNaN(recMins) ? '' : Math.round(recMins * 60));
+      fd.append('target_intensity_pct', document.getElementById('ef-ipct').value);
+      fd.append('target_notes',    document.getElementById('ef-tnotes').value);
+      fd.append('coach_notes',     document.getElementById('ef-cnotes').value);
+      const btn = document.getElementById('edit-save');
+      btn.textContent = 'Saving…'; btn.disabled = true;
+      fetch('/performance/sessions/' + s.id + '/update', { method:'POST', body:fd })
+        .then(r => r.json())
+        .then(updated => {
+          Object.assign(s, updated);
+          editMode = false;
+          detailTab = 'desc';
+          renderAll();
+        })
+        .catch(() => {
+          document.getElementById('edit-status').textContent = 'Save failed.';
+          btn.textContent = 'Save'; btn.disabled = false;
+        });
+    });
+    return;
+  }
+
+  // ── View mode ──
+  panel.innerHTML = `
+    <div style="padding:14px 16px 0;border-bottom:1px solid var(--border);">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:14px;font-weight:600;color:var(--text);line-height:1.3;margin-bottom:6px;">${s.name}</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <span style="font-size:11px;padding:2px 8px;border-radius:10px;background:${tm.bg};color:${tm.color};font-weight:500;">${tm.label}</span>
+            <span style="font-size:11px;color:${ic};font-weight:500;">${s.intensity_level||''}</span>
+            <span style="font-size:11px;color:var(--text-muted);">${(s.event_group||'').replace(/_/g,'/')} · ${(s.training_phase||'').replace(/_/g,' ')}</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:4px;flex-shrink:0;margin-left:6px;">
+          <button id="btn-edit" title="Edit" style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;cursor:pointer;padding:5px 8px;color:var(--text-muted);font-size:12px;">✏️</button>
+          <button id="btn-dup"  title="Duplicate" style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;cursor:pointer;padding:5px 8px;color:var(--text-muted);font-size:12px;">⧉</button>
+          <button id="detail-close" style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:20px;padding:0 4px;line-height:1;">×</button>
+        </div>
+      </div>
+      <div style="display:flex;border-bottom:1px solid var(--border);margin-bottom:-1px;overflow-x:auto;">
+        ${[['desc','Description'],['structure','Structure'],['tags','Tags'],['notes','Notes']].map(([k,l])=>`
+          <button class="dtab" data-tab="${k}" style="padding:7px 10px;font-size:12px;cursor:pointer;border:none;background:none;white-space:nowrap;
+            color:${detailTab===k?'#F26522':'var(--text-muted)'};
+            border-bottom:${detailTab===k?'2px solid #F26522':'2px solid transparent'};
+            font-weight:${detailTab===k?500:400};">${l}</button>
+        `).join('')}
+      </div>
+    </div>
+    <div id="detail-body" style="padding:14px 16px;flex:1;overflow-y:auto;display:flex;flex-direction:column;"></div>
+  `;
+
+  function renderBody() {
+    const body = document.getElementById('detail-body');
+    if (detailTab==='desc') {
+      body.innerHTML = `<pre style="font-family:var(--font);font-size:13px;color:var(--text);line-height:1.7;margin:0;white-space:pre-wrap;word-break:break-word;">${s.description||'—'}</pre>`;
+    } else if (detailTab==='tags') {
+      body.innerHTML = tags.length
+        ? `<div style="display:flex;flex-wrap:wrap;gap:6px;">${tags.map(t=>`<span style="font-size:12px;padding:3px 10px;border-radius:20px;background:var(--surface2);color:var(--text);border:1px solid var(--border);">${t}</span>`).join('')}</div>`
+        : `<span style="color:var(--text-muted);font-size:13px;">No tags.</span>`;
+    } else if (detailTab==='structure') {
+      const hasStructure = s.target_sets || s.target_reps || s.target_recovery_secs || s.target_intensity_pct || s.target_notes;
+      body.innerHTML = hasStructure ? `
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+          ${[['Sets', s.target_sets||'—'],['Reps', s.target_reps||'—'],['Recovery', fmtRecovery(s.target_recovery_secs)],['Intensity', s.target_intensity_pct ? s.target_intensity_pct+'%' : '—']].map(([l,v])=>`
+            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;">
+              <div style="font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px;">${l}</div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);">${v}</div>
+            </div>`).join('')}
+        </div>
+        ${s.target_notes ? `
+          <div style="background:rgba(0,180,216,.07);border:1px solid rgba(0,180,216,.2);border-radius:8px;padding:10px 12px;">
+            <div style="font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:#00B4D8;margin-bottom:6px;">Target Times / Goals</div>
+            <pre style="font-family:var(--font);font-size:13px;color:var(--text);margin:0;white-space:pre-wrap;">${s.target_notes}</pre>
+          </div>` : ''}
+      ` : `
+        <div style="text-align:center;padding:30px 0;color:var(--text-muted);">
+          <div style="font-size:22px;margin-bottom:8px;">🎯</div>
+          <div style="font-weight:500;margin-bottom:4px;">No targets set</div>
+          <div style="font-size:12px;">Click ✏️ Edit to add sets, reps, recovery and target times.</div>
+        </div>`;
+    } else {
+      body.style.flex = '1';
+      body.innerHTML = `
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">Visible to coaches only.</div>
+        <textarea id="note-ta" rows="8" placeholder="Add coaching notes, cues, modifications…" style="width:100%;flex:1;resize:vertical;font-size:13px;line-height:1.6;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-family:var(--font);">${s.coach_notes||''}</textarea>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:10px;">
+          <button id="note-save" style="padding:7px 18px;background:#F26522;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;">Save Note</button>
+          <span id="note-status" style="font-size:12px;color:var(--text-muted);"></span>
+        </div>
+      `;
+      document.getElementById('note-save').addEventListener('click', () => {
+        const val = document.getElementById('note-ta').value.trim();
+        const fd = new FormData();
+        fd.append('note', val);
+        fetch('/performance/sessions/' + s.id + '/note', { method:'POST', body:fd })
+          .then(r => {
+            if (r.ok) {
+              s.coach_notes = val;
+              const st = document.getElementById('note-status');
+              st.textContent = 'Saved!'; st.style.color = '#34d399';
+              setTimeout(() => { st.textContent = ''; }, 2000);
+            }
+          });
+      });
+    }
+  }
+  renderBody();
+
+  panel.querySelectorAll('.dtab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      detailTab = btn.dataset.tab;
+      panel.querySelectorAll('.dtab').forEach(b => {
+        const a = b.dataset.tab===detailTab;
+        b.style.color = a?'#F26522':'var(--text-muted)';
+        b.style.borderBottom = a?'2px solid #F26522':'2px solid transparent';
+        b.style.fontWeight = a?'500':'400';
+      });
+      renderBody();
+    });
+  });
+  panel.querySelector('#detail-close').addEventListener('click', () => { selectedId=null; renderAll(); });
+  panel.querySelector('#btn-edit').addEventListener('click', () => { editMode=true; renderDetail(); });
+  panel.querySelector('#btn-dup').addEventListener('click', () => {
+    fetch('/performance/sessions/' + s.id + '/duplicate', { method:'POST' })
+      .then(r => r.json())
+      .then(newS => {
+        SESSIONS.push(newS);
+        selectedId = newS.id;
+        detailTab = 'desc';
+        editMode = true;
+        renderAll();
+      });
+  });
+}
+
+function renderFooter() {
+  const list = filtered();
+  const counts = {};
+  list.forEach(s => { counts[s.session_type]=(counts[s.session_type]||0)+1; });
+  const footer = document.getElementById('sl-footer');
+  footer.innerHTML = Object.entries(TM)
+    .filter(([k])=>counts[k])
+    .map(([k,v])=>`<span><span style="font-weight:500;color:${v.color};">${counts[k]}</span> ${v.label}</span>`)
+    .join('')
+    + `<span style="margin-left:auto;">${list.length} of ${SESSIONS.length} sessions</span>`;
+}
+
+function renderAll() { renderFilters(); renderCards(); renderDetail(); renderFooter(); }
+
+document.getElementById('sl-search').addEventListener('input', e => { search=e.target.value; renderAll(); });
+document.getElementById('sl-clear').addEventListener('click', () => {
+  F={type:'',event:'',phase:'',intensity:''}; search='';
+  document.getElementById('sl-search').value=''; selectedId=null; renderAll();
+});
+
+renderAll();
+</script>
+{% endblock %}

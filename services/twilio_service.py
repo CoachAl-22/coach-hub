@@ -1,10 +1,15 @@
+import logging
+
+logger = logging.getLogger(__name__)
+
+
 def send_sms(account_sid, auth_token, from_number, to_number, message):
     """
     Send an SMS via Twilio. Returns True on success, False on failure.
-    If credentials are not configured, prints to console (dev mode).
+    If credentials are not configured, logs to console (dev mode).
     """
     if not account_sid or not auth_token:
-        print(f'[DEV MODE] SMS to {to_number}: {message}')
+        logger.info('[DEV MODE] SMS to %s: %s', to_number, message)
         return True
 
     try:
@@ -15,8 +20,8 @@ def send_sms(account_sid, auth_token, from_number, to_number, message):
             from_=from_number,
             to=to_number
         )
-        print(f'SMS sent to {to_number}: SID {msg.sid}')
+        logger.info('SMS sent to %s: SID %s', to_number, msg.sid)
         return True
     except Exception as e:
-        print(f'SMS failed to {to_number}: {e}')
+        logger.error('SMS failed to %s: %s', to_number, e)
         return False

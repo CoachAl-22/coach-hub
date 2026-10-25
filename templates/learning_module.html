@@ -49,7 +49,6 @@
 .section-card ul { padding-left: 1.25rem; margin: 0.5rem 0; }
 .section-card li { font-size: 0.9rem; line-height: 1.65; margin-bottom: 0.35rem; }
 
-/* Content component styles */
 .commitment-card {
     background: var(--surface2);
     border-left: 3px solid #F26522;
@@ -123,7 +122,6 @@
 
 <div class="module-reader">
 
-<!-- Module meta bar -->
 <div class="module-meta-bar">
     <div class="module-meta-icon">{{ module.icon }}</div>
     <div style="flex:1;">
@@ -135,7 +133,6 @@
     {% endif %}
 </div>
 
-<!-- Completion bar (top) -->
 <div class="complete-bar {% if completed %}done{% endif %}">
     {% if completed %}
         <small>✓ You've marked this module as read</small>
@@ -148,7 +145,6 @@
     {% endif %}
 </div>
 
-<!-- Module content sections -->
 {% for section in module.sections %}
 <div class="section-card">
     <h2>{{ section.heading }}</h2>
@@ -156,7 +152,6 @@
 </div>
 {% endfor %}
 
-<!-- Key takeaway -->
 {% if module.key_takeaway %}
 <div class="key-takeaway">
     <strong>Key Takeaway</strong>
@@ -164,7 +159,6 @@
 </div>
 {% endif %}
 
-<!-- Completion bar (bottom) -->
 {% if not completed %}
 <div class="complete-bar">
     <small>Finished reading? Mark this module as complete.</small>
@@ -174,7 +168,6 @@
 </div>
 {% endif %}
 
-<!-- Prev / Next nav -->
 <div class="module-nav">
     {% if prev_module %}
     <a href="{{ url_for('learning_module', module_key=prev_module.key) }}" class="btn-module-nav">

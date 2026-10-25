@@ -4,8 +4,8 @@
 
 {% block top_actions %}
     {% if is_admin %}
-    <form method="POST" action="{{ url_for('roster_generate', term_id=term['id']) }}" style="display:inline" onsubmit="return confirm('This will clear the current roster and auto-generate a new one. Continue?')">
-        <button type="submit" class="btn btn-secondary btn-sm">Auto-Generate</button>
+    <form method="POST" action="{{ url_for('roster_generate', term_id=term['id']) }}" style="display:inline" onsubmit="return confirm('This will clear the current roster and auto-generate a new one using coach availability responses. Continue?')">
+        <button type="submit" class="btn btn-secondary btn-sm" title="Builds roster using submitted availability responses">Auto-Generate from Availability</button>
     </form>
     <form method="POST" action="{{ url_for('roster_clear', term_id=term['id']) }}" style="display:inline" onsubmit="return confirm('Clear all roster entries for this term?')">
         <button type="submit" class="btn btn-danger btn-sm">Clear</button>
@@ -27,11 +27,15 @@
 
 {% if weeks %}
 {% for week in weeks %}
-<div class="card week-card">
-    <div class="week-header">
-        <h3>Week of {{ week.week_start.strftime('%d %B') }}</h3>
+<div class="card week-card" data-week-start="{{ week.week_start.isoformat() }}">
+    <div class="week-header week-header-toggle" onclick="toggleWeek(this)">
+        <h3>
+            Week of {{ week.week_start.strftime('%d %B') }}
+            <span class="week-past-label" style="display:none"> — Past</span>
+        </h3>
+        <span class="week-toggle-icon">▾</span>
     </div>
-    <div class="roster-table-wrap">
+    <div class="roster-table-wrap week-body">
         <table class="roster-table">
             <thead>
                 <tr>
@@ -47,40 +51,53 @@
                 {% for item in week.sessions %}
                 <tr class="roster-row status-row-{{ item.status }}"
                     data-session="{{ item.session['id'] }}"
-                    data-date="{{ item.date.isoformat() }}">
+                    data-date="{{ item.date.isoformat() }}"
+                    {% if item.is_cancelled %}style="opacity:0.55"{% endif %}>
                     <td class="day-cell">{{ item.date.strftime('%a %d') }}</td>
                     <td class="time-cell">{{ item.session['start_time'][:5] }}<br><small>{{ item.session['end_time'][:5] }}</small></td>
                     <td>{{ item.session['location'] }}</td>
                     <td><small>{{ item.session['programs'] }}</small></td>
                     <td class="coaches-cell">
-                        {% for entry in item.entries %}
-                        <div class="roster-coach-chip">
-                            {{ entry['coach_name'].split()[0] }}
-                            {% if is_admin %}
-                            <button class="remove-coach-btn"
-                                    onclick="removeCoach({{ item.session['id'] }}, {{ entry['coach_id'] }}, '{{ item.date.isoformat() }}')"
-                                    title="Remove">x</button>
+                        {% if item.is_cancelled %}
+                            <small class="text-muted">Session not running{% if item.cancel_reason %} — {{ item.cancel_reason }}{% endif %}</small>
+                        {% else %}
+                            {% for entry in item.entries %}
+                            <div class="roster-coach-chip">
+                                {{ entry['coach_name'].split()[0] }}
+                                {% if is_admin %}
+                                <button class="remove-coach-btn"
+                                        onclick="removeCoach({{ item.session['id'] }}, {{ entry['coach_id'] }}, '{{ item.date.isoformat() }}')"
+                                        title="Remove">x</button>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                            {% if is_admin and item.assigned < item.session['max_coaches'] %}
+                            <div class="add-coach-wrap">
+                                <select class="add-coach-select" id="select-{{ item.session['id'] }}-{{ item.date.isoformat() }}">
+                                    <option value="">+ Add coach</option>
+                                    {% for coach in coaches %}
+                                        {% set already_assigned = item.entries | selectattr('coach_id', 'equalto', coach['id']) | list %}
+                                        {% if not already_assigned %}
+                                        <option value="{{ coach['id'] }}">{{ coach['name'] }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                                <button class="btn btn-xs btn-primary"
+                                        onclick="assignCoach({{ item.session['id'] }}, '{{ item.date.isoformat() }}', '{{ item.session['location'] }} {{ item.session['start_time'][:5] }}')">Add</button>
+                            </div>
                             {% endif %}
-                        </div>
-                        {% endfor %}
-                        {% if is_admin and item.assigned < item.session['max_coaches'] %}
-                        <div class="add-coach-wrap">
-                            <select class="add-coach-select" id="select-{{ item.session['id'] }}-{{ item.date.isoformat() }}">
-                                <option value="">+ Add coach</option>
-                                {% for coach in coaches %}
-                                    {% set already_assigned = item.entries | selectattr('coach_id', 'equalto', coach['id']) | list %}
-                                    {% if not already_assigned %}
-                                    <option value="{{ coach['id'] }}">{{ coach['name'] }}</option>
-                                    {% endif %}
-                                {% endfor %}
-                            </select>
-                            <button class="btn btn-xs btn-primary"
-                                    onclick="assignCoach({{ item.session['id'] }}, '{{ item.date.isoformat() }}')">Add</button>
-                        </div>
                         {% endif %}
                     </td>
                     <td>
-                        {% if item.status == 'full' %}
+                        {% if item.is_cancelled %}
+                            <span class="badge badge-secondary">Cancelled</span>
+                            {% if is_admin %}
+                            <div style="margin-top:4px">
+                                <button class="btn btn-xs btn-secondary"
+                                        onclick="restoreDate({{ item.session['id'] }}, '{{ item.date.isoformat() }}')">Restore</button>
+                            </div>
+                            {% endif %}
+                        {% elif item.status == 'full' %}
                             <span class="badge badge-success">Full</span>
                         {% elif item.status == 'staffed' %}
                             <span class="badge badge-info">OK</span>
@@ -89,7 +106,15 @@
                         {% else %}
                             <span class="badge badge-danger">Empty</span>
                         {% endif %}
+                        {% if not item.is_cancelled %}
                         <div class="min-coaches-note">min {{ item.session['min_coaches'] }}</div>
+                        {% if is_admin %}
+                        <div style="margin-top:4px">
+                            <button class="btn btn-xs btn-outline-danger"
+                                    onclick="cancelDate({{ item.session['id'] }}, '{{ item.date.isoformat() }}', '{{ item.session['location'] }}')">Cancel</button>
+                        </div>
+                        {% endif %}
+                        {% endif %}
                     </td>
                 </tr>
                 {% endfor %}
@@ -113,10 +138,55 @@
 {% endblock %}
 
 {% block scripts %}
+<style>
+.week-header-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+    padding: 12px 16px;
+    margin: -12px -16px;
+    border-radius: 8px;
+    transition: background 0.15s;
+}
+.week-header-toggle:hover { background: rgba(255,255,255,0.04); }
+.week-toggle-icon {
+    font-size: 16px;
+    color: var(--text-muted);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+}
+.week-card.collapsed .week-toggle-icon { transform: rotate(-90deg); }
+.week-card.collapsed .week-body { display: none; }
+.week-card.is-past .week-header-toggle h3 { opacity: 0.6; }
+.week-past-label { font-size: 12px; font-weight: 400; color: var(--text-muted); }
+</style>
 <script>
 const TERM_ID = {{ term['id'] }};
 
-async function assignCoach(sessionId, sessionDate) {
+function toggleWeek(header) {
+    const card = header.closest('.week-card');
+    card.classList.toggle('collapsed');
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    document.querySelectorAll('.week-card').forEach(card => {
+        const weekStart = new Date(card.dataset.weekStart);
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekEnd.getDate() + 6);
+
+        if (weekEnd < today) {
+            card.classList.add('is-past', 'collapsed');
+            card.querySelector('.week-past-label').style.display = 'inline';
+        }
+    });
+});
+
+async function assignCoach(sessionId, sessionDate, sessionName = '', force = false) {
     const selectId = `select-${sessionId}-${sessionDate}`;
     const select = document.getElementById(selectId);
     const coachId = select.value;
@@ -125,10 +195,39 @@ async function assignCoach(sessionId, sessionDate) {
     const resp = await fetch(`/roster/${TERM_ID}/assign`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({session_id: sessionId, coach_id: coachId, date: sessionDate})
+        body: JSON.stringify({session_id: sessionId, coach_id: coachId, date: sessionDate, force})
     });
-    if (resp.ok) { location.reload(); }
-    else { alert('Failed to assign coach. Please try again.'); }
+    const data = await resp.json();
+    if (data.warning) {
+        if (confirm(`⚠ ${data.warning}\n\nAdd them anyway?`)) {
+            assignCoach(sessionId, sessionDate, sessionName, true);
+        } else {
+            select.value = '';
+        }
+    } else if (data.success) {
+        if (confirm(`✓ ${data.coach_name} added.\n\nApply ${data.coach_name} to ALL "${sessionName}" sessions this term?\n(Existing assignments won't be overwritten.)`)) {
+            await fillTerm(sessionId, coachId, sessionName);
+        } else {
+            location.reload();
+        }
+    } else {
+        alert('Failed to assign coach. Please try again.');
+    }
+}
+
+async function fillTerm(sessionId, coachId, sessionName) {
+    const resp = await fetch(`/roster/${TERM_ID}/fill_term`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({session_id: sessionId, coach_id: coachId})
+    });
+    const data = await resp.json();
+    if (data.success) {
+        alert(`Done — ${data.coach_name} added to ${data.added} of ${data.total} "${sessionName}" sessions this term.`);
+    } else {
+        alert('Could not fill term. Please try again.');
+    }
+    location.reload();
 }
 
 async function removeCoach(sessionId, coachId, sessionDate) {
@@ -140,6 +239,29 @@ async function removeCoach(sessionId, coachId, sessionDate) {
     });
     if (resp.ok) { location.reload(); }
     else { alert('Failed to remove coach. Please try again.'); }
+}
+
+async function cancelDate(sessionId, sessionDate, sessionName) {
+    const reason = prompt(`Reason for cancelling ${sessionName} on ${sessionDate}? (optional)`);
+    if (reason === null) return; // user hit Cancel
+    const resp = await fetch(`/roster/${TERM_ID}/cancel_date`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({session_id: sessionId, date: sessionDate, reason: reason})
+    });
+    if (resp.ok) { location.reload(); }
+    else { alert('Failed to cancel session. Please try again.'); }
+}
+
+async function restoreDate(sessionId, sessionDate) {
+    if (!confirm('Restore this session?')) return;
+    const resp = await fetch(`/roster/${TERM_ID}/restore_date`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({session_id: sessionId, date: sessionDate})
+    });
+    if (resp.ok) { location.reload(); }
+    else { alert('Failed to restore session. Please try again.'); }
 }
 </script>
 {% endblock %}

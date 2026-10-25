@@ -1,0 +1,348 @@
+{% extends "base.html" %}
+{% block title %}{{ athlete['name'] }}{% endblock %}
+{% block page_title %}Athlete Profile{% endblock %}
+
+{% set TM_COLORS = {'Speed':'#F26522','Speed_Endurance':'#00B4D8','Technical':'#a78bfa','Aerobic':'#34d399','Plyo_Power':'#f59e0b','Testing':'#f87171'} %}
+
+{% block top_actions %}
+<a href="{{ url_for('athletes') }}" class="btn btn-sm" style="background:var(--surface2);color:var(--text-muted);">← Athletes</a>
+<a href="{{ url_for('athlete_performance', athlete_id=athlete['id']) }}" class="btn btn-sm btn-primary">📊 Performance</a>
+{% if athlete['is_active'] %}
+<form action="{{ url_for('deactivate_athlete', athlete_id=athlete['id']) }}" method="post" style="margin:0;display:inline;">
+    <button type="submit" class="btn btn-sm" style="background:var(--surface2);color:var(--text-muted);"
+        onclick="return confirm('Deactivate {{ athlete['name'] }}? They can be reactivated at any time.')">Deactivate</button>
+</form>
+{% else %}
+<span class="badge" style="background:rgba(248,113,113,.15);color:#f87171;margin-right:4px;">Inactive</span>
+<form action="{{ url_for('reactivate_athlete', athlete_id=athlete['id']) }}" method="post" style="margin:0;display:inline;">
+    <button type="submit" class="btn btn-sm btn-primary">Reactivate</button>
+</form>
+{% endif %}
+<form action="{{ url_for('delete_athlete', athlete_id=athlete['id']) }}" method="post" style="margin:0;display:inline;">
+    <button type="submit" class="btn btn-sm" style="background:rgba(231,76,60,.15);color:var(--danger);"
+        onclick="return confirm('Permanently delete {{ athlete['name'] }}? This cannot be undone.')">Delete</button>
+</form>
+{% endblock %}
+
+{% block content %}
+
+{# ── Profile card ── #}
+<div class="card" style="margin-bottom:16px;">
+    <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+        <div style="width:64px;height:64px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px;flex-shrink:0;">
+            {{ athlete['initials'] or athlete['name'][:2].upper() }}
+        </div>
+        <div style="flex:1;min-width:0;">
+            <div style="font-size:22px;font-weight:700;margin-bottom:4px;">{{ athlete['name'] }}</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                {% if athlete['event_group'] %}
+                <span class="badge badge-info">{{ athlete['event_group'] }}</span>
+                {% endif %}
+                {% if athlete['squad'] %}
+                <span class="badge badge-warning">{{ athlete['squad'] }}</span>
+                {% endif %}
+                {% if athlete['age_group'] %}
+                <span class="badge">{{ athlete['age_group'] }}</span>
+                {% endif %}
+            </div>
+        </div>
+        <div style="text-align:right;">
+            {% if athlete['client_first'] %}
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">Linked to speed-assessment.online</div>
+            <span class="badge badge-success">✓ Profile connected</span>
+            {% else %}
+            <span class="badge">No assessment link</span>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if athlete['client_first'] %}
+    <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;">
+        {% if athlete['phone'] %}
+        <div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:2px;">Phone</div>
+            <div style="font-size:14px;">{{ athlete['phone'] }}</div>
+        </div>
+        {% endif %}
+        {% if athlete['email'] %}
+        <div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:2px;">Email</div>
+            <div style="font-size:14px;">{{ athlete['email'] }}</div>
+        </div>
+        {% endif %}
+        {% if athlete['date_of_birth'] %}
+        <div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:2px;">Date of Birth</div>
+            <div style="font-size:14px;">{{ athlete['date_of_birth'] | format_date }}</div>
+        </div>
+        {% endif %}
+        {% if athlete['primary_sport'] %}
+        <div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:2px;">Sport</div>
+            <div style="font-size:14px;">{{ athlete['primary_sport'] }}</div>
+        </div>
+        {% endif %}
+        {% if athlete['focus_events'] %}
+        <div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:2px;">Focus Events</div>
+            <div style="font-size:14px;">{{ athlete['focus_events'] }}</div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+{# ── Current training block ── #}
+{% if current_block %}
+<div class="card" style="margin-bottom:16px;">
+    <div style="font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;">Current Training Block</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;">
+        <div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:2px;">Block</div>
+            <div style="font-weight:600;">{{ current_block['block_name'] }}</div>
+        </div>
+        <div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:2px;">Phase</div>
+            <div style="font-weight:600;">{{ current_block['mesocycle_phase'] or '—' }}</div>
+        </div>
+        <div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:2px;">Strength Focus</div>
+            <div style="font-weight:600;">{{ current_block['strength_label'] or '—' }}</div>
+        </div>
+        <div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:2px;">Speed Focus</div>
+            <div style="font-weight:600;">{{ current_block['speed_label'] or '—' }}</div>
+        </div>
+        <div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:2px;">S&amp;C Phase</div>
+            <div><span class="badge badge-info">{{ current_block['sc_phase_code'] or '—' }}</span></div>
+        </div>
+        <div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:2px;">Dates</div>
+            <div style="font-size:13px;">{{ current_block['start_date'] | format_date }} – {{ current_block['end_date'] | format_date }}</div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{# ── Training plan ── #}
+{% set DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'] %}
+<div class="card" style="margin-bottom:16px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <div style="font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;">Weekly Training Plan</div>
+        <button onclick="document.getElementById('assign-modal').style.display='flex'" class="btn btn-sm btn-primary">+ Assign Session</button>
+    </div>
+    {% if training_plan %}
+    {% set ns = namespace(last_day=-99) %}
+    <div style="display:flex;flex-direction:column;gap:4px;">
+        {% for ts in training_plan %}
+        {% set c = TM_COLORS.get(ts['session_type'], '#888') %}
+        {% set dow = ts['day_of_week'] %}
+        {% if dow != ns.last_day %}
+            {% set ns.last_day = dow %}
+            <div style="font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--text-muted);padding:{% if loop.index > 1 %}10px{% else %}0px{% endif %} 0 4px;">
+                {{ DAYS[dow] if dow is not none else 'Any day' }}
+            </div>
+        {% endif %}
+        <div style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);">
+            <div style="width:8px;height:8px;border-radius:50%;background:{{ c }};flex-shrink:0;"></div>
+            <div style="flex:1;min-width:0;">
+                <div style="font-size:13px;font-weight:500;color:var(--text);">{{ ts['name'] }}</div>
+                <div style="font-size:11px;color:var(--text-muted);">{{ ts['session_type'] | replace('_',' ') }} · {{ ts['event_group'] or '—' }} · {{ ts['intensity_level'] }}</div>
+            </div>
+            <form action="{{ url_for('remove_training_session', athlete_id=athlete['id'], plan_id=ts['id']) }}" method="post" style="margin:0;">
+                <button type="submit" title="Remove" style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:18px;padding:0 4px;line-height:1;">&times;</button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div style="text-align:center;padding:28px 0;color:var(--text-muted);">
+        <div style="font-size:24px;margin-bottom:6px;">📋</div>
+        <div style="font-weight:500;margin-bottom:4px;">No sessions assigned</div>
+        <div style="font-size:12px;">Click "Assign Session" to pick from the training library.</div>
+    </div>
+    {% endif %}
+</div>
+
+{# ── Performance tests ── #}
+<div class="card" style="margin-bottom:16px;">
+    <div style="font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;">Performance Tests</div>
+    {% if tests %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Protocol</th>
+                <th>Conditions</th>
+                <th>Results</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in tests %}
+            <tr>
+                <td><strong>{{ t['test_date'] | format_date }}</strong></td>
+                <td><small>{{ t['test_protocol'] or '—' }}</small></td>
+                <td><small>{{ t['conditions'] or '—' }}</small></td>
+                <td>
+                    {% if t['results_summary'] and t['results_summary'][0] %}
+                    <small>{{ t['results_summary'] | join(', ') }}</small>
+                    {% else %}—{% endif %}
+                </td>
+                <td><small>{{ t['notes'] or '—' }}</small></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div style="text-align:center;padding:32px 0;color:var(--text-muted);">
+        <div style="font-size:28px;margin-bottom:8px;">📊</div>
+        <div style="font-weight:500;margin-bottom:4px;">No tests recorded yet</div>
+        <div style="font-size:13px;">
+            <a href="{{ url_for('athlete_performance', athlete_id=athlete['id']) }}" style="color:var(--cyan);">Open Performance Dashboard</a> to record test results.
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{# ── S&C log ── #}
+<div class="card">
+    <div style="font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;">Recent S&amp;C Sessions</div>
+    {% if sc_logs %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Template</th>
+                <th>Phase</th>
+                <th>RPE</th>
+                <th>Duration</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in sc_logs %}
+            <tr>
+                <td><strong>{{ log['workout_date'] | format_date }}</strong></td>
+                <td><small>{{ log['template_name'] or '—' }}</small></td>
+                <td><small>{{ log['phase_name'] or '—' }}</small></td>
+                <td>
+                    {% if log['overall_rpe'] %}
+                    <span class="badge {% if log['overall_rpe'] >= 8 %}badge-warning{% elif log['overall_rpe'] >= 6 %}badge-info{% else %}badge-success{% endif %}">
+                        {{ log['overall_rpe'] }}/10
+                    </span>
+                    {% else %}—{% endif %}
+                </td>
+                <td><small>{% if log['session_duration_min'] %}{{ log['session_duration_min'] }}min{% else %}—{% endif %}</small></td>
+                <td><small>{{ log['coach_notes'] or '—' }}</small></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div style="text-align:center;padding:32px 0;color:var(--text-muted);">
+        <div style="font-size:28px;margin-bottom:8px;">🏋️</div>
+        <div style="font-weight:500;margin-bottom:4px;">No S&amp;C sessions logged yet</div>
+        <div style="font-size:13px;">Strength &amp; conditioning sessions will appear here once recorded.</div>
+    </div>
+    {% endif %}
+</div>
+
+{# ── Assign Training Session Modal ── #}
+<form id="assign-form" action="{{ url_for('assign_training_session', athlete_id=athlete['id']) }}" method="post">
+    <input type="hidden" name="session_id" id="assign-session-id">
+    <input type="hidden" name="day_of_week" id="assign-dow">
+</form>
+
+<div id="assign-modal" class="modal" style="display:none;">
+    <div class="modal-overlay" onclick="closeAssignModal()"></div>
+    <div class="modal-box" style="max-width:540px;display:flex;flex-direction:column;max-height:85vh;">
+        <div class="modal-header">
+            <h3>Assign Training Session</h3>
+            <button onclick="closeAssignModal()">×</button>
+        </div>
+
+        <!-- Step 1: pick session -->
+        <div id="step-session" style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
+            <div style="padding:14px 20px 8px;">
+                <input type="text" id="ts-search" placeholder="Search by name, type or event…" style="width:100%;">
+            </div>
+            <div id="ts-list" style="flex:1;overflow-y:auto;padding:0 12px 12px;display:flex;flex-direction:column;gap:4px;">
+                {% for ts in all_training_sessions %}
+                {% set c = TM_COLORS.get(ts['session_type'], '#888') %}
+                <div class="ts-row" role="button"
+                    data-id="{{ ts['id'] }}"
+                    data-name="{{ ts['name'] | lower }}"
+                    data-type="{{ ts['session_type'] | lower | replace('_',' ') }}"
+                    data-event="{{ (ts['event_group'] or '') | lower }}"
+                    data-label="{{ ts['name'] }}"
+                    onclick="selectSession(this)"
+                    style="padding:9px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;display:flex;align-items:center;gap:10px;">
+                    <div style="width:8px;height:8px;border-radius:50%;background:{{ c }};flex-shrink:0;"></div>
+                    <div style="flex:1;min-width:0;">
+                        <div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ ts['name'] }}</div>
+                        <div style="font-size:10px;color:var(--text-muted);">{{ ts['session_type'] | replace('_',' ') }} · {{ ts['event_group'] or '—' }} · {{ ts['intensity_level'] }}</div>
+                    </div>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:var(--text-muted);flex-shrink:0;"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Step 2: pick day -->
+        <div id="step-day" style="display:none;padding:20px;">
+            <div style="margin-bottom:6px;">
+                <button onclick="backToSessions()" style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:12px;padding:0;">← Back</button>
+            </div>
+            <div id="step-day-name" style="font-size:14px;font-weight:600;margin-bottom:4px;"></div>
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">Which day should this session run?</div>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+                {% for d, label in [(0,'Mon'),(1,'Tue'),(2,'Wed'),(3,'Thu'),(4,'Fri'),(5,'Sat'),(6,'Sun')] %}
+                <button onclick="submitAssign({{ d }})"
+                    style="padding:10px 4px;border-radius:10px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:13px;font-weight:500;cursor:pointer;transition:background .15s,border-color .15s;"
+                    onmouseover="this.style.background='rgba(242,101,34,.15)';this.style.borderColor='#F26522';"
+                    onmouseout="this.style.background='var(--surface2)';this.style.borderColor='var(--border)';">
+                    {{ label }}
+                </button>
+                {% endfor %}
+                <button onclick="submitAssign('')"
+                    style="padding:10px 4px;border-radius:10px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);font-size:12px;cursor:pointer;transition:background .15s;"
+                    onmouseover="this.style.background='var(--surface)';"
+                    onmouseout="this.style.background='var(--surface2)';">
+                    Any day
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function closeAssignModal() {
+    document.getElementById('assign-modal').style.display = 'none';
+    backToSessions();
+}
+function selectSession(el) {
+    document.getElementById('assign-session-id').value = el.dataset.id;
+    document.getElementById('step-day-name').textContent = el.dataset.label;
+    document.getElementById('step-session').style.display = 'none';
+    document.getElementById('step-day').style.display = 'block';
+}
+function backToSessions() {
+    document.getElementById('step-session').style.display = 'flex';
+    document.getElementById('step-day').style.display = 'none';
+    document.getElementById('assign-session-id').value = '';
+}
+function submitAssign(dow) {
+    document.getElementById('assign-dow').value = dow;
+    document.getElementById('assign-form').submit();
+}
+document.getElementById('ts-search').addEventListener('input', function() {
+    const q = this.value.toLowerCase();
+    document.querySelectorAll('#ts-list .ts-row').forEach(row => {
+        const match = !q || row.dataset.name.includes(q) || row.dataset.type.includes(q) || row.dataset.event.includes(q);
+        row.style.display = match ? 'flex' : 'none';
+    });
+});
+</script>
+{% endblock %}

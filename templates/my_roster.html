@@ -1,50 +1,62 @@
 {% extends "base.html" %}
-{% block title %}My Roster{% endblock %}
+{% block title %}My Roster{% if term %} — {{ term['name'] }}{% endif %}{% endblock %}
 {% block page_title %}My Roster{% endblock %}
 
 {% block content %}
+
 {% if term %}
-<div class="roster-intro">
-    <div>
-        <strong>{{ term['name'] }}</strong>
-        <span>{{ term['start_date'] }} to {{ term['end_date'] }}</span>
-    </div>
-    <span class="badge badge-info">{{ weeks | length }} rostered week{% if weeks | length != 1 %}s{% endif %}</span>
-</div>
+<p class="text-muted" style="margin-bottom:1.5rem;font-size:0.875rem;">
+    {{ term['name'] }} &mdash; your allocated sessions
+</p>
 {% endif %}
 
 {% if weeks %}
 {% for week in weeks %}
-<div class="card week-card {% if week.is_past %}is-collapsed{% endif %}">
-    <button class="week-header week-toggle"
-            type="button"
-            aria-expanded="{{ 'false' if week.is_past else 'true' }}"
-            aria-controls="my-roster-week-{{ loop.index }}">
-        <span>
+<div class="card week-card" data-week-start="{{ week.week_start.isoformat() }}">
+    <div class="week-header week-header-toggle" onclick="toggleWeek(this)">
+        <h3>
             Week of {{ week.week_start.strftime('%d %B') }}
-            {% if week.is_past %}<span class="past-week-label">Past</span>{% endif %}
-        </span>
-        <span class="week-chevron" aria-hidden="true">⌄</span>
-    </button>
-    <div class="roster-table-wrap week-content" id="my-roster-week-{{ loop.index }}">
+            <span class="week-past-label" style="display:none"> — Past</span>
+        </h3>
+        <span class="week-toggle-icon">▾</span>
+    </div>
+    <div class="roster-table-wrap week-body">
         <table class="roster-table">
             <thead>
                 <tr>
                     <th>Day</th>
-                    <th>Date</th>
                     <th>Time</th>
                     <th>Location</th>
                     <th>Programs</th>
+                    <th>With</th>
+                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
                 {% for item in week.sessions %}
-                <tr>
-                    <td class="day-cell">{{ item.date.strftime('%A') }}</td>
-                    <td>{{ item.date.strftime('%d %b') }}</td>
-                    <td class="time-cell">{{ item.session['start_time'][:5] }}–{{ item.session['end_time'][:5] }}</td>
-                    <td>{{ item.session['location'] }}</td>
-                    <td><small>{{ item.session['programs'] or '—' }}</small></td>
+                <tr class="roster-row"{% if item.is_cancelled %} style="opacity:0.55"{% endif %}>
+                    <td class="day-cell">{{ item.date.strftime('%a %d') }}</td>
+                    <td class="time-cell">
+                        {{ item.start_time[:5] }}<br>
+                        <small>{{ item.end_time[:5] }}</small>
+                    </td>
+                    <td>{{ item.location }}</td>
+                    <td><small>{{ item.programs }}</small></td>
+                    <td class="text-muted">
+                        {% if item.co_coaches %}
+                            <small>{{ item.co_coaches | join(', ') }}</small>
+                        {% else %}
+                            <small>&mdash;</small>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if item.is_cancelled %}
+                            <span class="badge badge-secondary">Cancelled</span>
+                            {% if item.cancel_reason %}
+                            <br><small class="text-muted">{{ item.cancel_reason }}</small>
+                            {% endif %}
+                        {% endif %}
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -52,26 +64,64 @@
     </div>
 </div>
 {% endfor %}
+
 {% else %}
 <div class="card">
     <div class="empty-state">
         {% if term %}
-        You have no classes allocated for {{ term['name'] }} yet.
+        You have no sessions assigned for {{ term['name'] }}.
         {% else %}
-        There is no current or upcoming term.
+        No active term found.
         {% endif %}
     </div>
 </div>
 {% endif %}
+
 {% endblock %}
 
 {% block scripts %}
+<style>
+.week-header-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+    padding: 12px 16px;
+    margin: -12px -16px;
+    border-radius: 8px;
+    transition: background 0.15s;
+}
+.week-header-toggle:hover { background: rgba(255,255,255,0.04); }
+.week-toggle-icon {
+    font-size: 16px;
+    color: var(--text-muted);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+}
+.week-card.collapsed .week-toggle-icon { transform: rotate(-90deg); }
+.week-card.collapsed .week-body { display: none; }
+.week-card.is-past .week-header-toggle h3 { opacity: 0.6; }
+.week-past-label { font-size: 12px; font-weight: 400; color: var(--text-muted); }
+</style>
 <script>
-document.querySelectorAll('.week-toggle').forEach((toggle) => {
-    toggle.addEventListener('click', () => {
-        const card = toggle.closest('.week-card');
-        const collapsed = card.classList.toggle('is-collapsed');
-        toggle.setAttribute('aria-expanded', String(!collapsed));
+function toggleWeek(header) {
+    header.closest('.week-card').classList.toggle('collapsed');
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    document.querySelectorAll('.week-card').forEach(card => {
+        const weekStart = new Date(card.dataset.weekStart);
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekEnd.getDate() + 6);
+
+        if (weekEnd < today) {
+            card.classList.add('is-past', 'collapsed');
+            card.querySelector('.week-past-label').style.display = 'inline';
+        }
     });
 });
 </script>

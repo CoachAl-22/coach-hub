@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Access Restricted{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="access-denied-wrap">
+    <div class="access-denied-banner">
+        <div class="access-denied-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+            </svg>
+        </div>
+        <div class="access-denied-text">
+            <div class="access-denied-heading">Access Restricted</div>
+            <div class="access-denied-msg">{{ message }}</div>
+        </div>
+    </div>
+    <a href="{{ url_for('dashboard') }}" class="btn btn-secondary" style="margin-top:24px;display:inline-flex;align-items:center;gap:8px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;"><polyline points="15 18 9 12 15 6"/></svg>
+        Back to Dashboard
+    </a>
+</div>
+{% endblock %}

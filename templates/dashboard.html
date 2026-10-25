@@ -15,7 +15,7 @@
     <div class="stats-row">
         <div class="stat-card">
             <div class="stat-value">{{ total_this_week }}</div>
-            <div class="stat-label">Sessions This Week</div>
+            <div class="stat-label">{% if between_terms %}Sessions Next Week{% else %}Sessions This Week{% endif %}</div>
         </div>
         <div class="stat-card {% if gaps > 0 %}stat-warning{% endif %}">
             <div class="stat-value">{{ gaps }}</div>
@@ -32,7 +32,7 @@
     <!-- This week's schedule -->
     <div class="card">
         <div class="card-header">
-            <h2>This Week
+            <h2>{% if between_terms %}Upcoming Week{% else %}This Week{% endif %}
                 <span class="week-range">{{ week_start.strftime('%d %b') }} -- {{ week_end.strftime('%d %b %Y') }}</span>
             </h2>
             {% if current_user.is_admin and current_term %}

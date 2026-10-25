@@ -3,15 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | Power2ADAPT Coach Hub</title>
+    <title>Coach Hub</title>
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Coach Hub">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0d0f14">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body class="login-body">
     <div class="login-container">
         <div class="login-logo">
-            <span class="logo-power">Power</span><span class="logo-2">2</span><span class="logo-adapt">ADAPT</span>
-            <div class="login-subtitle">Coach Hub</div>
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Power2ADAPT" class="login-logo-img">
+            <div class="login-subtitle">COACH HUB</div>
         </div>
 
         {% with messages = get_flashed_messages(with_categories=true) %}

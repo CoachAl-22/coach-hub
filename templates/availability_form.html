@@ -11,7 +11,7 @@
 <div class="form-container">
 
     <div class="form-logo">
-        <span class="logo-power">Power</span><span class="logo-2">2</span><span class="logo-adapt">ADAPT</span>
+        <img src="/static/logo.png" alt="Power2ADAPT" style="width:200px;height:auto;display:block;margin:0 auto;">
     </div>
 
     {% if error %}
@@ -32,7 +32,7 @@
             <h2>Already Submitted</h2>
             <p>You've already submitted your availability for <strong>{{ tok['term_name'] }}</strong>.</p>
             {% if existing %}
-            <p class="text-muted">Submitted: {{ existing['submitted_at'][:10] }}</p>
+            <p class="text-muted">Submitted: {{ existing['submitted_at'].strftime('%Y-%m-%d') if existing['submitted_at'] else '' }}</p>
             {% endif %}
             <p>Need to make changes? Contact Alistair.</p>
         </div>
@@ -41,25 +41,47 @@
         <div class="form-card">
             <h2>{{ tok['term_name'] }} Availability</h2>
             <p>Hi <strong>{{ tok['coach_name'].split()[0] }}</strong>, please fill in your availability below. Takes 2 minutes!</p>
+            {% if expires_display %}
+            <p class="link-expiry-note">&#128274; This link expires on <strong>{{ expires_display }}</strong>.</p>
+            {% endif %}
 
             <form method="POST" action="/availability/{{ token }}/submit">
 
                 <!-- Weekly availability -->
                 <div class="form-section">
                     <h3>Weekly Availability</h3>
-                    <p class="form-hint">For each day, are you generally available this term?</p>
+                    <p class="form-hint">For each day, select when you're generally available this term.</p>
+                    <div class="time-legend">
+                        <span class="legend-item legend-all">All Day</span>
+                        <span class="legend-item legend-am">AM (before 12pm)</span>
+                        <span class="legend-item legend-pm">PM/Eve (after 12pm)</span>
+                        <span class="legend-item legend-standby">Standby</span>
+                        <span class="legend-item legend-no">Not Available</span>
+                    </div>
 
                     {% for day in days_of_week %}
                     <div class="day-toggle">
                         <label class="day-label">{{ day }}</label>
                         <div class="toggle-group">
                             <label class="toggle-opt">
-                                <input type="radio" name="weekly_{{ day }}" value="available" checked>
-                                <span class="toggle-btn toggle-yes">Available</span>
+                                <input type="radio" name="weekly_{{ day }}" value="all" checked>
+                                <span class="toggle-btn toggle-all">All Day</span>
+                            </label>
+                            <label class="toggle-opt">
+                                <input type="radio" name="weekly_{{ day }}" value="am">
+                                <span class="toggle-btn toggle-am">AM</span>
+                            </label>
+                            <label class="toggle-opt">
+                                <input type="radio" name="weekly_{{ day }}" value="pm">
+                                <span class="toggle-btn toggle-pm">PM/Eve</span>
+                            </label>
+                            <label class="toggle-opt">
+                                <input type="radio" name="weekly_{{ day }}" value="standby">
+                                <span class="toggle-btn toggle-standby">Standby</span>
                             </label>
                             <label class="toggle-opt">
                                 <input type="radio" name="weekly_{{ day }}" value="unavailable">
-                                <span class="toggle-btn toggle-no">Unavailable</span>
+                                <span class="toggle-btn toggle-no">Not Available</span>
                             </label>
                         </div>
                     </div>

@@ -36,8 +36,19 @@
         <p class="card-desc">Send a custom SMS to selected coaches or the whole team.</p>
         <form method="POST" action="{{ url_for('send_custom_sms') }}">
             <div class="form-group">
-                <label>Message</label>
-                <textarea name="message" rows="4" placeholder="Type your message here..." required></textarea>
+                <label>Saved templates</label>
+                {% for template in sms_templates %}
+                <button type="button" class="btn btn-outline btn-sm sms-template-button"
+                        data-message="{{ template.message | tojson | forceescape }}">
+                    {{ template.name }}
+                </button>
+                {% endfor %}
+                <p class="form-hint">Click a template to load it below. Nothing is sent until you click Send Message and confirm.</p>
+            </div>
+            <div class="form-group">
+                <label for="custom-sms-message">Message</label>
+                <textarea id="custom-sms-message" name="message" rows="8" placeholder="Type your message here..." required aria-describedby="sms-personalization-help"></textarea>
+                <p id="sms-personalization-help" class="form-hint">[Name] is replaced with each coach's first name when sent. You can edit the message before sending.</p>
             </div>
             <div class="form-group">
                 <label>Send to (leave empty for all active coaches)</label>
@@ -79,7 +90,7 @@
             <tbody>
                 {% for entry in log %}
                 <tr>
-                    <td><small>{{ entry['sent_at'][:16] }}</small></td>
+                    <td><small>{{ entry['sent_at'].strftime('%Y-%m-%d %H:%M') if entry['sent_at'] else '' }}</small></td>
                     <td>{{ entry['coach_name'] or entry['mobile'] }}</td>
                     <td><span class="badge badge-info">{{ entry['type'] | replace('_', ' ') }}</span></td>
                     <td><small class="text-muted">{{ entry['message'][:80] }}{% if entry['message']|length > 80 %}...{% endif %}</small></td>
@@ -99,4 +110,21 @@
     <div class="empty-state">No messages sent yet.</div>
     {% endif %}
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.querySelectorAll('.sms-template-button').forEach(function (button) {
+    button.addEventListener('click', function () {
+        const message = document.getElementById('custom-sms-message');
+        const template = JSON.parse(button.dataset.message);
+        if (message.value.trim() && message.value !== template &&
+            !window.confirm('Replace the current draft with this template?')) {
+            return;
+        }
+        message.value = template;
+        message.focus();
+    });
+});
+</script>
 {% endblock %}

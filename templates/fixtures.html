@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+
+{% block title %}Fixtures | Coach Hub{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Fixtures</h1>
+        <p class="page-subtitle">Upcoming school sporting fixtures and events</p>
+    </div>
+    <div>
+        <button id="mine-toggle" class="btn btn-secondary" onclick="toggleMineFilter()" style="font-size:13px">
+            Show my fixtures only
+        </button>
+    </div>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+{% endwith %}
+
+<div class="card">
+    {% if fixtures %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Event</th>
+                <th>Location</th>
+                <th>School</th>
+                <th>Coaches</th>
+                <th>With</th>
+                <th>Notes</th>
+                {% if is_admin %}<th></th>{% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for f in fixtures %}
+            {% set i_am_on = current_user_id in (assigned_map.get(f['id']) or []) %}
+            <tr class="{% if f['date'] < today %}row-past{% endif %}{% if i_am_on %} row-mine{% endif %}" data-mine="{{ 'true' if i_am_on else 'false' }}">
+                <td>
+                    <strong>{{ f['date'] | format_date }}</strong>
+                    {% if f['date'] == today %}
+                        <span class="badge badge-warning" style="margin-left:6px">Today</span>
+                    {% elif f['date'] > today %}
+                        <div style="font-size:11px;color:var(--text-muted)">{{ f['date'] | days_until }}</div>
+                    {% endif %}
+                    {% if i_am_on %}
+                        <div style="margin-top:4px"><span class="badge-mine">You're on this</span></div>
+                    {% endif %}
+                </td>
+                <td><strong>{{ f['title'] }}</strong></td>
+                <td>{{ f['location'] or '—' }}</td>
+                <td>
+                    {% if f['school'] %}
+                    <span class="badge badge-info">{{ f['school'] }}</span>
+                    {% else %}—{% endif %}
+                </td>
+                <td id="coaches-cell-{{ f['id'] }}">
+                    {% set assigned = assigned_map.get(f['id']) or [] %}
+                    {% for coach in all_coaches %}
+                        {% if coach['id'] in assigned %}
+                        <div class="roster-coach-chip" id="chip-{{ f['id'] }}-{{ coach['id'] }}">
+                            {{ coach['name'].split()[0] }}
+                            {% if is_admin %}
+                            <button class="remove-coach-btn"
+                                    onclick="removeFixtureCoach({{ f['id'] }}, {{ coach['id'] }})"
+                                    title="Remove">x</button>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                    {% if is_admin %}
+                    <div class="add-coach-wrap" style="margin-top:4px">
+                        <select class="add-coach-select" id="fselect-{{ f['id'] }}">
+                            <option value="">+ Add coach</option>
+                            {% for coach in all_coaches %}
+                                {% if coach['id'] not in assigned %}
+                                <option value="{{ coach['id'] }}">{{ coach['name'] }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                        <button class="btn btn-xs btn-primary"
+                                onclick="addFixtureCoach({{ f['id'] }})">Add</button>
+                    </div>
+                    {% elif not assigned %}
+                    <span class="text-muted">—</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% set co = co_coaches_map.get(f['id']) %}
+                    {% if co %}
+                        <small>{{ co | join(', ') }}</small>
+                    {% else %}
+                        <span class="text-muted">—</span>
+                    {% endif %}
+                </td>
+                <td><small class="text-muted">{{ f['notes'] or '' }}</small></td>
+                {% if is_admin %}
+                <td style="white-space:nowrap">
+                    <button type="button" class="btn btn-xs btn-secondary"
+                            onclick="toggleRow('edit-fixture-{{ f['id'] }}')">Edit</button>
+                    <form method="POST" action="{{ url_for('fixtures_delete', fixture_id=f['id']) }}" style="display:inline;margin-left:4px"
+                          onsubmit="return confirm('Delete this fixture?')">
+                        <button type="submit" class="btn btn-xs btn-danger">Delete</button>
+                    </form>
+                </td>
+                {% endif %}
+            </tr>
+            {% if is_admin %}
+            <tr id="edit-fixture-{{ f['id'] }}" style="display:none;background:var(--bg-secondary)">
+                <td colspan="8" style="padding:12px 16px">
+                    <form method="POST" action="{{ url_for('fixtures_edit', fixture_id=f['id']) }}">
+                        <strong style="font-size:13px">Edit fixture details:</strong>
+                        <div class="form-row" style="margin-top:10px">
+                            <div class="form-group">
+                                <label>Event Title</label>
+                                <input type="text" name="title" class="form-control" value="{{ f['title'] }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Date</label>
+                                <input type="date" name="date" class="form-control" value="{{ f['date'] }}" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Location / Venue</label>
+                                <input type="text" name="location" class="form-control" value="{{ f['location'] or '' }}">
+                            </div>
+                            <div class="form-group">
+                                <label>School</label>
+                                <input type="text" name="school" class="form-control" value="{{ f['school'] or '' }}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Notes</label>
+                            <input type="text" name="notes" class="form-control" value="{{ f['notes'] or '' }}">
+                        </div>
+                        <button type="submit" class="btn btn-sm btn-primary">Save</button>
+                        <button type="button" class="btn btn-sm btn-secondary" style="margin-left:6px"
+                                onclick="toggleRow('edit-fixture-{{ f['id'] }}')">Cancel</button>
+                    </form>
+                </td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">No fixtures added yet.</div>
+    {% endif %}
+</div>
+
+{% if is_admin %}
+<div class="card" style="margin-top:16px">
+    <h2 class="card-title">Add Fixture</h2>
+    <form method="POST" action="{{ url_for('fixtures_add') }}">
+        <div class="form-row">
+            <div class="form-group">
+                <label>Event Title</label>
+                <input type="text" name="title" class="form-control" required placeholder="e.g. AGSV Round 1">
+            </div>
+            <div class="form-group">
+                <label>Date</label>
+                <input type="date" name="date" class="form-control" required>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Location / Venue</label>
+                <input type="text" name="location" class="form-control" placeholder="e.g. Yarra Bend">
+            </div>
+            <div class="form-group">
+                <label>School</label>
+                <input type="text" name="school" class="form-control" placeholder="e.g. Peninsula Grammar">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Assign Coaches</label>
+            <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:4px">
+                {% for coach in all_coaches %}
+                <label style="display:flex;align-items:center;gap:6px;font-weight:400;cursor:pointer">
+                    <input type="checkbox" name="coach_ids" value="{{ coach['id'] }}">
+                    {{ coach['name'] }}
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Notes</label>
+            <input type="text" name="notes" class="form-control" placeholder="Optional notes">
+        </div>
+        <button type="submit" class="btn btn-primary">Add Fixture</button>
+    </form>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<style>
+.row-mine {
+    background: rgba(41, 171, 226, 0.07);
+    border-left: 3px solid var(--cyan);
+}
+.row-mine.row-past {
+    background: rgba(41, 171, 226, 0.04);
+    border-left: 3px solid rgba(41, 171, 226, 0.35);
+}
+.badge-mine {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    background: rgba(41, 171, 226, 0.18);
+    color: var(--cyan);
+    text-transform: uppercase;
+}
+#mine-toggle.active {
+    background: var(--cyan);
+    color: #fff;
+    border-color: var(--cyan);
+}
+</style>
+<script>
+var mineFilterOn = false;
+function toggleMineFilter() {
+    mineFilterOn = !mineFilterOn;
+    var btn = document.getElementById('mine-toggle');
+    btn.textContent = mineFilterOn ? 'Show all fixtures' : 'Show my fixtures only';
+    btn.classList.toggle('active', mineFilterOn);
+    document.querySelectorAll('tbody tr[data-mine]').forEach(function(row) {
+        if (mineFilterOn && row.dataset.mine !== 'true') {
+            row.style.display = 'none';
+        } else {
+            row.style.display = '';
+        }
+    });
+}
+
+function toggleRow(rowId) {
+    var row = document.getElementById(rowId);
+    row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
+}
+
+async function addFixtureCoach(fixtureId) {
+    const select = document.getElementById(`fselect-${fixtureId}`);
+    const coachId = select.value;
+    if (!coachId) return;
+    const resp = await fetch(`/fixtures/${fixtureId}/add_coach`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({coach_id: coachId})
+    });
+    const data = await resp.json();
+    if (data.success) { location.reload(); }
+    else { alert('Failed to add coach.'); }
+}
+
+async function removeFixtureCoach(fixtureId, coachId) {
+    if (!confirm('Remove this coach from the fixture?')) return;
+    const resp = await fetch(`/fixtures/${fixtureId}/remove_coach`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({coach_id: coachId})
+    });
+    const data = await resp.json();
+    if (data.success) {
+        const chip = document.getElementById(`chip-${fixtureId}-${coachId}`);
+        if (chip) chip.remove();
+    } else { alert('Failed to remove coach.'); }
+}
+</script>
+{% endblock %}

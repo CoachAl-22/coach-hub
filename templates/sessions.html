@@ -36,7 +36,8 @@
                 </td>
                 <td>
                     <button class="btn btn-xs btn-outline"
-                            onclick="openEditSession({{ session | tojson }})">Edit</button>
+                            data-session="{{ session | tojson | forceescape }}"
+                            onclick="openEditSession(JSON.parse(this.dataset.session))">Edit</button>
                     <form method="POST" action="{{ url_for('admin_sessions_toggle', session_id=session['id']) }}" style="display:inline">
                         <button type="submit" class="btn btn-xs btn-danger"
                                 onclick="return confirm('Toggle session status?')">
